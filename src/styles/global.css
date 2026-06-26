@@ -359,7 +359,25 @@ figcaption, .caption {
   will-change: transform;
 }
 /* Frido & projekt pages: spine rail reads warmer at rest */
-.theme-gold-spine .spine { background: var(--gold-soft); }
+/* /frido — full-gold continuity treatment: a solid gold thread, deepening with scroll */
+.theme-gold-spine .spine { background: color-mix(in srgb, var(--gold) 32%, var(--paper)); }
+.theme-gold-spine .spine__gold { width: 3px; box-shadow: 0 0 10px rgba(200, 150, 43, 0.35); }
+
+/* timeline: the line draws itself gold as each entry is reached (node-fill) */
+.theme-gold-spine .timeline__rail {
+  background: color-mix(in srgb, var(--gold) 28%, var(--paper));
+  transition: background 500ms var(--ease-out);
+}
+.theme-gold-spine .timeline__node {
+  background: var(--paper);
+  box-shadow: 0 0 0 2px var(--gold), 0 0 0 5px var(--paper);
+  transition: background 400ms var(--ease-out), box-shadow 400ms var(--ease-out);
+}
+.theme-gold-spine .timeline__item.is-visible .timeline__rail { background: var(--gold); }
+.theme-gold-spine .timeline__item.is-visible .timeline__node {
+  background: var(--gold);
+  box-shadow: 0 0 0 2px var(--gold), 0 0 0 5px var(--paper), 0 0 12px rgba(200, 150, 43, 0.5);
+}
 
 /* legacy alias retained for any decorative inline rule */
 .continuity-line {
@@ -644,6 +662,29 @@ figcaption, .caption {
   transition: opacity var(--dur-reveal) var(--ease-out),
               transform var(--dur-reveal) var(--ease-out);
 }
+
+/* =====================================================================
+   14b. Form fields (membership / contact)
+   ===================================================================== */
+.membership-form > * + * { margin-top: var(--sp-5); }
+.field { display: block; }
+.field > span {
+  display: block; font-size: var(--step--1); font-weight: 600;
+  letter-spacing: 0.02em; color: var(--stone); margin-bottom: var(--sp-2);
+}
+.field input, .field textarea, .field select {
+  width: 100%; font: inherit; color: var(--ink); background: var(--paper-pure);
+  border: 1px solid var(--line); border-radius: var(--r-input);
+  padding: 0.62em 0.7em;
+}
+.field input:focus-visible, .field textarea:focus-visible, .field select:focus-visible {
+  outline: 2px solid var(--teal); outline-offset: 1px; border-color: var(--teal);
+}
+.field textarea { resize: vertical; }
+.field-grid { display: grid; gap: var(--sp-4); }
+@media (min-width: 560px) { .field-grid { grid-template-columns: 1fr 1fr; } }
+.membership-form__submit { width: 100%; }
+.membership-form .hp { position: absolute; left: -9999px; }
 
 /* =====================================================================
    15. Sticky mobile CTA

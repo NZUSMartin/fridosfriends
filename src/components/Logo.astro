@@ -1,47 +1,26 @@
 ---
 /**
- * Logo.astro — Jesuit double-shaft patriarchal cross (corrected geometry, DESIGN.md §9)
- * Two parallel vertical shafts; an upper crossbar + a wider lower crossbar;
- * each crossbar ends in short downward bracket tabs (lower longer than upper).
- * The fine strokes echo the continuity line; the right shaft conceptually "falls out"
- * of the lower crossbar and becomes the page spine.
+ * Logo.astro — the real Frido's Friends mark (Jesuit double-shaft patriarchal cross),
+ * recoloured to gold with transparency from the original logo artwork.
+ * Raster on purpose: the exact provided design, not a redrawing.
  *
  * Props:
- *   size   number  — width in px (default 40). Height scales by the 64x96 viewBox ratio.
- *   color  string  — stroke colour (default 'currentColor'; header sets color:var(--gold)).
- * Decorative: aria-hidden. (Header wraps it in an aria-labelled <a>.)
+ *   size   number  — rendered width in px (default 40). Height scales by the artwork ratio.
+ *   color? string  — accepted for backwards compatibility; ignored (the mark is gold).
+ *   class? string
  */
 interface Props { size?: number; color?: string; class?: string; }
-const { size = 40, color = 'currentColor', class: className = 'brand__mark' } = Astro.props;
-const ratio = 96 / 64;
+const { size = 40, class: className = 'brand__mark' } = Astro.props;
+const ratio = 558 / 336; // intrinsic logo-gold.png aspect (height / width)
 const h = Math.round(size * ratio);
 ---
-<svg
+<img
   class={className}
+  src="/images/logo-gold.png"
   width={size}
   height={h}
-  viewBox="0 0 64 96"
-  xmlns="http://www.w3.org/2000/svg"
+  alt=""
   aria-hidden="true"
-  focusable="false"
-  fill="none"
-  stroke={color}
-  stroke-width="3"
-  stroke-linecap="square"
->
-  <!-- two parallel vertical shafts -->
-  <line x1="27" y1="6"  x2="27" y2="90" />
-  <line x1="37" y1="6"  x2="37" y2="90" />
-
-  <!-- upper crossbar (narrower) -->
-  <line x1="16" y1="26" x2="48" y2="26" />
-  <!-- upper downward bracket tabs (short) -->
-  <line x1="16" y1="26" x2="16" y2="32" />
-  <line x1="48" y1="26" x2="48" y2="32" />
-
-  <!-- lower crossbar (wider) -->
-  <line x1="8"  y1="52" x2="56" y2="52" />
-  <!-- lower downward bracket tabs (longer) -->
-  <line x1="8"  y1="52" x2="8"  y2="62" />
-  <line x1="56" y1="52" x2="56" y2="62" />
-</svg>
+  decoding="async"
+  style={`width:${size}px;height:auto;display:block`}
+/>

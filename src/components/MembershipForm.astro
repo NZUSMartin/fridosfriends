@@ -1,0 +1,137 @@
+---
+/**
+ * MembershipForm.astro — the real "Mitgliedschaft by email" flow.
+ * A Netlify Form (static, no backend): amount + interval + name + email + message,
+ * submitted to the Vorstand (vorstand@fridosfriends.de via Netlify notification),
+ * redirecting to a thank-you page. Honeypot for spam. Teal primary submit.
+ *
+ * Props:
+ *   lang  'de' | 'en'  — language (default 'de')
+ */
+interface Props { lang?: 'de' | 'en'; }
+const { lang = 'de' } = Astro.props;
+const isEn = lang === 'en';
+
+const formName = isEn ? 'membership-en' : 'mitgliedschaft-de';
+const thanks = isEn ? '/en/thanks/' : '/danke/';
+
+const impactDe: Record<string, string> = {
+  '25': '25 €/Monat = 300 € im Jahr — Schulmaterial und Hygieneartikel für ein Mädchen.',
+  '75': '75 €/Monat = 900 € im Jahr — ein ganzes Schuljahr für ein Mädchen in Adjumani.',
+  '100': '100 €/Monat = 1.200 € im Jahr — ein Schuljahr plus Mentoring vor Ort.',
+};
+const impactEn: Record<string, string> = {
+  '25': '€25/month = €300 a year — school materials and hygiene products for one girl.',
+  '75': '€75/month = €900 a year — a full school year for one girl in Adjumani.',
+  '100': '€100/month = €1,200 a year — a school year plus local mentoring.',
+};
+const impacts = isEn ? impactEn : impactDe;
+
+const t = isEn
+  ? {
+      legend: 'Become a member — monthly',
+      amountLabel: 'Monthly contribution',
+      name: 'Name', email: 'Email',
+      interval: 'Interval', monthly: 'monthly', yearly: 'yearly',
+      message: 'Message (optional)',
+      submit: 'Send membership application',
+      followup: 'We get back to you within 24–48 hours with the membership form and SEPA mandate.',
+      direct: 'Or write to us directly:',
+      minimum: 'Statutory minimum contribution: €50/year.',
+      trust: ['Registered charity', '100% promise', 'Tax receipt', 'Partner JRS'],
+    }
+  : {
+      legend: 'Mitglied werden — monatlich',
+      amountLabel: 'Monatlicher Beitrag',
+      name: 'Name', email: 'E-Mail',
+      interval: 'Intervall', monthly: 'monatlich', yearly: 'jährlich',
+      message: 'Nachricht (optional)',
+      submit: 'Mitgliedsantrag absenden',
+      followup: 'Wir melden uns innerhalb von 24–48 Stunden mit Beitrittserklärung und SEPA-Mandat.',
+      direct: 'Oder schreiben Sie uns direkt:',
+      minimum: 'Satzungsgemäßer Mindestbeitrag: 50 €/Jahr.',
+      trust: ['Gemeinnützigkeit', '100 %-Versprechen', 'Spendenquittung', 'Partner JRS'],
+    };
+---
+<form
+  class="calc card membership-form"
+  name={formName}
+  method="POST"
+  action={thanks}
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  data-donate
+  aria-label={t.legend}
+>
+  <input type="hidden" name="form-name" value={formName} />
+  <p class="hp" hidden aria-hidden="true">
+    <label>{isEn ? 'Leave this field empty' : 'Dieses Feld bitte leer lassen'}: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+  </p>
+
+  <fieldset>
+    <legend class="eyebrow">{t.legend}</legend>
+    <div class="calc__tiers" role="radiogroup" aria-label={t.amountLabel}>
+      <label class="tier">
+        <input type="radio" name="betrag" value="25" />
+        <span>25&nbsp;€</span>
+      </label>
+      <label class="tier tier--featured">
+        <input type="radio" name="betrag" value="75" checked />
+        <span>75&nbsp;€</span>
+      </label>
+      <label class="tier">
+        <input type="radio" name="betrag" value="100" />
+        <span>100&nbsp;€</span>
+      </label>
+    </div>
+    <p class="calc__impact" aria-live="polite" data-impact>{impacts['75']}</p>
+  </fieldset>
+
+  <div class="field-grid">
+    <label class="field">
+      <span>{t.name}</span>
+      <input type="text" name="name" required autocomplete="name" />
+    </label>
+    <label class="field">
+      <span>{t.email}</span>
+      <input type="email" name="email" required autocomplete="email" />
+    </label>
+  </div>
+
+  <label class="field">
+    <span>{t.interval}</span>
+    <select name="intervall">
+      <option value="monatlich">{t.monthly}</option>
+      <option value="jaehrlich">{t.yearly}</option>
+    </select>
+  </label>
+
+  <label class="field">
+    <span>{t.message}</span>
+    <textarea name="nachricht" rows="3"></textarea>
+  </label>
+
+  <button type="submit" class="btn btn--primary membership-form__submit">{t.submit}</button>
+
+  <p class="calc__secondary">
+    {t.followup}<br />
+    {t.direct} <a class="link-tertiary" href="mailto:vorstand@fridosfriends.de">vorstand@fridosfriends.de</a>
+  </p>
+
+  <ul class="trust-row">
+    {t.trust.map((x) => (<li>{x}</li>))}
+  </ul>
+
+  <p class="caption">{t.minimum}</p>
+</form>
+
+<script is:inline define:vars={{ impacts }}>
+  document.querySelectorAll('.membership-form[data-donate]').forEach((form) => {
+    const out = form.querySelector('[data-impact]');
+    form.querySelectorAll('input[name="betrag"]').forEach((input) => {
+      input.addEventListener('change', () => {
+        if (out && impacts[input.value]) out.textContent = impacts[input.value];
+      });
+    });
+  });
+</script>

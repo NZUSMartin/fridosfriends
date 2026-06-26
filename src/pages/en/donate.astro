@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
-import MembershipCalculator from '../../components/MembershipCalculator.astro';
+import MembershipForm from '../../components/MembershipForm.astro';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 
@@ -64,20 +64,10 @@ const trust = [
       </div>
 
       <div class="join-grid">
-        <!-- Ask column: calculator + dominant primary CTA -->
+        <!-- Ask column: real membership application form (Netlify → Vorstand) -->
         <div class="join-ask" data-reveal-group>
           <div data-reveal>
-            <MembershipCalculator lang="en" ctaHref={betterplace} />
-          </div>
-
-          <div class="join-cta" data-reveal>
-            <p class="caption join-cta__note">
-              The button takes you to betterplace.org, where you complete your membership.
-              Betterplace issues your donation receipt (Zuwendungsbestätigung) automatically.
-            </p>
-            <p class="caption">
-              Note: the statutory minimum contribution is €50/year and is available separately.
-            </p>
+            <MembershipForm lang="en" />
           </div>
         </div>
 
@@ -152,7 +142,7 @@ const trust = [
           <p class="caption" style="margin-top:var(--sp-5)">
             For amounts up to €300, your bank statement suffices as proof of donation. For larger
             amounts we are glad to issue a Zuwendungsbestätigung — just write to us at
-            <a class="link-tertiary" href="mailto:martin.hirt@cassandra.ceo">martin.hirt@cassandra.ceo</a>.
+            <a class="link-tertiary" href="mailto:vorstand@fridosfriends.de">vorstand@fridosfriends.de</a>.
           </p>
         </article>
       </div>
@@ -181,7 +171,7 @@ const trust = [
           <p style="color:var(--stone);margin-top:var(--sp-3)">
             Do you know people or companies who would like to support girls’ education? Connect us.
             Write to
-            <a class="link-tertiary" href="mailto:martin.hirt@cassandra.ceo">martin.hirt@cassandra.ceo</a>.
+            <a class="link-tertiary" href="mailto:vorstand@fridosfriends.de">vorstand@fridosfriends.de</a>.
           </p>
         </article>
 
@@ -189,7 +179,7 @@ const trust = [
           <h3>Newsletter</h3>
           <p style="color:var(--stone);margin-top:var(--sp-3)">
             Stay close: we report on how the girls we support are doing. Sign up by email at
-            <a class="link-tertiary" href="mailto:martin.hirt@cassandra.ceo?subject=Newsletter">martin.hirt@cassandra.ceo</a>.
+            <a class="link-tertiary" href="mailto:vorstand@fridosfriends.de?subject=Newsletter">vorstand@fridosfriends.de</a>.
           </p>
         </article>
       </div>

@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+
+const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
+---
+<Layout
+  title="Vielen Dank"
+  description="Vielen Dank für Ihren Mitgliedsantrag bei Frido's Friends e.V. Wir melden uns innerhalb von 24–48 Stunden."
+  lang="de"
+  path="/danke"
+  spine="none"
+>
+  <section class="section">
+    <div class="container container-text" data-reveal-group>
+      <Eyebrow text="Mitgliedsantrag eingegangen" />
+      <h1 data-reveal>Vielen Dank.</h1>
+      <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
+        Ihr Mitgliedsantrag ist bei uns angekommen. Wir melden uns innerhalb von 24–48 Stunden
+        persönlich bei Ihnen — mit der Beitrittserklärung und dem SEPA-Mandat für Ihren Beitrag.
+      </p>
+      <p style="margin-top:var(--sp-5);color:var(--stone)" data-reveal>
+        Wenn Sie in der Zwischenzeit sofort helfen möchten, können Sie auch direkt über
+        <a class="link-tertiary" href={betterplace} rel="noopener" target="_blank">betterplace.org</a>
+        spenden. Bei Fragen erreichen Sie uns jederzeit unter
+        <a class="link-tertiary" href="mailto:vorstand@fridosfriends.de">vorstand@fridosfriends.de</a>.
+      </p>
+      <p style="margin-top:var(--sp-6)" data-reveal>
+        <a class="btn btn--secondary" href="/">Zurück zur Startseite</a>
+      </p>
+    </div>
+  </section>
+</Layout>
