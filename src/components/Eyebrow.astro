@@ -1,0 +1,15 @@
+---
+/**
+ * Eyebrow.astro — Inter small tracked uppercase, gold, with the continuity tick.
+ * Props:
+ *   text     string   — eyebrow label (or use the default slot)
+ *   center?  boolean  — center the tick + text (default false)
+ *   as?      string   — element tag (default 'p')
+ */
+interface Props { text?: string; center?: boolean; as?: string; class?: string; }
+const { text, center = false, as = 'p', class: className = '' } = Astro.props;
+const Tag = as as any;
+---
+<Tag class:list={['eyebrow', center && 'eyebrow--center', className]}>
+  {text ?? <slot />}
+</Tag>

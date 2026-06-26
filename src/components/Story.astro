@@ -1,0 +1,37 @@
+---
+/**
+ * Story.astro — the mandated single-girl story block (280px 1fr; portrait + body).
+ * Figure radius on <img>, visible figcaption. Safeguarding: first name + aspiration only.
+ *
+ * Props:
+ *   image      string  — portrait path under /images/
+ *   alt        string  — dignity-first alt text
+ *   eyebrow    string  — small label (e.g. 'Eine von 24')
+ *   heading    string  — story headline
+ *   quote?     string  — pull-quote
+ *   linkHref?  string  — tertiary link target
+ *   linkLabel? string  — tertiary link label
+ *   credit?    string  — figcaption (default 'Foto: JRS Uganda')
+ * Body prose goes in the default slot.
+ */
+import Eyebrow from './Eyebrow.astro';
+interface Props {
+  image: string; alt: string;
+  eyebrow: string; heading: string;
+  quote?: string; linkHref?: string; linkLabel?: string; credit?: string;
+}
+const { image, alt, eyebrow, heading, quote, linkHref, linkLabel, credit = 'Foto: JRS Uganda' } = Astro.props;
+---
+<div class="story" data-reveal-group>
+  <figure class="figure figure--portrait" data-reveal>
+    <img src={image} alt={alt} width="800" height="1000" loading="lazy" decoding="async" />
+    <figcaption>{credit}</figcaption>
+  </figure>
+  <div class="story__body" data-reveal>
+    <Eyebrow text={eyebrow} />
+    <h2>{heading}</h2>
+    <div class="prose"><slot /></div>
+    {quote && <blockquote class="pullquote">{quote}</blockquote>}
+    {linkHref && linkLabel && <a class="link-tertiary" href={linkHref}>{linkLabel}</a>}
+  </div>
+</div>

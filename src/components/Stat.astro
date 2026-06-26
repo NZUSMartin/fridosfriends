@@ -1,0 +1,64 @@
+---
+/**
+ * Stat.astro — a single big serif figure (gold) + label.
+ * Designed to sit inside a `.stats` grid (wrap several in <div class="stats">).
+ * Count-up is opt-in via data-countup and is skipped under reduced motion
+ * (the final value is always in the DOM as the figure text).
+ *
+ * Props:
+ *   figure   string|number  — the displayed number (e.g. '24', '100', '900 €')
+ *   label    string         — the caption beneath
+ *   countTo? number         — numeric target for count-up (omit to disable)
+ *   suffix?  string         — appended after the counted number (e.g. '%')
+ *   prefix?  string         — prepended before the counted number
+ */
+interface Props {
+  figure: string | number;
+  label: string;
+  countTo?: number;
+  suffix?: string;
+  prefix?: string;
+}
+const { figure, label, countTo, suffix = '', prefix = '' } = Astro.props;
+---
+<div class="stat" data-reveal>
+  <span
+    class="stat__figure"
+    data-countup={countTo !== undefined ? String(countTo) : undefined}
+    data-suffix={suffix || undefined}
+    data-prefix={prefix || undefined}
+  >{figure}</span>
+  <span class="stat__label">{label}</span>
+</div>
+
+{countTo !== undefined && (
+  <script>
+    // Lightweight count-up, gated to reduced-motion + viewport entry. Runs once.
+    (() => {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !('IntersectionObserver' in window)) return;
+      const els = document.querySelectorAll('.stat__figure[data-countup]:not([data-counted])');
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const el = e.target as HTMLElement;
+          io.unobserve(el);
+          el.setAttribute('data-counted', '');
+          const target = parseInt(el.getAttribute('data-countup') || '0', 10);
+          const suffix = el.getAttribute('data-suffix') || '';
+          const prefix = el.getAttribute('data-prefix') || '';
+          const dur = 1100;
+          const start = performance.now();
+          const tick = (now: number) => {
+            const t = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = prefix + Math.round(target * eased) + suffix;
+            if (t < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+      }, { threshold: 0.5 });
+      els.forEach((el) => io.observe(el));
+    })();
+  </script>
+)}

@@ -1,66 +1,108 @@
 ---
+/**
+ * Header.astro — sticky, persistent. Gold logo + wordmark (left), nav (center/right),
+ * DE/EN switch + teal "Mitglied werden" CTA (right), accessible mobile hamburger drawer.
+ *
+ * Props:
+ *   lang  'de' | 'en'  — language (default 'de')
+ *   path  string       — current pathname for active-item highlight (e.g. '/projekt', '/en/project')
+ */
 import Logo from './Logo.astro';
-interface Props {
-  lang?: 'de' | 'en';
-  currentPath?: string;
-}
-const { lang = 'de', currentPath = '/' } = Astro.props;
 
-const navDE = [
-  { href: '/projekt', label: 'Das Projekt' },
-  { href: '/geschichten', label: 'Geschichten' },
-  { href: '/frido', label: 'Pater Frido' },
-  { href: '/ueber-uns', label: 'Über uns' },
-  { href: '/mitmachen', label: 'Mitmachen' },
+interface Props { lang?: 'de' | 'en'; path?: string; }
+const { lang = 'de', path = '' } = Astro.props;
+const isEn = lang === 'en';
+
+const home = isEn ? '/en/' : '/';
+const joinHref = isEn ? '/en/donate' : '/mitmachen';
+const joinLabel = isEn ? 'Become a member' : 'Mitglied werden';
+const altHref = isEn ? '/' : '/en/';
+const altLabel = isEn ? 'DE' : 'EN';
+
+const navDe = [
+  { href: '/projekt',     label: 'Das Projekt' },
+  { href: '/geschichten', label: 'Stipendiatinnen' },
+  { href: '/frido',       label: 'Pater Frido' },
+  { href: '/ueber-uns',   label: 'Über uns' },
 ];
-const navEN = [
+const navEn = [
   { href: '/en/project', label: 'The Project' },
-  { href: '/en/stories', label: 'Stories' },
-  { href: '/en/frido', label: 'Father Frido' },
-  { href: '/en/about', label: 'About us' },
-  { href: '/en/donate', label: 'Donate' },
+  { href: '/en/stories', label: 'Scholars' },
+  { href: '/en/frido',   label: 'Father Frido' },
+  { href: '/en/about',   label: 'About us' },
 ];
-const nav = lang === 'de' ? navDE : navEN;
-const switchHref = lang === 'de' ? '/en/' : '/';
-const switchLabel = lang === 'de' ? 'EN' : 'DE';
+const nav = isEn ? navEn : navDe;
+
+// normalise trailing slash for comparison
+const norm = (p: string) => (p.length > 1 ? p.replace(/\/$/, '') : p);
+const cur = norm(path);
+const isActive = (href: string) => norm(href) === cur;
+const menuLabel = isEn ? 'Open menu' : 'Menü öffnen';
+const langAriaCurrent = false;
 ---
-<header style="background:var(--paper);border-bottom:1px solid var(--line);" class="sticky top-0 z-50">
-  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-    <a href={lang === 'de' ? '/' : '/en/'} class="flex items-center gap-3" style="text-decoration:none;">
-      <Logo size={32} color="var(--gold)" />
-      <span style="font-family:'Source Serif 4',Georgia,serif;font-weight:700;font-size:1.1rem;color:var(--ink);">Frido's Friends</span>
+
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <a class="brand" href={home} aria-label={isEn ? "Frido's Friends e.V. — Home" : "Frido's Friends e.V. — Startseite"}>
+      <Logo size={28} color="var(--gold)" />
+      <span class="brand__name">Frido&rsquo;s Friends</span>
     </a>
-    <nav class="hidden md:flex items-center gap-6">
-      {nav.map(item => (
-        <a href={item.href}
-           style={`color:var(--ink);font-size:0.9rem;font-weight:500;text-decoration:none;padding-bottom:2px;border-bottom:${currentPath === item.href ? '2px solid var(--gold)' : '2px solid transparent'};`}>
-          {item.label}
-        </a>
+
+    <nav class="nav" aria-label={isEn ? 'Main navigation' : 'Hauptnavigation'}>
+      {nav.map((item) => (
+        <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
       ))}
     </nav>
-    <div class="flex items-center gap-3">
-      <a href={switchHref} style="font-size:0.85rem;color:var(--stone);font-weight:600;text-decoration:none;border:1px solid var(--line);padding:4px 10px;border-radius:4px;">{switchLabel}</a>
-      {lang === 'de' ? (
-        <a href="/mitmachen" style="background:var(--teal);color:#fff;padding:8px 18px;border-radius:6px;font-weight:600;font-size:0.9rem;text-decoration:none;">Jetzt spenden</a>
-      ) : (
-        <a href="/en/donate" style="background:var(--teal);color:#fff;padding:8px 18px;border-radius:6px;font-weight:600;font-size:0.9rem;text-decoration:none;">Donate now</a>
-      )}
-      <button id="menu-btn" class="md:hidden" aria-label="Menu" style="background:none;border:none;cursor:pointer;padding:4px;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
+
+    <div class="site-header__actions">
+      <a class="lang-toggle" href={altHref} hreflang={isEn ? 'de' : 'en'} aria-label={isEn ? 'Auf Deutsch wechseln' : 'Switch to English'}>{altLabel}</a>
+      <a class="btn btn--primary btn--sm" href={joinHref}>{joinLabel}</a>
     </div>
-  </div>
-  <div id="mobile-menu" style="display:none;background:var(--paper);border-top:1px solid var(--line);padding:1rem;" class="md:hidden">
-    {nav.map(item => (
-      <a href={item.href} style="display:block;padding:10px 16px;color:var(--ink);font-weight:500;text-decoration:none;border-bottom:1px solid var(--line);">{item.label}</a>
-    ))}
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label={menuLabel} data-nav-toggle>
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+
+<div id="mobile-nav" class="mobile-nav" hidden data-mobile-nav>
+  <nav aria-label={isEn ? 'Main navigation (mobile)' : 'Hauptnavigation mobil'}>
+    {nav.map((item) => (
+      <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
+    ))}
+    <a class="mobile-nav__lang" href={altHref} hreflang={isEn ? 'de' : 'en'} aria-label={isEn ? 'Auf Deutsch wechseln' : 'Switch to English'}>{isEn ? 'Deutsch' : 'English'}</a>
+  </nav>
+  <a class="btn btn--primary mobile-nav__cta" href={joinHref}>{joinLabel}</a>
+</div>
+
 <script>
-  document.getElementById('menu-btn')?.addEventListener('click', () => {
-    const m = document.getElementById('mobile-menu');
-    if (m) m.style.display = m.style.display === 'none' ? 'block' : 'none';
+  // Sticky header border on scroll
+  const header = document.querySelector('[data-header]');
+  const onScroll = () => header && header.classList.toggle('is-scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Mobile drawer toggle (accessible: aria-expanded + hidden, focus + Escape + scroll lock)
+  const toggle = document.querySelector('[data-nav-toggle]');
+  const drawer = document.querySelector('[data-mobile-nav]');
+  const setOpen = (open: boolean) => {
+    if (!toggle || !drawer) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    if (open) { drawer.removeAttribute('hidden'); } else { drawer.setAttribute('hidden', ''); }
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+  toggle?.addEventListener('click', () => {
+    setOpen(toggle.getAttribute('aria-expanded') !== 'true');
   });
+  // close on link click or Escape
+  drawer?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+      setOpen(false);
+      (toggle as HTMLElement).focus();
+    }
+  });
+  // reset on resize to desktop
+  const mq = window.matchMedia('(min-width: 1024px)');
+  mq.addEventListener('change', (e) => { if (e.matches) setOpen(false); });
 </script>

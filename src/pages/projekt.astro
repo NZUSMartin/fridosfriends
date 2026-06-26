@@ -1,57 +1,345 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import PhotoBreak from '../components/PhotoBreak.astro';
+import CTABand from '../components/CTABand.astro';
+
+const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
+
+// (c) Was 900 € leisten — itemized breakdown of one scholarship
+const coverage = [
+  {
+    title: '100 % der Schulgebühren',
+    body: 'Der vollständige Schulplatz an einer weiterführenden Schule — ohne Lücke, die eine Familie selbst tragen müsste.',
+  },
+  {
+    title: 'Schulmaterialien',
+    body: 'Hefte, Stifte, Bücher und Uniform — alles, was ein Mädchen braucht, um vom ersten Tag an mitzuhalten.',
+  },
+  {
+    title: 'Hygieneartikel inkl. Menstruationsprodukte',
+    body: 'Damit kein Mädchen aus Mangel an Produkten Schultage verpasst.',
+  },
+  {
+    title: 'Internat / Boarding',
+    body: 'Ein sicherer Platz im Wohnheim hält das Mädchen in der Schule — und senkt das Risiko einer frühen Verheiratung.',
+  },
+  {
+    title: 'Mentoring durch lokale Begleiter',
+    body: 'Begleitung statt bloßer Hilfe: Menschen vor Ort, die jedes Mädchen über das Schuljahr hinweg stärken.',
+  },
+];
+
+// (d) 4-step Mittelfluss chain
+const flow = [
+  {
+    n: '1',
+    title: 'Ihre Spende',
+    body: 'Als Mitglied oder mit einer einmaligen Spende geben Sie den ersten Anstoß.',
+  },
+  {
+    n: '2',
+    title: 'Frido’s Friends bündelt und überweist',
+    body: 'Wir bündeln die Beiträge und überweisen sie quartalsweise an den Jesuit Refugee Service (JRS).',
+  },
+  {
+    n: '3',
+    title: 'JRS zahlt direkt an die Schulen',
+    body: 'Unser Partner vor Ort zahlt das Stipendium direkt an die Schule — kein Umweg, keine Verwaltungskosten.',
+  },
+  {
+    n: '4',
+    title: 'Das Mädchen bleibt in der Schule',
+    body: 'Aus einem Beitrag wird ein Schulplatz: Stand Schuljahr 2024/25 bleiben 100 % der geförderten Kinder in der Schule.',
+  },
+];
+
+// (f) JRS in Zahlen
+const jrsFacts = [
+  { figure: '~30.000', label: 'Mädchen über die Jahre durch JRS-nahe Bildung im Raum Adjumani erreicht' },
+  { figure: 'Seit 2003', label: 'baute Pater Frido mit JRS in Adjumani Bildungsprogramme auf' },
+  { figure: '100 %', label: 'der geförderten Kinder bleiben in der Schule (Stand: Schuljahr 2024/25)' },
+];
 ---
-<Layout title="Das Projekt" lang="de" currentPath="/projekt">
 
-  <section style="padding:4rem 1.5rem 2rem;max-width:860px;margin:0 auto;">
-    <p style="color:var(--gold);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Das Projekt</p>
-    <h1 style="font-family:'Source Serif 4',Georgia,serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:700;color:var(--ink);margin:0 0 1.5rem;">Uganda: Bildung im Flüchtlingslager Adjumani</h1>
-    <p style="color:var(--stone);font-size:1.1rem;line-height:1.8;margin-bottom:2rem;">
-      Adjumani im Norden Ugandas beherbergt eines der größten Flüchtlingslager Afrikas. Rund 240.000 Menschen — überwiegend aus dem Südsudan — leben hier unter schwierigen Bedingungen. Bildung ist für die meisten Kinder der einzige Ausweg aus diesem Kreislauf.
-    </p>
-  </section>
+<Layout title="Das Projekt" lang="de" path="/projekt" spine="fill">
 
-  <figure style="margin:0 0 0;">
-    <img src="/images/student-corridor-flowers.jpg" alt="Schüler im Schulkorridor in Adjumani mit Blumen"
-         style="width:100%;height:420px;object-fit:cover;object-position:center;display:block;" />
-    <figcaption style="text-align:right;padding:0.5rem 1rem;background:var(--line);color:var(--stone);font-size:0.75rem;">by JRS Uganda</figcaption>
-  </figure>
-
-  <section style="padding:4rem 1.5rem;background:var(--paper-pure);">
-    <div style="max-width:860px;margin:0 auto;">
-      <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.8rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Was € 900 bewirkt</h2>
-      <p style="color:var(--stone);margin:0 0 2.5rem;">Ein Stipendium deckt alle Kosten für ein vollständiges Schuljahr:</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem;">
-        {[
-          { amount: '€ 350', label: 'Schulgebühren' },
-          { amount: '€ 200', label: 'Internat' },
-          { amount: '€ 200', label: 'Bücher & Materialien' },
-          { amount: '€ 150', label: 'Schuluniform' },
-        ].map(item => (
-          <div style="background:var(--paper);border-radius:10px;padding:1.5rem;border:1px solid var(--line);text-align:center;">
-            <p style="font-family:'Source Serif 4',Georgia,serif;font-size:2rem;font-weight:700;color:var(--gold);margin:0 0 0.5rem;">{item.amount}</p>
-            <p style="color:var(--stone);margin:0;font-size:0.9rem;">{item.label}</p>
-          </div>
-        ))}
+  <!-- (a) INTRO -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal-group>
+        <Eyebrow text="Das Projekt" />
+        <h1 data-reveal>Adjumani in Norduganda — wo ein Schulplatz alles entscheidet.</h1>
+        <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
+          Rund zwei Millionen Geflüchtete leben in Uganda — viele von ihnen im Bezirk Adjumani
+          im Norden des Landes. Mädchen sind hier besonders ausgeschlossen: Frühheirat mit 14
+          bis 16 Jahren ist verbreitet, ein Schulzugang oft nicht selbstverständlich. Bildung
+          ist der einzige nachhaltige Weg aus diesem Kreislauf — und genau dort setzen wir an.
+        </p>
       </div>
     </div>
   </section>
 
-  <figure style="margin:0;">
-    <img src="/images/girls-group-smiling.jpg" alt="Gruppe von Schülerinnen in Adjumani"
-         style="width:100%;height:380px;object-fit:cover;object-position:center top;display:block;" />
-    <figcaption style="text-align:right;padding:0.5rem 1rem;background:var(--line);color:var(--stone);font-size:0.75rem;">by JRS Uganda</figcaption>
-  </figure>
+  <!-- (b) CONTEXT PHOTO -->
+  <PhotoBreak
+    src="/images/student-corridor-flowers.jpg"
+    alt="Eine Schülerin steht in einem sonnendurchfluteten Schulkorridor in Adjumani"
+    eyebrow="Adjumani, Norduganda"
+    heading="Für ein Mädchen beginnt Zukunft mit einem sicheren Schulweg."
+  />
 
-  <section id="jrs" style="padding:4rem 1.5rem;background:var(--paper-pure);">
-    <div style="max-width:860px;margin:0 auto;">
-      <p style="color:var(--gold);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Unser Partner</p>
-      <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.8rem;font-weight:700;color:var(--ink);margin:0 0 1rem;">Jesuit Refugee Service (JRS) Uganda</h2>
-      <p style="color:var(--stone);line-height:1.8;margin-bottom:1.5rem;">
-        Der Jesuit Refugee Service ist seit Jahrzehnten in Adjumani aktiv und betreibt dort Schulen und Bildungsprogramme. JRS verfügt über tiefes lokales Wissen, etablierte Schutzstandards und direkten Zugang zu den Schülerinnen und Familien.
-      </p>
-      <a href="/mitmachen" style="background:var(--teal);color:#fff;padding:12px 24px;border-radius:8px;font-weight:600;text-decoration:none;display:inline-block;">Stipendium finanzieren</a>
+  <!-- (c) WAS 900 € LEISTEN -->
+  <section class="band band-pure section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <Eyebrow text="Was 900 € leisten" />
+        <h2>Ein Stipendium trägt ein ganzes Schuljahr — vollständig.</h2>
+      </div>
+
+      <div class="coverage" data-reveal-group>
+        <dl class="coverage__list">
+          {coverage.map((item) => (
+            <div class="coverage__item" data-reveal>
+              <dt>{item.title}</dt>
+              <dd>{item.body}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <aside class="coverage__total card card--story" data-reveal>
+          <Eyebrow text="Ein Schuljahr" />
+          <p class="coverage__figure">900&nbsp;€</p>
+          <p class="coverage__per">pro Jahr und Mädchen</p>
+          <p class="coverage__note">
+            Alles oben Genannte ist darin enthalten. 100 % Ihrer Spende fließen direkt in
+            Stipendien — Verwaltungskosten tragen die Gründungsmitglieder privat.
+          </p>
+        </aside>
+      </div>
     </div>
   </section>
 
+  <!-- (d) MITTELFLUSS — 4 steps -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <Eyebrow text="Der Mittelfluss" />
+        <h2>Von Ihrer Spende bis zum Schulplatz — vier klare Schritte.</h2>
+      </div>
+
+      <ol class="flow-chain" data-reveal-group>
+        {flow.map((step) => (
+          <li class="flow-chain__item" data-reveal>
+            <span class="flow-chain__node" aria-hidden="true"></span>
+            <span class="flow-chain__num">{step.n}</span>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- (e) PHOTO BREAK -->
+  <PhotoBreak
+    src="/images/girls-group-smiling.jpg"
+    alt="Eine Gruppe von sieben Schülerinnen in rot-weißen Uniformen steht selbstbewusst zusammen"
+    eyebrow="Gemeinsam stärker"
+    heading="Jedes geförderte Mädchen verändert mehr als ein einzelnes Leben."
+  />
+
+  <!-- (f) JRS PARTNERSHIP -->
+  <section id="jrs" class="band band-pure section">
+    <div class="container">
+      <div class="story">
+        <div data-reveal>
+          <Eyebrow text="Unser Partner" />
+          <h2>Der Jesuit Refugee Service — seit Jahrzehnten in Adjumani verwurzelt.</h2>
+          <div class="prose" style="margin-top:var(--sp-5)">
+            <p>
+              Der Jesuit Refugee Service (JRS) ist seit vielen Jahren fest im Bezirk Adjumani
+              verankert. Er kennt die Familien, die Schulen und die Lehrkräfte — und wählt
+              gemeinsam mit ihnen die Mädchen aus, für die ein Schulplatz alles verändert.
+            </p>
+            <p>
+              JRS arbeitet nach klaren Schutzstandards: Über unsere Stipendiatinnen werden
+              öffentlich nur Vorname und Berufswunsch genannt — keine Nachnamen, keine
+              Familien- oder Ortsangaben. Würde und Sicherheit der Mädchen stehen an erster
+              Stelle.
+            </p>
+            <p>
+              Pater Frido Pflüger SJ hat über viele Jahre mit JRS in Ostafrika gearbeitet —
+              ab 2003 in Adjumani, später als Regionaldirektor für Ostafrika und zuletzt als
+              Landesdirektor in Uganda. Diese gewachsene Beziehung ist das Fundament unserer Arbeit.
+            </p>
+          </div>
+        </div>
+
+        <aside class="card jrs-card" data-reveal>
+          <Eyebrow text="JRS in Zahlen" />
+          <dl class="jrs-card__stats">
+            {jrsFacts.map((f) => (
+              <div class="jrs-card__stat">
+                <dt>{f.figure}</dt>
+                <dd>{f.label}</dd>
+              </div>
+            ))}
+          </dl>
+          <ul class="trust-row">
+            <li>Schwerpunkt Sekundarabschluss</li>
+            <li>Begleitschutz gegen Frühverheiratung</li>
+            <li>Berichtspflicht gegenüber Frido&rsquo;s Friends</li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- (g) CTA BAND -->
+  <CTABand
+    eyebrow="Mitmachen"
+    heading="Geben Sie einem Mädchen ein ganzes Schuljahr."
+    text="900 € tragen ein Jahr — Schulgebühren, Material, Hygieneartikel, Internat und Begleitung. Ihre Mitgliedschaft macht daraus verlässliche Zukunft."
+    primaryHref="/mitmachen"
+    primaryLabel="Mitglied werden"
+    secondaryHref={betterplace}
+    secondaryLabel="Jetzt spenden"
+  />
+
 </Layout>
+
+<style>
+  /* (c) Coverage — definition layout + thin gold-tick accent. Teal NEVER used here. */
+  .coverage {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-7);
+    align-items: start;
+  }
+  @media (min-width: 1024px) {
+    .coverage { grid-template-columns: 1fr 320px; gap: var(--sp-8); }
+  }
+  .coverage__list { margin: 0; }
+  .coverage__item {
+    padding: var(--sp-5) 0;
+    border-top: 1px solid var(--line);
+  }
+  .coverage__item:first-child { border-top: 0; padding-top: 0; }
+  .coverage__item dt {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: var(--step-1);
+    color: var(--ink);
+    line-height: 1.25;
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+  }
+  .coverage__item dt::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 18px;
+    border-top: 2px solid var(--gold);
+    transform: translateY(-4px);
+  }
+  .coverage__item dd {
+    margin: var(--sp-2) 0 0;
+    padding-left: calc(18px + var(--sp-3));
+    color: var(--stone);
+    max-width: 60ch;
+  }
+
+  .coverage__total {
+    position: sticky;
+    top: calc(72px + var(--sp-5));
+  }
+  .coverage__figure {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: var(--step-5);
+    line-height: 1;
+    color: var(--gold);
+    margin: var(--sp-3) 0 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .coverage__per {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+    color: var(--stone);
+    margin: var(--sp-2) 0 0;
+  }
+  .coverage__note {
+    margin: var(--sp-5) 0 0;
+    color: var(--stone);
+    font-size: var(--step--1);
+    line-height: 1.6;
+  }
+
+  /* (d) Mittelfluss chain — continuity/timeline connector style */
+  .flow-chain {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .flow-chain__item {
+    position: relative;
+    padding-left: var(--sp-7);
+    padding-bottom: var(--sp-8);
+  }
+  .flow-chain__item:last-child { padding-bottom: 0; }
+  /* the connector rail between nodes */
+  .flow-chain__item::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: var(--sp-2);
+    bottom: 0;
+    width: 1px;
+    background: var(--line);
+  }
+  .flow-chain__item:last-child::before { display: none; }
+  .flow-chain__node {
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--gold);
+    box-shadow: 0 0 0 4px var(--paper);
+  }
+  .flow-chain__num {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: var(--step-2);
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+  }
+  .flow-chain__item h3 { margin: var(--sp-2) 0 var(--sp-3); }
+  .flow-chain__item p { color: var(--stone); max-width: 60ch; }
+
+  /* (f) JRS card */
+  .jrs-card { align-self: start; }
+  .jrs-card__stats { margin: var(--sp-4) 0 0; }
+  .jrs-card__stat {
+    padding: var(--sp-4) 0;
+    border-top: 1px solid var(--line);
+  }
+  .jrs-card__stat:first-child { border-top: 0; padding-top: 0; }
+  .jrs-card__stat dt {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: var(--step-2);
+    line-height: 1.05;
+    color: var(--gold);
+  }
+  .jrs-card__stat dd {
+    margin: var(--sp-2) 0 0;
+    color: var(--stone);
+    font-size: var(--step--1);
+    line-height: 1.5;
+  }
+</style>

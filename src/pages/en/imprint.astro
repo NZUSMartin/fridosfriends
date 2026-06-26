@@ -1,9 +1,129 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
 ---
-<Layout title="Imprint" lang="en" currentPath="/en/imprint">
-  <section style="padding:4rem 1.5rem;max-width:860px;margin:0 auto;">
-    <h1 style="font-family:'Source Serif 4',Georgia,serif;font-size:2.2rem;font-weight:700;color:var(--ink);margin:0 0 2rem;">Imprint</h1>
-    <p style="color:var(--stone);line-height:1.8;">Frido's Friends e.V.<br>Gemarkenstraße 12<br>51069 Köln, Germany<br><br>Registered: Amtsgericht Köln<br>Founded: 15 August 2025<br><br>Chair: Dominik Bartsch<br>Treasurer: Martin Hirt<br><br>Email: <a href="mailto:martin.hirt@cassandra.ceo" style="color:var(--teal);">martin.hirt@cassandra.ceo</a></p>
+
+<Layout title="Imprint" lang="en" path="/en/imprint" spine="none">
+  <section class="section">
+    <div class="container-text">
+      <header class="section-head" data-reveal>
+        <Eyebrow text="Legal" />
+        <h1>Imprint</h1>
+        <p class="lead" style="margin-top:var(--sp-4)">
+          Information pursuant to &sect;&nbsp;5 of the German Digital Services Act (DDG) and the
+          applicable press regulations.
+        </p>
+      </header>
+
+      <div class="legal-doc prose" data-reveal-group>
+        <section class="legal-block" data-reveal>
+          <h2>Service provider</h2>
+          <p>
+            <strong>Frido&rsquo;s Friends e.V.</strong><br />
+            Gemarkenstra&szlig;e 12<br />
+            51069 K&ouml;ln<br />
+            Germany
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Register of associations</h2>
+          <p>
+            Registered at the Local Court (Amtsgericht) of K&ouml;ln.<br />
+            Founded on 15&nbsp;August 2025.
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Authorised board</h2>
+          <p>
+            Dominik Bartsch &mdash; Chairman<br />
+            Martin Hirt &mdash; Treasurer<br />
+            Lorenz Dietsche &mdash; Board member
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Contact</h2>
+          <p>
+            Email:
+            <a class="link-tertiary" href="mailto:martin.hirt@cassandra.ceo">martin.hirt@cassandra.ceo</a>
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Charitable status</h2>
+          <p>
+            Frido&rsquo;s Friends e.V. is recognised as a charitable organisation. Donations to the
+            association are tax-deductible within the limits set by law. We are happy to issue a
+            donation receipt (Zuwendungsbest&auml;tigung) on request.
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Liability for content</h2>
+          <p>
+            We have prepared the content of these pages with the greatest possible care. However,
+            we cannot guarantee that the content is accurate, complete or up to date.
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Liability for links</h2>
+          <p>
+            Our website contains links to external third-party websites over whose content we have
+            no control. For this reason, we cannot accept any liability for such external content.
+            The respective provider or operator of the linked pages is always responsible for their
+            content. Should we become aware of any legal infringements, we will remove such links
+            without delay.
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Copyright</h2>
+          <p>
+            The content and works created by us on these pages are subject to German copyright law.
+            Contributions by third parties are identified as such. Reproduction, editing,
+            distribution and any kind of use beyond the limits of copyright law require the written
+            consent of the respective author.
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Image credits</h2>
+          <p>
+            All photographs on this website: &copy; JRS Uganda. Used with kind permission.
+          </p>
+        </section>
+      </div>
+
+      <p class="legal-back" data-reveal>
+        <a class="link-tertiary" href="/en/">&larr; Back to the homepage</a>
+      </p>
+    </div>
   </section>
 </Layout>
+
+<style>
+  /* Page-local layout only — uses existing tokens. */
+  .legal-doc {
+    border-top: 1px solid var(--line);
+  }
+  .legal-block {
+    padding-block: var(--sp-6);
+    border-bottom: 1px solid var(--line);
+  }
+  .legal-block h2 {
+    margin: 0 0 var(--sp-3);
+  }
+  .legal-block p {
+    margin: 0;
+    color: var(--stone);
+  }
+  .legal-block strong {
+    color: var(--ink);
+  }
+  .legal-back {
+    margin-top: var(--sp-7);
+  }
+</style>

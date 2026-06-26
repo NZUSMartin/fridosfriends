@@ -1,16 +1,161 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+
+const updated = 'Juni 2026';
 ---
-<Layout title="Datenschutz" lang="de" currentPath="/datenschutz">
-  <section style="padding:4rem 1.5rem;max-width:860px;margin:0 auto;">
-    <h1 style="font-family:'Source Serif 4',Georgia,serif;font-size:2.2rem;font-weight:700;color:var(--ink);margin:0 0 2rem;">Datenschutzerklärung</h1>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin:2rem 0 0.5rem;">1. Verantwortlicher</h2>
-    <p style="color:var(--stone);line-height:1.8;">Frido's Friends e.V., Gemarkenstraße 12, 51069 Köln<br>E-Mail: martin.hirt@cassandra.ceo</p>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin:2rem 0 0.5rem;">2. Hosting</h2>
-    <p style="color:var(--stone);line-height:1.8;">Diese Website wird gehostet bei Netlify, Inc. Netlify nimmt am EU-US Data Privacy Framework (DPF) teil.</p>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin:2rem 0 0.5rem;">3. Cookies</h2>
-    <p style="color:var(--stone);line-height:1.8;">Diese Website verwendet keine Cookies. Es werden keine Tracking- oder Analyse-Dienste eingesetzt.</p>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin:2rem 0 0.5rem;">4. Ihre Rechte</h2>
-    <p style="color:var(--stone);line-height:1.8;">Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Datenübertragbarkeit. Beschwerden richten Sie an die LDI NRW.</p>
+
+<Layout
+  title="Datenschutzerklärung"
+  description="Datenschutzerklärung von Frido's Friends e.V. gemäß DSGVO: Verantwortlicher, Hosting, selbst gehostete Schriften, Spenden über betterplace.org, keine Cookies, keine Tracking-Tools."
+  lang="de"
+  path="/datenschutz"
+  spine="none"
+>
+  <section class="section">
+    <div class="container-text">
+
+      <header class="section-head" data-reveal>
+        <Eyebrow text="Rechtliches" />
+        <h1>Datenschutzerklärung</h1>
+        <p class="lead" style="margin-top:var(--sp-4)">
+          Der Schutz Ihrer Daten ist uns wichtig. Diese Website erhebt so wenige Daten wie
+          möglich: keine Cookies, keine Tracking-Tools, keine Werbenetzwerke. Im Folgenden
+          erklären wir, welche Daten dennoch anfallen und welche Rechte Sie haben.
+        </p>
+      </header>
+
+      <div class="legal-body prose">
+
+        <h2>1. Verantwortlicher</h2>
+        <p>
+          Verantwortlich für die Datenverarbeitung auf dieser Website im Sinne der
+          Datenschutz-Grundverordnung (DSGVO) ist:
+        </p>
+        <p>
+          <strong>Frido&rsquo;s Friends e.V.</strong><br />
+          Gemarkenstraße 12<br />
+          51069 Köln<br />
+          Deutschland
+        </p>
+        <p>
+          E-Mail: <a class="link-tertiary" href="mailto:martin.hirt@cassandra.ceo">martin.hirt@cassandra.ceo</a>
+        </p>
+
+        <h2>2. Hosting</h2>
+        <p>
+          Diese Website wird bei der Netlify, Inc. (512 2nd Street, Suite 200, San Francisco,
+          CA 94107, USA) gehostet. Der Datentransfer in die USA ist durch die Teilnahme von
+          Netlify am EU-US Data Privacy Framework (DPF) abgesichert; auf dieser Grundlage
+          gilt für die Übermittlung ein angemessenes Datenschutzniveau.
+        </p>
+        <p>
+          Beim Aufruf der Website werden technisch notwendige Daten in sogenannten
+          Server-Logfiles verarbeitet — insbesondere die IP-Adresse, Angaben zu Browser und
+          Betriebssystem sowie der Zeitstempel des Zugriffs. Diese Verarbeitung ist für den
+          sicheren und stabilen Betrieb der Website erforderlich. Rechtsgrundlage ist
+          Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der technisch fehlerfreien
+          Bereitstellung).
+        </p>
+
+        <h2>3. Schriftarten</h2>
+        <p>
+          Die auf dieser Website verwendeten Schriftarten werden ausschließlich von unserem
+          eigenen Server (selbst gehostet) geladen. Es findet <strong>keine Verbindung zu
+          externen Schriftanbietern</strong> und damit keine Übertragung Ihrer Daten an Dritte
+          statt. Für Sie ist das ein Datenschutzvorteil: Beim Laden der Schriften werden weder
+          Ihre IP-Adresse noch andere Daten an einen Drittanbieter übermittelt.
+        </p>
+
+        <h2>4. Spenden über betterplace.org</h2>
+        <p>
+          Für Spenden und Mitgliedsbeiträge nutzen wir die Spendenplattform betterplace.org der
+          gemeinnützigen betterplace.org gGmbH. Wenn Sie über betterplace.org spenden, werden
+          Ihre dort eingegebenen Daten von der betterplace.org gGmbH als eigenständig
+          Verantwortlicher verarbeitet. Es gelten insoweit die Datenschutzbestimmungen von
+          betterplace.org. Bitte informieren Sie sich dort über Art, Umfang und Zweck der
+          Datenverarbeitung, bevor Sie Ihre Daten eingeben.
+        </p>
+
+        <h2>5. Cookies und Tracking</h2>
+        <p>
+          Diese Website setzt <strong>keine Cookies</strong> und verwendet <strong>keine
+          Analyse- oder Tracking-Werkzeuge</strong>. Es findet kein Webtracking statt, es werden
+          keine Nutzungsprofile erstellt und es sind keine Werbenetzwerke eingebunden.
+        </p>
+
+        <h2>6. Kontaktaufnahme per E-Mail</h2>
+        <p>
+          Wenn Sie uns per E-Mail kontaktieren, verarbeiten wir die von Ihnen mitgeteilten Daten
+          (Ihre E-Mail-Adresse sowie den Inhalt Ihrer Nachricht) ausschließlich zur Bearbeitung
+          Ihres Anliegens. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes
+          Interesse an der Beantwortung Ihrer Anfrage) bzw. Art. 6 Abs. 1 lit. b DSGVO, sofern
+          Ihre Anfrage auf einen Vertrag oder eine Mitgliedschaft gerichtet ist. Wir geben diese
+          Daten nicht ohne Ihre Einwilligung weiter und löschen sie, sobald sie für den genannten
+          Zweck nicht mehr erforderlich sind.
+        </p>
+
+        <h2>7. Ihre Rechte</h2>
+        <p>
+          Sie haben im Rahmen der gesetzlichen Voraussetzungen jederzeit das Recht auf:
+        </p>
+        <ul>
+          <li>Auskunft über die zu Ihrer Person gespeicherten Daten (Art. 15 DSGVO),</li>
+          <li>Berichtigung unrichtiger Daten (Art. 16 DSGVO),</li>
+          <li>Löschung Ihrer Daten (Art. 17 DSGVO),</li>
+          <li>Einschränkung der Verarbeitung (Art. 18 DSGVO),</li>
+          <li>Datenübertragbarkeit (Art. 20 DSGVO).</li>
+        </ul>
+        <p>
+          Zur Ausübung dieser Rechte genügt eine formlose Nachricht an
+          <a class="link-tertiary" href="mailto:martin.hirt@cassandra.ceo">martin.hirt@cassandra.ceo</a>.
+        </p>
+
+        <h2>8. Aufsichtsbehörde</h2>
+        <p>
+          Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über die Verarbeitung
+          Ihrer personenbezogenen Daten zu beschweren. Die für uns zuständige Behörde ist:
+        </p>
+        <p>
+          <strong>Landesbeauftragte für Datenschutz und Informationsfreiheit
+          Nordrhein-Westfalen (LDI NRW)</strong><br />
+          Kavalleriestraße 2&ndash;4<br />
+          40213 Düsseldorf<br />
+          Deutschland
+        </p>
+
+        <p class="legal-stand caption">Stand: {updated}</p>
+
+        <p class="legal-back">
+          <a class="link-tertiary" href="/impressum">Zum Impressum &rarr;</a>
+        </p>
+      </div>
+
+    </div>
   </section>
 </Layout>
+
+<style>
+  /* Page-local layout for the legal reading column — tokens only, no new globals. */
+  .legal-body h2 {
+    margin-top: var(--sp-8);
+    margin-bottom: var(--sp-4);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--line);
+  }
+  .legal-body h2:first-of-type { margin-top: var(--sp-6); }
+
+  .legal-body ul {
+    margin: 0 0 var(--sp-4);
+    padding-left: var(--sp-5);
+  }
+  .legal-body li { margin-bottom: var(--sp-2); }
+
+  .legal-stand { margin-top: var(--sp-8); }
+
+  .legal-back {
+    margin-top: var(--sp-5);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--line);
+  }
+</style>

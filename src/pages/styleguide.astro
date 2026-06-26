@@ -1,0 +1,203 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Stat from '../components/Stat.astro';
+import Story from '../components/Story.astro';
+import PhotoBreak from '../components/PhotoBreak.astro';
+import PromiseBand from '../components/PromiseBand.astro';
+import CTABand from '../components/CTABand.astro';
+import MembershipCalculator from '../components/MembershipCalculator.astro';
+import Logo from '../components/Logo.astro';
+
+const colors = [
+  { name: '--ink', hex: '#1C1B19', note: 'Text, dark sections, logo' },
+  { name: '--paper', hex: '#FBF9F4', note: 'Page background' },
+  { name: '--paper-pure', hex: '#FFFFFF', note: 'Cards, donation surfaces' },
+  { name: '--gold', hex: '#C8962B', note: 'Accent only — never body text on light' },
+  { name: '--gold-soft', hex: '#EBD9AE', note: 'Tints / hover fills' },
+  { name: '--teal', hex: '#1E5B57', note: 'Primary CTA only' },
+  { name: '--teal-dark', hex: '#143F3C', note: 'CTA hover' },
+  { name: '--stone', hex: '#6B675E', note: 'Secondary text, captions' },
+  { name: '--line', hex: '#E4DECF', note: 'Hairlines, dividers, spine' },
+];
+
+const typeScale = [
+  { token: '--step-5', label: 'Hero H1 (serif 400)', cls: 'h1' },
+  { token: '--step-3', label: 'Section H2 (serif 500)', cls: 'h2' },
+  { token: '--step-1', label: 'H3 (serif 500)', cls: 'h3' },
+  { token: '--step-1', label: 'Lead (Inter 400)', cls: 'lead' },
+  { token: '--step-0', label: 'Body (Inter 400)', cls: '' },
+  { token: '--step--1', label: 'Caption / eyebrow (Inter)', cls: 'caption' },
+];
+---
+
+<Layout title="Styleguide" description="Designsystem von Frido's Friends e.V." lang="de" path="/styleguide" spine="progress">
+
+  <section class="section">
+    <div class="container">
+      <Eyebrow text="Designsystem" />
+      <h1>Light &amp; Continuity</h1>
+      <p class="lead" style="margin-top:var(--sp-4)">
+        Das vollständige System: Farben, Typografie, Komponenten und die Kontinuitätslinie.
+        Diese Seite ist die lebende Referenz für alle weiteren Seiten.
+      </p>
+    </div>
+  </section>
+
+  <!-- LOGO -->
+  <section class="band band-pure section section--tight">
+    <div class="container">
+      <Eyebrow text="Logo" />
+      <h2 style="margin-bottom:var(--sp-6)">Jesuitisches Doppelkreuz</h2>
+      <div style="display:flex;gap:var(--sp-7);align-items:flex-end;flex-wrap:wrap">
+        <span style="color:var(--gold)"><Logo size={40} /></span>
+        <span style="color:var(--ink)"><Logo size={56} /></span>
+        <span style="color:var(--teal)"><Logo size={72} /></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLORS -->
+  <section class="section">
+    <div class="container">
+      <Eyebrow text="Farben" />
+      <h2 style="margin-bottom:var(--sp-6)">Token-Palette</h2>
+      <div class="swatch-grid">
+        {colors.map((c) => (
+          <div class="swatch">
+            <div class="swatch__chip" style={`background:${c.hex}`}></div>
+            <div class="swatch__meta">
+              <b>{c.name}</b>
+              <code>{c.hex}</code>
+              <div style="margin-top:6px;color:var(--stone)">{c.note}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section class="band band-pure section">
+    <div class="container container-text">
+      <Eyebrow text="Typografie" />
+      <h2 style="margin-bottom:var(--sp-6)">Schriftskala</h2>
+      {typeScale.map((t) => (
+        <div class="type-row">
+          <small>{t.token} — {t.label}</small>
+          <div class={t.cls}>Bildung ist ihre Zukunft — Frido&rsquo;s Friends</div>
+        </div>
+      ))}
+      <div class="type-row">
+        <small>.pullquote</small>
+        <blockquote class="pullquote">Begleitung, nicht nur Hilfe.</blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUTTONS -->
+  <section class="section">
+    <div class="container">
+      <Eyebrow text="Buttons &amp; Links" />
+      <h2 style="margin-bottom:var(--sp-6)">Aktionen</h2>
+      <div class="btn-row" style="align-items:center">
+        <a class="btn btn--primary" href="#">Mitglied werden (teal)</a>
+        <a class="btn btn--secondary" href="#">Mehr erfahren</a>
+        <a class="link-tertiary" href="#">Tertiärer Link →</a>
+      </div>
+      <p class="caption" style="margin-top:var(--sp-4)">Teal ist ausschließlich der primären Conversion-Aktion vorbehalten. Nie zwei teal-Buttons nebeneinander.</p>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="band band-pure section">
+    <div class="container">
+      <Eyebrow text="Statistik" />
+      <h2 style="margin-bottom:var(--sp-6)">Kennzahlen</h2>
+      <div class="stats" data-reveal-group>
+        <Stat figure="24"   countTo={24}  label="Kinder gefördert" />
+        <Stat figure="18"   countTo={18}  label="davon Mädchen" />
+        <Stat figure="100%" countTo={100} suffix="%" label="bleiben in der Schule" />
+      </div>
+      <p class="caption" style="margin-top:var(--sp-5)">Stand: Schuljahr 2024/25</p>
+    </div>
+  </section>
+
+  <!-- CARDS -->
+  <section class="section">
+    <div class="container">
+      <Eyebrow text="Karten" />
+      <h2 style="margin-bottom:var(--sp-6)">Card-Varianten</h2>
+      <div class="grid-3">
+        <article class="card"><h3>Standard</h3><p style="color:var(--stone);margin-top:var(--sp-3)">.card</p></article>
+        <article class="card card--interactive"><h3>Interaktiv</h3><p style="color:var(--stone);margin-top:var(--sp-3)">.card--interactive (Hover)</p></article>
+        <article class="card card--story"><span class="card__num">1</span><h3>Story</h3><p style="color:var(--stone);margin-top:var(--sp-3)">.card--story</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORY -->
+  <section class="band band-pure section">
+    <div class="container">
+      <Eyebrow text="Story-Block" />
+      <h2 style="margin-bottom:var(--sp-6)">280px 1fr</h2>
+      <Story
+        image="/images/student-classroom-portrait.jpg"
+        alt="Eine Schülerin sitzt aufrecht und selbstbewusst vor einer Tafel"
+        eyebrow="Eine von 24"
+        heading="Grace wäre mit 15 verheiratet gewesen."
+        quote="Ich will Hebamme werden."
+        linkHref="/geschichten" linkLabel="Mehr Geschichten →"
+      >
+        <p>Beispieltext für den Story-Block. Erste Name + Berufswunsch — Safeguarding nach JRS.</p>
+      </Story>
+    </div>
+  </section>
+
+  <!-- PROMISE -->
+  <PromiseBand lang="de" />
+
+  <!-- PHOTO BREAK -->
+  <PhotoBreak
+    src="/images/girls-group-smiling.jpg"
+    alt="Sieben Mädchen in rot-weißen Schuluniformen stehen selbstbewusst zusammen"
+    eyebrow="Photo-Break"
+    heading="Voll-Bild mit Overlay und sichtbarer Bildunterschrift."
+  />
+
+  <!-- CALCULATOR -->
+  <section class="section">
+    <div class="container container-text">
+      <Eyebrow text="Conversion" />
+      <h2 style="margin-bottom:var(--sp-6)">Mitglieds-Rechner</h2>
+      <MembershipCalculator lang="de" />
+    </div>
+  </section>
+
+  <!-- CONTINUITY LINE NOTE -->
+  <section class="band band-pure section">
+    <div class="container container-text">
+      <Eyebrow text="Kontinuitätslinie" />
+      <h2>Die Linie als Rückgrat</h2>
+      <p class="prose" style="margin-top:var(--sp-4);color:var(--stone)">
+        Eine feste 1px-Linie in <code>--line</code> am linken Rand der Inhaltsspalte; ein
+        goldenes Segment (<code>--spine-w-active</code>, 2px) folgt dem Scroll-Fortschritt.
+        Sie ist die sichtbare Linie links auf dieser Seite — scrollen Sie, um das goldene
+        „Sie sind hier&ldquo;-Segment zu sehen. Bei <code>prefers-reduced-motion</code> bleibt
+        sie als Information erhalten, ohne Animation.
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <CTABand
+    heading="Begleitung, nicht nur Hilfe."
+    eyebrow="CTA-Band"
+    text="Ein Schuljahr kostet 900 €."
+    primaryHref="/mitmachen"
+    primaryLabel="Mitglied werden"
+    secondaryHref="https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft"
+    secondaryLabel="Jetzt spenden"
+  />
+
+</Layout>

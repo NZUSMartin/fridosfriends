@@ -1,12 +1,345 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import PhotoBreak from '../../components/PhotoBreak.astro';
+import CTABand from '../../components/CTABand.astro';
+
+const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
+
+// (c) What €900 covers — itemized breakdown of one scholarship
+const coverage = [
+  {
+    title: '100% of school fees',
+    body: 'The full place at a secondary school — with no gap that a family would have to cover on its own.',
+  },
+  {
+    title: 'School materials',
+    body: 'Notebooks, pens, books and a uniform — everything a girl needs to keep up from her very first day.',
+  },
+  {
+    title: 'Hygiene products incl. menstrual supplies',
+    body: 'So that no girl misses school days for lack of supplies.',
+  },
+  {
+    title: 'Boarding',
+    body: 'A safe place in the dormitory keeps a girl in school — and lowers the risk of an early marriage.',
+  },
+  {
+    title: 'Mentoring by local companions',
+    body: 'Accompaniment, not just aid: people on the ground who strengthen every girl throughout the school year.',
+  },
+];
+
+// (d) 4-step flow of funds
+const flow = [
+  {
+    n: '1',
+    title: 'Your donation',
+    body: 'As a member or with a one-off gift, you give the first impulse.',
+  },
+  {
+    n: '2',
+    title: 'Frido’s Friends pools and transfers',
+    body: 'We pool the contributions and transfer them quarterly to the Jesuit Refugee Service (JRS).',
+  },
+  {
+    n: '3',
+    title: 'JRS pays the schools directly',
+    body: 'Our partner on the ground pays the scholarship directly to the school — no detour, no administrative costs.',
+  },
+  {
+    n: '4',
+    title: 'The girl stays in school',
+    body: 'A contribution becomes a school place: as of the 2024/25 school year, 100% of supported children stay in school.',
+  },
+];
+
+// (f) JRS by the numbers
+const jrsFacts = [
+  { figure: '~30,000', label: 'girls reached over the years through JRS-related education in the Adjumani area' },
+  { figure: 'Since 2003', label: 'Father Frido built education programs with JRS in Adjumani' },
+  { figure: '100%', label: 'of supported children stay in school (as of the 2024/25 school year)' },
+];
 ---
-<Layout title="The Project" lang="en" currentPath="/en/project">
-  <section style="padding:4rem 1.5rem;max-width:860px;margin:0 auto;">
-    <p style="color:var(--gold);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">The Project</p>
-    <h1 style="font-family:'Source Serif 4',Georgia,serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:700;color:var(--ink);margin:0 0 1.5rem;">Uganda: Education in Adjumani Refugee Settlement</h1>
-    <p style="color:var(--stone);font-size:1.1rem;line-height:1.8;margin-bottom:2rem;">Adjumani in northern Uganda hosts one of Africa's largest refugee settlements — around 240,000 people, mostly from South Sudan. For most children, education is the only way out of this cycle.</p>
-    <p style="color:var(--stone);font-size:1.1rem;line-height:1.8;margin-bottom:2rem;">A full scholarship covers everything: school fees, boarding, books, and uniform — € 900 per year, per child.</p>
-    <a href="/en/donate" style="background:var(--teal);color:#fff;padding:14px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:1rem;display:inline-block;">Fund a scholarship</a>
+
+<Layout title="The Project" lang="en" path="/en/project" spine="fill">
+
+  <!-- (a) INTRO -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal-group>
+        <Eyebrow text="The Project" />
+        <h1 data-reveal>Adjumani in northern Uganda — where a school place decides everything.</h1>
+        <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
+          Around two million refugees live in Uganda — many of them in the Adjumani district
+          in the north of the country. Girls are especially excluded here: early marriage at
+          14 to 16 is common, and access to school is far from a given. Education is the only
+          sustainable way out of this cycle — and that is exactly where we begin.
+        </p>
+      </div>
+    </div>
   </section>
+
+  <!-- (b) CONTEXT PHOTO -->
+  <PhotoBreak
+    src="/images/student-corridor-flowers.jpg"
+    alt="A schoolgirl stands in a sunlit school corridor in Adjumani"
+    eyebrow="Adjumani, northern Uganda"
+    heading="For a girl, the future begins with a safe way to school."
+  />
+
+  <!-- (c) WHAT €900 COVERS -->
+  <section class="band band-pure section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <Eyebrow text="What €900 covers" />
+        <h2>One scholarship carries an entire school year — in full.</h2>
+      </div>
+
+      <div class="coverage" data-reveal-group>
+        <dl class="coverage__list">
+          {coverage.map((item) => (
+            <div class="coverage__item" data-reveal>
+              <dt>{item.title}</dt>
+              <dd>{item.body}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <aside class="coverage__total card card--story" data-reveal>
+          <Eyebrow text="One school year" />
+          <p class="coverage__figure">€900</p>
+          <p class="coverage__per">per year and per girl</p>
+          <p class="coverage__note">
+            Everything listed above is included. 100% of your donation flows directly into
+            scholarships — administrative costs are borne privately by the founding members.
+          </p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- (d) FLOW OF FUNDS — 4 steps -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <Eyebrow text="The flow of funds" />
+        <h2>From your donation to a school place — four clear steps.</h2>
+      </div>
+
+      <ol class="flow-chain" data-reveal-group>
+        {flow.map((step) => (
+          <li class="flow-chain__item" data-reveal>
+            <span class="flow-chain__node" aria-hidden="true"></span>
+            <span class="flow-chain__num">{step.n}</span>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- (e) PHOTO BREAK -->
+  <PhotoBreak
+    src="/images/girls-group-smiling.jpg"
+    alt="A group of seven schoolgirls in red-and-white uniforms stand together confidently"
+    eyebrow="Stronger together"
+    heading="Every girl we support changes more than a single life."
+  />
+
+  <!-- (f) JRS PARTNERSHIP -->
+  <section id="jrs" class="band band-pure section">
+    <div class="container">
+      <div class="story">
+        <div data-reveal>
+          <Eyebrow text="Our partner" />
+          <h2>The Jesuit Refugee Service — rooted in Adjumani for decades.</h2>
+          <div class="prose" style="margin-top:var(--sp-5)">
+            <p>
+              The Jesuit Refugee Service (JRS) has been firmly established in the Adjumani
+              district for many years. It knows the families, the schools and the teachers —
+              and, together with them, selects the girls for whom a school place changes
+              everything.
+            </p>
+            <p>
+              JRS works to clear safeguarding standards: of our scholars, only first names and
+              career aspirations are made public — no surnames, no family or location details.
+              The dignity and safety of the girls come first.
+            </p>
+            <p>
+              Father Frido Pflüger SJ worked with JRS in East Africa for many years — from 2003
+              in Adjumani, later as Regional Director for East Africa and, most recently, as
+              Country Director in Uganda. This long-grown relationship is the foundation of our work.
+            </p>
+          </div>
+        </div>
+
+        <aside class="card jrs-card" data-reveal>
+          <Eyebrow text="JRS by the numbers" />
+          <dl class="jrs-card__stats">
+            {jrsFacts.map((f) => (
+              <div class="jrs-card__stat">
+                <dt>{f.figure}</dt>
+                <dd>{f.label}</dd>
+              </div>
+            ))}
+          </dl>
+          <ul class="trust-row">
+            <li>Focus on secondary completion</li>
+            <li>Protective accompaniment against early marriage</li>
+            <li>Reporting duty towards Frido&rsquo;s Friends</li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- (g) CTA BAND -->
+  <CTABand
+    eyebrow="Get involved"
+    heading="Give a girl an entire school year."
+    text="€900 carries one year — school fees, materials, hygiene products, boarding and accompaniment. Your membership turns it into a dependable future."
+    primaryHref="/en/donate"
+    primaryLabel="Become a member"
+    secondaryHref={betterplace}
+    secondaryLabel="Donate now"
+  />
+
 </Layout>
+
+<style>
+  /* (c) Coverage — definition layout + thin gold-tick accent. Teal NEVER used here. */
+  .coverage {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-7);
+    align-items: start;
+  }
+  @media (min-width: 1024px) {
+    .coverage { grid-template-columns: 1fr 320px; gap: var(--sp-8); }
+  }
+  .coverage__list { margin: 0; }
+  .coverage__item {
+    padding: var(--sp-5) 0;
+    border-top: 1px solid var(--line);
+  }
+  .coverage__item:first-child { border-top: 0; padding-top: 0; }
+  .coverage__item dt {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: var(--step-1);
+    color: var(--ink);
+    line-height: 1.25;
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+  }
+  .coverage__item dt::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 18px;
+    border-top: 2px solid var(--gold);
+    transform: translateY(-4px);
+  }
+  .coverage__item dd {
+    margin: var(--sp-2) 0 0;
+    padding-left: calc(18px + var(--sp-3));
+    color: var(--stone);
+    max-width: 60ch;
+  }
+
+  .coverage__total {
+    position: sticky;
+    top: calc(72px + var(--sp-5));
+  }
+  .coverage__figure {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: var(--step-5);
+    line-height: 1;
+    color: var(--gold);
+    margin: var(--sp-3) 0 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .coverage__per {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+    color: var(--stone);
+    margin: var(--sp-2) 0 0;
+  }
+  .coverage__note {
+    margin: var(--sp-5) 0 0;
+    color: var(--stone);
+    font-size: var(--step--1);
+    line-height: 1.6;
+  }
+
+  /* (d) Flow of funds chain — continuity/timeline connector style */
+  .flow-chain {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .flow-chain__item {
+    position: relative;
+    padding-left: var(--sp-7);
+    padding-bottom: var(--sp-8);
+  }
+  .flow-chain__item:last-child { padding-bottom: 0; }
+  /* the connector rail between nodes */
+  .flow-chain__item::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: var(--sp-2);
+    bottom: 0;
+    width: 1px;
+    background: var(--line);
+  }
+  .flow-chain__item:last-child::before { display: none; }
+  .flow-chain__node {
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--gold);
+    box-shadow: 0 0 0 4px var(--paper);
+  }
+  .flow-chain__num {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: var(--step-2);
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+  }
+  .flow-chain__item h3 { margin: var(--sp-2) 0 var(--sp-3); }
+  .flow-chain__item p { color: var(--stone); max-width: 60ch; }
+
+  /* (f) JRS card */
+  .jrs-card { align-self: start; }
+  .jrs-card__stats { margin: var(--sp-4) 0 0; }
+  .jrs-card__stat {
+    padding: var(--sp-4) 0;
+    border-top: 1px solid var(--line);
+  }
+  .jrs-card__stat:first-child { border-top: 0; padding-top: 0; }
+  .jrs-card__stat dt {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: var(--step-2);
+    line-height: 1.05;
+    color: var(--gold);
+  }
+  .jrs-card__stat dd {
+    margin: var(--sp-2) 0 0;
+    color: var(--stone);
+    font-size: var(--step--1);
+    line-height: 1.5;
+  }
+</style>

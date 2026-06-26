@@ -1,20 +1,166 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import CTABand from '../../components/CTABand.astro';
+
+// Timeline — IMMUTABLE FACTS, verbatim chronology (1947 → 19/20 June 2021).
+const timeline = [
+  {
+    year: '1947',
+    heading: 'Born in Albbruck',
+    body: 'Frido Pflüger is born in Albbruck in Baden-Württemberg.',
+  },
+  {
+    year: '1966',
+    heading: 'Entered the Jesuit order',
+    body: 'With his admission to the Jesuits, a life of service begins — shaped by education and a lived closeness to people.',
+  },
+  {
+    year: '1970s',
+    heading: 'Studies and teacher at Kolleg St. Blasien',
+    body: 'After his studies, Frido becomes a teacher at Kolleg St. Blasien — the very place where, decades later, seven of his pupils would carry on his work.',
+  },
+  {
+    year: '1980s',
+    heading: 'Deputy head — and rebuilding in Dresden',
+    body: 'As deputy head at Kolleg St. Blasien he shapes an entire generation. In the same decade he rebuilds the St. Benno-Gymnasium in Dresden.',
+  },
+  {
+    year: '1986/87',
+    heading: 'Philippine refugee camps',
+    body: 'In the refugee camps of the Philippines, Frido first encounters the task that would define the rest of his life: education for people in flight.',
+  },
+  {
+    year: '2003–2006',
+    heading: 'First deployment in Adjumani',
+    body: 'In Adjumani in northern Uganda, Frido builds education programs with the Jesuit Refugee Service (JRS) — the same place, the same task to which our association remains committed to this day.',
+  },
+  {
+    year: '2008–2012',
+    heading: 'JRS Regional Director East Africa',
+    body: 'As Regional Director of the Jesuit Refugee Service for East Africa, Frido carries responsibility far beyond any single school.',
+  },
+  {
+    year: '2018',
+    heading: 'JRS Country Director Uganda',
+    body: 'As Country Director of the Jesuit Refugee Service in Uganda, Frido returns to the country to which more than fifteen years of his work for girls’ education had been devoted.',
+  },
+  {
+    year: '19/20 June 2021',
+    heading: 'Died in Kampala',
+    body: 'Father Frido Pflüger SJ dies during the night of 19 to 20 June 2021 in Kampala. What he began was not meant to end.',
+  },
+];
 ---
-<Layout title="Father Frido Pflueger SJ" lang="en" currentPath="/en/frido">
-  <section style="padding:4rem 1.5rem;max-width:860px;margin:0 auto;">
-    <p style="color:var(--gold);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">In Memoriam</p>
-    <h1 style="font-family:'Source Serif 4',Georgia,serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:700;color:var(--ink);margin:0 0 1.5rem;">Father Frido Pflueger SJ</h1>
-    <p style="color:var(--stone);font-size:1.1rem;line-height:1.8;margin-bottom:1rem;">Frido Pflueger was a Jesuit priest, pastor, and human rights activist. For twenty years he worked in Adjumani to ensure refugee children — especially girls — had access to education. He died in June 2021 in Kampala.</p>
-    <p style="color:var(--stone);font-size:1.1rem;line-height:1.8;">This association bears his name as a commitment: the work he lived for continues.</p>
+
+<Layout
+  title="Father Frido Pflüger SJ"
+  description="Father Frido Pflüger SJ (1947–2021) — Jesuit, teacher and finally JRS Country Director in Uganda. More than fifteen years for girls’ education in Adjumani. This association carries his name as a promise."
+  lang="en"
+  path="/en/frido"
+  spine="fill"
+  bodyClass="theme-gold-spine"
+>
+
+  <!-- (a) INTRO -->
+  <section class="section" data-hero>
+    <div class="container container-text" data-reveal-group>
+      <Eyebrow text="In memoriam" />
+      <h1 data-reveal>Father Frido Pflüger SJ</h1>
+      <p class="frido__dates" data-reveal>1947–2021</p>
+      <p class="lead" style="margin-top:var(--sp-6)" data-reveal>
+        Jesuit, teacher, and finally Country Director of the Jesuit Refugee Service in
+        Uganda: more than fifteen years of his life were devoted to the education of girls
+        in Adjumani in northern Uganda. In June 2021 he died in Kampala.
+      </p>
+      <p class="prose" style="margin-top:var(--sp-5);color:var(--stone)" data-reveal>
+        This association carries his name — not as an obituary, but as a promise.
+        Seven graduates of Kolleg St. Blasien, who knew him as their teacher, carry
+        on what he began in Adjumani: school places for girls for whom education opens
+        the way into a life of their own.
+      </p>
+    </div>
   </section>
-  <section style="background:var(--ink);color:#fff;padding:4rem 1.5rem;text-align:center;">
-    <blockquote style="max-width:640px;margin:0 auto;font-family:'Source Serif 4',Georgia,serif;font-size:1.5rem;font-style:italic;line-height:1.6;color:#e8e4dc;">
-      "Education is not charity. It is a right — and our duty to protect it."
-    </blockquote>
-    <p style="margin-top:1.5rem;color:var(--gold-soft);font-size:0.9rem;">— Father Frido Pflueger SJ</p>
+
+  <!-- (b) PULL-QUOTE -->
+  <section class="section--tight">
+    <div class="container container-text" data-reveal-group>
+      <blockquote class="pullquote" data-reveal>
+        &ldquo;Accompaniment, not just aid.&rdquo;
+      </blockquote>
+      <p class="frido__quote-source" data-reveal>
+        Education as service to human dignity — that was Frido’s ethos.
+      </p>
+    </div>
   </section>
-  <section style="padding:3rem 1.5rem;text-align:center;">
-    <a href="/en/donate" style="background:var(--teal);color:#fff;padding:14px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:1rem;">Donate in his name</a>
+
+  <!-- (c) THE TIMELINE -->
+  <section class="section">
+    <div class="container container-text">
+      <div class="section-head" data-reveal>
+        <Eyebrow text="A life of service" />
+        <h2>From Albbruck to Adjumani.</h2>
+      </div>
+
+      <ol class="timeline" data-spine-page="frido">
+        {timeline.map((t) => (
+          <li class="timeline__item" data-reveal>
+            <span class="timeline__node" aria-hidden="true"></span>
+            <span class="timeline__rail" aria-hidden="true"></span>
+            <span class="timeline__year">{t.year}</span>
+            <h3>{t.heading}</h3>
+            <p style="color:var(--stone);margin-top:var(--sp-2)">{t.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
   </section>
+
+  <!-- (d) CONTINUITY BRIDGE — dark band -->
+  <section class="band band-dark section">
+    <div class="container container-text" data-reveal-group>
+      <Eyebrow text="The line does not break" />
+      <h2 data-reveal>What he began goes on.</h2>
+      <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
+        Seven graduates of Kolleg St. Blasien carry on Frido’s work. They are the
+        same schools, the same girls, the same partner: the Jesuit Refugee Service.
+      </p>
+      <p style="margin-top:var(--sp-5)" data-reveal>
+        What Frido built in Adjumani lives on today in every school year we fund — for the
+        2024/25 school year, that means 24 children, 18 of them girls, of whom 100% stay
+        in school. The accompaniment he meant has not ended; it has only changed hands.
+      </p>
+      <p style="margin-top:var(--sp-6)" data-reveal>
+        <a class="link-tertiary" href="/en/project">See how €900 becomes a school year →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- (e) CTA -->
+  <CTABand
+    eyebrow="Act in his name"
+    heading="Accompaniment, not just aid."
+    text="A school year costs €900. Your membership turns Frido’s promise into the dependable future of a girl."
+    primaryHref="/en/donate"
+    primaryLabel="Become a member"
+    secondaryHref="https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft"
+    secondaryLabel="Donate now"
+  />
+
 </Layout>
+
+<style>
+  /* Page-local layout only — uses existing tokens, no new globals. */
+  .frido__dates {
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    color: var(--gold);
+    margin-top: var(--sp-3);
+    letter-spacing: 0.02em;
+  }
+  .frido__quote-source {
+    margin-top: var(--sp-4);
+    color: var(--stone);
+    font-size: var(--step-0);
+  }
+</style>

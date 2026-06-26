@@ -1,14 +1,159 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+
+const updated = 'June 2026';
 ---
-<Layout title="Privacy Policy" lang="en" currentPath="/en/privacy">
-  <section style="padding:4rem 1.5rem;max-width:860px;margin:0 auto;">
-    <h1 style="font-family:'Source Serif 4',Georgia,serif;font-size:2.2rem;font-weight:700;color:var(--ink);margin:0 0 2rem;">Privacy Policy</h1>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;margin:2rem 0 0.5rem;">Hosting</h2>
-    <p style="color:var(--stone);line-height:1.8;">This website is hosted by Netlify, Inc. Netlify participates in the EU-US Data Privacy Framework (DPF).</p>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;margin:2rem 0 0.5rem;">Cookies</h2>
-    <p style="color:var(--stone);line-height:1.8;">This website uses no cookies and no tracking or analytics services.</p>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;margin:2rem 0 0.5rem;">Supervisory Authority</h2>
-    <p style="color:var(--stone);line-height:1.8;">Complaints may be directed to the LDI NRW (Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen).</p>
+
+<Layout
+  title="Privacy Policy"
+  description="Privacy policy of Frido's Friends e.V. under the GDPR: data controller, hosting, self-hosted fonts, donations via betterplace.org, no cookies, no tracking tools."
+  lang="en"
+  path="/en/privacy"
+  spine="none"
+>
+  <section class="section">
+    <div class="container-text">
+
+      <header class="section-head" data-reveal>
+        <Eyebrow text="Legal" />
+        <h1>Privacy Policy</h1>
+        <p class="lead" style="margin-top:var(--sp-4)">
+          Protecting your data matters to us. This website collects as little data as
+          possible: no cookies, no tracking tools, no advertising networks. Below we
+          explain what data is nonetheless processed and what rights you have.
+        </p>
+      </header>
+
+      <div class="legal-body prose">
+
+        <h2>1. Data Controller</h2>
+        <p>
+          The party responsible for data processing on this website within the meaning of the
+          General Data Protection Regulation (GDPR) is:
+        </p>
+        <p>
+          <strong>Frido&rsquo;s Friends e.V.</strong><br />
+          Gemarkenstraße 12<br />
+          51069 Köln<br />
+          Germany
+        </p>
+        <p>
+          Email: <a class="link-tertiary" href="mailto:martin.hirt@cassandra.ceo">martin.hirt@cassandra.ceo</a>
+        </p>
+
+        <h2>2. Hosting</h2>
+        <p>
+          This website is hosted by Netlify, Inc. (512 2nd Street, Suite 200, San Francisco,
+          CA 94107, USA). The transfer of data to the USA is safeguarded by Netlify&rsquo;s
+          participation in the EU-US Data Privacy Framework (DPF); on this basis, an adequate
+          level of data protection applies to the transfer.
+        </p>
+        <p>
+          When the website is accessed, technically necessary data is processed in so-called
+          server log files — in particular the IP address, information about your browser and
+          operating system, and the timestamp of the request. This processing is required for
+          the secure and stable operation of the website. The legal basis is Art. 6(1)(f) GDPR
+          (legitimate interest in the technically error-free provision of the website).
+        </p>
+
+        <h2>3. Fonts</h2>
+        <p>
+          The fonts used on this website are loaded exclusively from our own server
+          (self-hosted). There is <strong>no connection to external font providers</strong> and
+          therefore no transfer of your data to third parties. This is a privacy advantage for
+          you: when the fonts load, neither your IP address nor any other data is transmitted to
+          a third-party provider.
+        </p>
+
+        <h2>4. Donations via betterplace.org</h2>
+        <p>
+          For donations and membership contributions we use the donation platform betterplace.org,
+          operated by the non-profit betterplace.org gGmbH. When you donate via betterplace.org,
+          the data you enter there is processed by betterplace.org gGmbH as an independent data
+          controller. The privacy policy of betterplace.org applies in this respect. Please
+          inform yourself there about the nature, scope and purpose of the data processing before
+          you enter your data.
+        </p>
+
+        <h2>5. Cookies and Tracking</h2>
+        <p>
+          This website sets <strong>no cookies</strong> and uses <strong>no analytics or
+          tracking tools</strong>. There is no web tracking, no usage profiles are created, and
+          no advertising networks are integrated.
+        </p>
+
+        <h2>6. Contacting Us by Email</h2>
+        <p>
+          If you contact us by email, we process the data you provide (your email address and the
+          content of your message) solely to handle your request. The legal basis is Art. 6(1)(f)
+          GDPR (legitimate interest in responding to your enquiry) or Art. 6(1)(b) GDPR, where
+          your enquiry relates to a contract or a membership. We do not pass this data on without
+          your consent and delete it as soon as it is no longer required for the stated purpose.
+        </p>
+
+        <h2>7. Your Rights</h2>
+        <p>
+          Within the scope of the statutory requirements, you have the right at any time to:
+        </p>
+        <ul>
+          <li>access the data stored about you (Art. 15 GDPR),</li>
+          <li>rectification of inaccurate data (Art. 16 GDPR),</li>
+          <li>erasure of your data (Art. 17 GDPR),</li>
+          <li>restriction of processing (Art. 18 GDPR),</li>
+          <li>data portability (Art. 20 GDPR).</li>
+        </ul>
+        <p>
+          To exercise these rights, an informal message to
+          <a class="link-tertiary" href="mailto:martin.hirt@cassandra.ceo">martin.hirt@cassandra.ceo</a>
+          is sufficient.
+        </p>
+
+        <h2>8. Supervisory Authority</h2>
+        <p>
+          You have the right to lodge a complaint with a data protection supervisory authority
+          about the processing of your personal data. The authority responsible for us is:
+        </p>
+        <p>
+          <strong>State Commissioner for Data Protection and Freedom of Information
+          North Rhine-Westphalia (LDI NRW)</strong><br />
+          Kavalleriestraße 2&ndash;4<br />
+          40213 Düsseldorf<br />
+          Germany
+        </p>
+
+        <p class="legal-stand caption">As of: {updated}</p>
+
+        <p class="legal-back">
+          <a class="link-tertiary" href="/en/imprint">To the imprint &rarr;</a>
+        </p>
+      </div>
+
+    </div>
   </section>
 </Layout>
+
+<style>
+  /* Page-local layout for the legal reading column — tokens only, no new globals. */
+  .legal-body h2 {
+    margin-top: var(--sp-8);
+    margin-bottom: var(--sp-4);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--line);
+  }
+  .legal-body h2:first-of-type { margin-top: var(--sp-6); }
+
+  .legal-body ul {
+    margin: 0 0 var(--sp-4);
+    padding-left: var(--sp-5);
+  }
+  .legal-body li { margin-bottom: var(--sp-2); }
+
+  .legal-stand { margin-top: var(--sp-8); }
+
+  .legal-back {
+    margin-top: var(--sp-5);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--line);
+  }
+</style>

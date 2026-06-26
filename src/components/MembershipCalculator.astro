@@ -1,0 +1,84 @@
+---
+/**
+ * MembershipCalculator.astro — the conversion engine (DESIGN.md §4.10).
+ * Real radio inputs in a radiogroup; aria-live impact line; trust row ask-adjacent.
+ * Tiers 25 / 75 (preselected, = one school year) / 100 EUR. Teal primary CTA.
+ *
+ * Props:
+ *   lang     'de' | 'en'  — language (default 'de')
+ *   ctaHref? string       — primary "Mitglied werden" target. Defaults to the
+ *                           donation hub (/mitmachen ÷ /en/donate) on the homepages;
+ *                           hub pages pass the membership-completion URL so the teal
+ *                           primary doesn't self-loop back to the current page.
+ */
+import Eyebrow from './Eyebrow.astro';
+interface Props { lang?: 'de' | 'en'; ctaHref?: string; }
+const { lang = 'de', ctaHref } = Astro.props;
+const isEn = lang === 'en';
+
+const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
+const joinHref = ctaHref ?? (isEn ? '/en/donate' : '/mitmachen');
+
+const impactDe: Record<string, string> = {
+  '25': '25 €/Monat = 300 € im Jahr — Schulmaterial und Hygieneartikel für ein Mädchen.',
+  '75': '75 €/Monat = 900 € im Jahr — ein ganzes Schuljahr für ein Mädchen in Adjumani.',
+  '100': '100 €/Monat = 1.200 € im Jahr — ein Schuljahr plus Mentoring vor Ort.',
+};
+const impactEn: Record<string, string> = {
+  '25': '€25/month = €300 a year — school materials and hygiene products for one girl.',
+  '75': '€75/month = €900 a year — a full school year for one girl in Adjumani.',
+  '100': '€100/month = €1,200 a year — a school year plus local mentoring.',
+};
+const impacts = isEn ? impactEn : impactDe;
+const trust = isEn
+  ? ['Registered charity', '100% promise', 'Tax receipt', 'Partner JRS']
+  : ['Gemeinnützigkeit', '100 %-Versprechen', 'Spendenquittung', 'Partner JRS'];
+---
+<form class="calc card" data-donate aria-label={isEn ? 'Become a member' : 'Mitglied werden'}>
+  <fieldset>
+    <legend class="eyebrow">{isEn ? 'Become a member — monthly' : 'Mitglied werden — monatlich'}</legend>
+    <div class="calc__tiers" role="radiogroup" aria-label={isEn ? 'Monthly contribution' : 'Monatlicher Beitrag'}>
+      <label class="tier">
+        <input type="radio" name="amount" value="25" />
+        <span>25&nbsp;€</span>
+      </label>
+      <label class="tier tier--featured">
+        <input type="radio" name="amount" value="75" checked />
+        <span>75&nbsp;€</span>
+      </label>
+      <label class="tier">
+        <input type="radio" name="amount" value="100" />
+        <span>100&nbsp;€</span>
+      </label>
+    </div>
+    <p class="calc__impact" aria-live="polite" data-impact>{impacts['75']}</p>
+  </fieldset>
+
+  <a class="btn btn--primary" href={joinHref} data-join>{isEn ? 'Become a member' : 'Mitglied werden'}</a>
+
+  <p class="calc__secondary">
+    {isEn ? 'Prefer a one-off gift? ' : 'Lieber einmalig? '}
+    <a class="link-tertiary" href={betterplace} rel="noopener" target="_blank">{isEn ? 'Donate now →' : 'Jetzt spenden →'}</a>
+  </p>
+
+  <ul class="trust-row">
+    {trust.map((t) => (<li>{t}</li>))}
+  </ul>
+
+  <p class="caption">
+    {isEn
+      ? 'Statutory minimum contribution: €50/year (available separately).'
+      : 'Satzungsgemäßer Mindestbeitrag: 50 €/Jahr (separat möglich).'}
+  </p>
+</form>
+
+<script is:inline define:vars={{ impacts }}>
+  document.querySelectorAll('[data-donate]').forEach((form) => {
+    const out = form.querySelector('[data-impact]');
+    form.querySelectorAll('input[name="amount"]').forEach((input) => {
+      input.addEventListener('change', () => {
+        if (out && impacts[input.value]) out.textContent = impacts[input.value];
+      });
+    });
+  });
+</script>

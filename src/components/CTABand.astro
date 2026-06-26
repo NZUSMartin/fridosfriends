@@ -1,0 +1,37 @@
+---
+/**
+ * CTABand.astro — dark closing call-to-action (DESIGN.md §4.12).
+ * One teal primary + one white ghost secondary. The gold spine runs through it (no brightness toggle — see DESIGN.md §5).
+ *
+ * Props:
+ *   heading       string  — serif headline
+ *   text?         string  — supporting line
+ *   primaryHref   string  — teal CTA href
+ *   primaryLabel  string  — teal CTA label
+ *   secondaryHref? string — ghost CTA href
+ *   secondaryLabel? string— ghost CTA label
+ *   eyebrow?      string  — optional gold eyebrow
+ */
+import Eyebrow from './Eyebrow.astro';
+interface Props {
+  heading: string; text?: string;
+  primaryHref: string; primaryLabel: string;
+  secondaryHref?: string; secondaryLabel?: string;
+  eyebrow?: string;
+}
+const { heading, text, primaryHref, primaryLabel, secondaryHref, secondaryLabel, eyebrow } = Astro.props;
+const secExternal = secondaryHref?.startsWith('http');
+---
+<section class="band cta-band section">
+  <div class="container container-text" data-reveal-group>
+    {eyebrow && <Eyebrow text={eyebrow} center />}
+    <h2 data-reveal>{heading}</h2>
+    {text && <p data-reveal>{text}</p>}
+    <div class="btn-row" data-reveal>
+      <a class="btn btn--primary" href={primaryHref}>{primaryLabel}</a>
+      {secondaryHref && secondaryLabel && (
+        <a class="btn btn--ghost" href={secondaryHref} rel={secExternal ? 'noopener' : undefined} target={secExternal ? '_blank' : undefined}>{secondaryLabel}</a>
+      )}
+    </div>
+  </div>
+</section>

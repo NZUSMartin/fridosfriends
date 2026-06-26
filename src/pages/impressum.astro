@@ -1,20 +1,132 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Eyebrow from '../components/Eyebrow.astro';
 ---
-<Layout title="Impressum" lang="de" currentPath="/impressum">
-  <section style="padding:4rem 1.5rem;max-width:860px;margin:0 auto;">
-    <h1 style="font-family:'Source Serif 4',Georgia,serif;font-size:2.2rem;font-weight:700;color:var(--ink);margin:0 0 2rem;">Impressum</h1>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin:2rem 0 0.5rem;">Angaben gemäß § 5 TMG</h2>
-    <p style="color:var(--stone);line-height:1.8;">Frido's Friends e.V.<br>Gemarkenstraße 12<br>51069 Köln<br>Deutschland</p>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin:2rem 0 0.5rem;">Vereinsregister</h2>
-    <p style="color:var(--stone);line-height:1.8;">Eingetragen beim Amtsgericht Köln<br>Gründungsdatum: 15. August 2025</p>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin:2rem 0 0.5rem;">Vertretungsberechtigter Vorstand</h2>
-    <p style="color:var(--stone);line-height:1.8;">Dominik Bartsch (Vorsitzender)<br>Martin Hirt (Schatzmeister)</p>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin:2rem 0 0.5rem;">Kontakt</h2>
-    <p style="color:var(--stone);line-height:1.8;">E-Mail: <a href="mailto:martin.hirt@cassandra.ceo" style="color:var(--teal);">martin.hirt@cassandra.ceo</a></p>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin:2rem 0 0.5rem;">Gemeinnützigkeit</h2>
-    <p style="color:var(--stone);line-height:1.8;">Frido's Friends e.V. ist als gemeinnützig anerkannt. Spenden sind steuerlich absetzbar.</p>
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin:2rem 0 0.5rem;">Bildnachweise</h2>
-    <p style="color:var(--stone);line-height:1.8;">Alle Fotos auf dieser Website: © JRS Uganda. Verwendung mit freundlicher Genehmigung.</p>
+
+<Layout title="Impressum" lang="de" path="/impressum" spine="none">
+  <section class="section">
+    <div class="container-text">
+      <header class="section-head" data-reveal>
+        <Eyebrow text="Rechtliches" />
+        <h1>Impressum</h1>
+        <p class="lead" style="margin-top:var(--sp-4)">
+          Angaben gem&auml;&szlig; &sect; 5 Digitale-Dienste-Gesetz (DDG) sowie den
+          presserechtlichen Vorschriften.
+        </p>
+      </header>
+
+      <div class="legal-doc prose" data-reveal-group>
+        <section class="legal-block" data-reveal>
+          <h2>Diensteanbieter</h2>
+          <p>
+            <strong>Frido&rsquo;s Friends e.V.</strong><br />
+            Gemarkenstra&szlig;e 12<br />
+            51069 K&ouml;ln<br />
+            Deutschland
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Vereinsregister</h2>
+          <p>
+            Eingetragen beim Amtsgericht K&ouml;ln.<br />
+            Gegr&uuml;ndet am 15.&nbsp;August 2025.
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Vertretungsberechtigter Vorstand</h2>
+          <p>
+            Dominik Bartsch &mdash; Vorsitzender<br />
+            Martin Hirt &mdash; Schatzmeister<br />
+            Lorenz Dietsche &mdash; Beisitzer
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Kontakt</h2>
+          <p>
+            E-Mail:
+            <a class="link-tertiary" href="mailto:martin.hirt@cassandra.ceo">martin.hirt@cassandra.ceo</a>
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Gemeinn&uuml;tzigkeit</h2>
+          <p>
+            Frido&rsquo;s Friends e.V. ist als gemeinn&uuml;tzig anerkannt. Spenden an den
+            Verein sind im Rahmen der gesetzlichen Vorgaben steuerlich absetzbar. Eine
+            Zuwendungsbest&auml;tigung stellen wir auf Wunsch aus.
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Haftung f&uuml;r Inhalte</h2>
+          <p>
+            Die Inhalte dieser Seiten haben wir mit gr&ouml;&szlig;ter Sorgfalt erstellt.
+            F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte
+            k&ouml;nnen wir jedoch keine Gew&auml;hr &uuml;bernehmen.
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Haftung f&uuml;r Links</h2>
+          <p>
+            Unser Angebot enth&auml;lt Links zu externen Websites Dritter, auf deren Inhalte
+            wir keinen Einfluss haben. Deshalb k&ouml;nnen wir f&uuml;r diese fremden Inhalte
+            auch keine Gew&auml;hr &uuml;bernehmen. F&uuml;r die Inhalte der verlinkten Seiten
+            ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Bei
+            Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Urheberrecht</h2>
+          <p>
+            Die durch uns erstellten Inhalte und Werke auf diesen Seiten unterliegen dem
+            deutschen Urheberrecht. Beitr&auml;ge Dritter sind als solche gekennzeichnet.
+            Vervielf&auml;ltigung, Bearbeitung, Verbreitung und jede Art der Verwertung
+            au&szlig;erhalb der Grenzen des Urheberrechts bed&uuml;rfen der schriftlichen
+            Zustimmung des jeweiligen Urhebers.
+          </p>
+        </section>
+
+        <section class="legal-block" data-reveal>
+          <h2>Bildnachweise</h2>
+          <p>
+            Alle Fotografien auf dieser Website: &copy; JRS Uganda. Verwendung mit
+            freundlicher Genehmigung.
+          </p>
+        </section>
+      </div>
+
+      <p class="legal-back" data-reveal>
+        <a class="link-tertiary" href="/">&larr; Zur&uuml;ck zur Startseite</a>
+      </p>
+    </div>
   </section>
 </Layout>
+
+<style>
+  /* Page-local layout only — uses existing tokens. */
+  .legal-doc {
+    border-top: 1px solid var(--line);
+  }
+  .legal-block {
+    padding-block: var(--sp-6);
+    border-bottom: 1px solid var(--line);
+  }
+  .legal-block h2 {
+    margin: 0 0 var(--sp-3);
+  }
+  .legal-block p {
+    margin: 0;
+    color: var(--stone);
+  }
+  .legal-block strong {
+    color: var(--ink);
+  }
+  .legal-back {
+    margin-top: var(--sp-7);
+  }
+</style>

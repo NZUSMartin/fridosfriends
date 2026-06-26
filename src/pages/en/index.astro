@@ -1,55 +1,231 @@
 ---
 import Layout from '../../layouts/Layout.astro';
----
-<Layout title="Home" lang="en" currentPath="/en/">
+import Eyebrow from '../../components/Eyebrow.astro';
+import Stat from '../../components/Stat.astro';
+import Story from '../../components/Story.astro';
+import PhotoBreak from '../../components/PhotoBreak.astro';
+import PromiseBand from '../../components/PromiseBand.astro';
+import CTABand from '../../components/CTABand.astro';
+import MembershipCalculator from '../../components/MembershipCalculator.astro';
 
-  <section style="position:relative;min-height:520px;display:flex;align-items:flex-end;overflow:hidden;">
-    <img src="/images/students-path.jpg" alt="Three students walking to school in Adjumani, Uganda"
-         style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;" />
-    <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(28,27,25,0.78) 0%, rgba(28,27,25,0.2) 60%, transparent 100%);"></div>
-    <div style="position:relative;z-index:1;max-width:720px;margin:0 auto;padding:3rem 1.5rem;width:100%;">
-      <p style="color:var(--gold);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1rem;">Frido's Friends e.V.</p>
-      <h1 style="font-family:'Source Serif 4',Georgia,serif;color:#fff;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;line-height:1.2;margin:0 0 1.2rem;">
-        Education is the only investment<br>no one can ever take away.
-      </h1>
-      <p style="color:#e8e4dc;font-size:1.1rem;line-height:1.6;margin-bottom:2rem;max-width:560px;">
-        We fund scholarships for girls in the Adjumani refugee settlement, Uganda — because education must not be a matter of fate.
-      </p>
-      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-        <a href="/en/donate" style="background:var(--teal);color:#fff;padding:14px 28px;border-radius:8px;font-weight:700;font-size:1rem;text-decoration:none;">Donate now</a>
-        <a href="/en/project" style="background:transparent;color:#fff;padding:14px 28px;border-radius:8px;font-weight:600;font-size:1rem;text-decoration:none;border:2px solid rgba(255,255,255,0.6);">Learn more</a>
+const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
+
+const steps = [
+  {
+    n: '1',
+    title: 'JRS selects',
+    body: 'Our partner on the ground, the Jesuit Refugee Service, knows the families in the Adjumani district and chooses the girls for whom a school place changes everything.',
+  },
+  {
+    n: '2',
+    title: 'We fund it — 100%',
+    body: '€900 cover a full school year: school fees, materials, hygiene products, boarding and local mentoring. Every euro donated flows into scholarships.',
+  },
+  {
+    n: '3',
+    title: 'The girls stay in school',
+    body: 'As of school year 2024/25, 100% of the children we support stay in school. An education no one can ever take away.',
+  },
+];
+
+const multiplier = [
+  {
+    num: '3–6',
+    title: 'Children per woman',
+    body: 'Every educated woman directly influences three to six children — through what she passes on, earns and lives by.',
+  },
+  {
+    num: '~40',
+    title: 'Pupils per class',
+    body: 'If a scholar becomes a teacher, she reaches around 40 children per class, year after year (illustrative projection).',
+  },
+  {
+    num: '150–300',
+    title: 'Births per year',
+    body: 'If she becomes a midwife, she attends 150 to 300 births a year — safely, in a region where that saves lives (illustrative projection).',
+  },
+];
+---
+
+<Layout title="Education is their future" lang="en" path="/en/" spine="progress">
+
+  <!-- 1. HERO -->
+  <section class="hero section" data-hero>
+    <div class="container">
+      <div class="hero__grid">
+        <div data-reveal-group>
+          <Eyebrow text="Education is their future" />
+          <h1 data-reveal>Education is the one investment no one can ever take away.</h1>
+          <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
+            We fund school scholarships for girls in the Adjumani refugee district in
+            northern Uganda — together with the Jesuit Refugee Service and in the spirit of
+            Father Frido Pflüger. When you support one girl, you support a whole community.
+          </p>
+          <p class="hero__cost" data-reveal><b>€900</b> = a full school year for one girl.</p>
+          <div class="btn-row" data-reveal>
+            <a class="btn btn--primary" href="/en/donate">Become a member</a>
+            <a class="btn btn--secondary" href="#how-it-works">Learn more</a>
+          </div>
+        </div>
+
+        <figure class="figure hero__media" data-reveal>
+          <img
+            src="/images/students-path.jpg"
+            alt="Three schoolgirls walking confidently along a fenced path to school"
+            width="1200" height="1500"
+            fetchpriority="high" loading="eager" decoding="async"
+          />
+          <figcaption>Foto: JRS Uganda</figcaption>
+        </figure>
       </div>
     </div>
-    <figcaption style="position:absolute;bottom:8px;right:12px;color:rgba(255,255,255,0.6);font-size:0.72rem;">by JRS Uganda</figcaption>
   </section>
 
-  <section style="background:var(--teal);color:#fff;padding:1.25rem 1.5rem;text-align:center;">
-    <p style="margin:0;font-size:1.05rem;font-weight:600;">100 % of your donation goes directly to scholarships — zero to overhead.</p>
+  <!-- 2. 100% PROMISE BAND (LOUD, dark) -->
+  <PromiseBand lang="en" />
+
+  <!-- 3. ONE STORY — GRACE -->
+  <section class="section">
+    <div class="container">
+      <Story
+        image="/images/student-classroom-portrait.jpg"
+        alt="A schoolgirl sits upright and confident in front of a blackboard"
+        eyebrow="One of 24"
+        heading="Grace would have been married at 15."
+        quote="I want to become a midwife so mothers in my settlement can give birth safely."
+        linkHref="/en/stories"
+        linkLabel="More stories →"
+      >
+        <p>
+          At around 15, Grace was on the verge of marriage. A scholarship let her stay in
+          school — and changed her path. Today she is class representative.
+        </p>
+        <p>
+          She wants to become a midwife: not just anywhere, but in her own settlement, so that
+          mothers there can give birth safely. A school place that becomes a whole working life.
+        </p>
+      </Story>
+    </div>
   </section>
 
-  <section style="background:var(--paper-pure);padding:4rem 1.5rem;">
-    <div class="max-w-5xl mx-auto">
-      <p style="text-align:center;color:var(--stone);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:3rem;">School year 2024/25</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:2rem;text-align:center;">
-        {[
-          { value: '24', label: 'Children supported' },
-          { value: '18', label: 'Girls with scholarships' },
-          { value: '100 %', label: 'School retention rate' },
-          { value: '€ 900', label: 'per scholarship / year' },
-        ].map(s => (
-          <div>
-            <p style="font-family:'Source Serif 4',Georgia,serif;font-size:3rem;font-weight:700;color:var(--gold);margin:0 0 0.5rem;">{s.value}</p>
-            <p style="color:var(--stone);font-size:0.9rem;margin:0;">{s.label}</p>
-          </div>
+  <!-- 4. IMPACT / STATS -->
+  <section class="band band-pure section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <Eyebrow text="Impact" />
+        <h2>Small numbers that change everything.</h2>
+      </div>
+      <div class="stats" data-reveal-group>
+        <Stat figure="24"   countTo={24}  label="children supported" />
+        <Stat figure="18"   countTo={18}  label="of them girls" />
+        <Stat figure="100%" countTo={100} suffix="%" label="stay in school" />
+        <Stat figure="€900" label="fund one school year" />
+      </div>
+      <p class="caption" style="margin-top:var(--sp-5)" data-reveal>As of school year 2024/25</p>
+    </div>
+  </section>
+
+  <!-- 5. PHOTO BREAK — MULTIPLIER -->
+  <PhotoBreak
+    src="/images/classroom-students.jpg"
+    alt="A full classroom of attentive schoolgirls and schoolboys"
+    eyebrow="The multiplier"
+    heading="Educate one girl, and you change a whole community."
+  />
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="lead">
+          In refugee regions, girls' education has the highest long-term multiplier of all.
+          Scholars go on to become nurses, midwives, teachers and civil servants —
+          and each of them passes on what she has learned.
+        </p>
+      </div>
+      <div class="grid-3" data-reveal-group>
+        {multiplier.map((m) => (
+          <article class="card card--story" data-reveal>
+            <span class="card__num">{m.num}</span>
+            <h3>{m.title}</h3>
+            <p style="color:var(--stone);margin-top:var(--sp-3)">{m.body}</p>
+          </article>
         ))}
       </div>
+      <p class="caption" style="margin-top:var(--sp-5)" data-reveal>
+        Numbers shown as an illustrative projection. In the Adjumani region, JRS-associated
+        girls' education has reached around 30,000 girls over the years.
+      </p>
     </div>
   </section>
 
-  <section style="background:var(--ink);color:#fff;padding:4rem 1.5rem;text-align:center;">
-    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:2.2rem;font-weight:700;margin:0 0 1rem;">Be part of the solution.</h2>
-    <p style="color:#b0aba0;font-size:1.05rem;margin:0 0 2rem;max-width:480px;margin-left:auto;margin-right:auto;">€ 75 per month funds a complete scholarship for one year.</p>
-    <a href="/en/donate" style="background:var(--teal);color:#fff;padding:16px 36px;border-radius:8px;font-weight:700;font-size:1.1rem;text-decoration:none;display:inline-block;">Donate now</a>
+  <!-- 6. HOW IT WORKS -->
+  <section id="how-it-works" class="band band-pure section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <Eyebrow text="How it works" />
+        <h2>From contribution to school place — in three clear steps.</h2>
+      </div>
+      <div class="grid-3" data-reveal-group>
+        {steps.map((s) => (
+          <article class="card" data-reveal>
+            <span class="card__num">{s.n}</span>
+            <h3>{s.title}</h3>
+            <p style="color:var(--stone);margin-top:var(--sp-3)">{s.body}</p>
+          </article>
+        ))}
+      </div>
+      <p style="margin-top:var(--sp-6)" data-reveal>
+        <a class="link-tertiary" href="/en/project">See the full flow of funds and the €900 breakdown →</a>
+      </p>
+    </div>
   </section>
+
+  <!-- 7. JOIN — CALCULATOR -->
+  <section class="section">
+    <div class="container">
+      <div class="story">
+        <div data-reveal>
+          <Eyebrow text="Join us" />
+          <h2>Become part of Frido&rsquo;s Friends.</h2>
+          <p class="prose" style="margin-top:var(--sp-4);color:var(--stone)">
+            A regular membership gives a girl planning security for the whole school year.
+            €75 a month cover a complete school year — school fees, materials, hygiene
+            products, boarding and local mentoring.
+          </p>
+          <p class="prose" style="margin-top:var(--sp-4);color:var(--stone)">
+            Prefer to give once? That works too — via betterplace.org, including a tax receipt.
+          </p>
+        </div>
+        <div data-reveal>
+          <MembershipCalculator lang="en" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. FRIDO TEASER (dark) -->
+  <section class="band band-dark section">
+    <div class="container container-text" data-reveal-group>
+      <Eyebrow text="Why we do this" />
+      <p class="lead" data-reveal>
+        &ldquo;Accompaniment, not just aid.&rdquo; — Father Frido Pflüger SJ understood
+        education in Adjumani as a service to human dignity. Seven graduates of Kolleg
+        St. Blasien carry on his work.
+      </p>
+      <p style="margin-top:var(--sp-5)" data-reveal>
+        <a class="link-tertiary" href="/en/frido">Meet Father Frido →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- 9. DARK CTA BAND -->
+  <CTABand
+    heading="Accompaniment, not just aid."
+    text="A school year costs €900. Your membership turns it into a reliable future for one girl."
+    primaryHref="/en/donate"
+    primaryLabel="Become a member"
+    secondaryHref={betterplace}
+    secondaryLabel="Donate now"
+  />
 
 </Layout>

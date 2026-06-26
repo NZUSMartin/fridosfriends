@@ -1,0 +1,36 @@
+---
+/**
+ * PhotoBreak.astro — full-bleed documentary photo (60vh) with an optional overlaid
+ * eyebrow + serif headline, and the mandatory visible figcaption "Foto: JRS Uganda".
+ * Radius is on the <img>; the <figure> is NEVER overflow:hidden (would clip the caption).
+ *
+ * Props:
+ *   src       string   — image path under /images/
+ *   alt       string   — dignity-first alt text (required)
+ *   eyebrow?  string    — overlaid gold eyebrow
+ *   heading?  string    — overlaid serif headline
+ *   credit?   string    — figcaption text (default 'Foto: JRS Uganda')
+ *   width?    number    — intrinsic width attr (default 1600)
+ *   height?   number    — intrinsic height attr (default 1067)
+ */
+import Eyebrow from './Eyebrow.astro';
+interface Props {
+  src: string; alt: string;
+  eyebrow?: string; heading?: string;
+  credit?: string; width?: number; height?: number;
+}
+const { src, alt, eyebrow, heading, credit = 'Foto: JRS Uganda', width = 1600, height = 1067 } = Astro.props;
+const hasOverlay = Boolean(eyebrow || heading);
+---
+<figure class="photo-break" data-reveal>
+  <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
+  {hasOverlay && (
+    <div class="photo-break__caption">
+      <div class="container">
+        {eyebrow && <Eyebrow text={eyebrow} />}
+        {heading && <h2>{heading}</h2>}
+      </div>
+    </div>
+  )}
+  <figcaption>{credit}</figcaption>
+</figure>

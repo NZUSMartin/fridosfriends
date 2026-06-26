@@ -1,33 +1,214 @@
 ---
-import '../styles/global.css';
+/**
+ * Layout.astro — site shell. html lang, full head (meta, OpenGraph, font preload),
+ * skip-link, the continuity-line spine, Header, <main id="main-content">, Footer,
+ * and the shared motion scripts (scroll-reveal + spine progress) — all motion-safe.
+ *
+ * Props:
+ *   title        string             — page title (rendered as "<title> | Frido's Friends e.V.")
+ *   description? string             — meta description
+ *   lang         'de' | 'en'        — document language (default 'de')
+ *   path         string             — current pathname (active nav + canonical/hreflang)
+ *   ogImage?     string             — OG image path (default '/images/students-path.jpg')
+ *   spine?       'progress' | 'fill' | 'none'  — spine gold behaviour (default 'progress')
+ *   bodyClass?   string             — extra class on <body> (e.g. 'theme-gold-spine')
+ */
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import '../styles/global.css';
 
 interface Props {
   title: string;
   description?: string;
   lang?: 'de' | 'en';
-  currentPath?: string;
+  path?: string;
+  ogImage?: string;
+  spine?: 'progress' | 'fill' | 'none';
+  bodyClass?: string;
 }
 
-const { title, description = "Frido's Friends e.V. – Stipendien für Mädchen in Adjumani, Uganda", lang = 'de', currentPath = '/' } = Astro.props;
+const {
+  title,
+  lang = 'de',
+  path = '/',
+  ogImage = '/images/students-path.jpg',
+  spine = 'progress',
+  bodyClass = '',
+  description = lang === 'en'
+    ? "Secondary-school scholarships for girls in the Adjumani refugee district, northern Uganda — continuing the work of Father Frido Pflüger SJ with the Jesuit Refugee Service. 100% of donations fund scholarships."
+    : "Schulstipendien für Mädchen im Flüchtlingsbezirk Adjumani in Norduganda — wir setzen das Werk von Pater Frido Pflüger SJ mit dem Jesuit Refugee Service fort. 100 % Ihrer Spende fließen in Stipendien.",
+} = Astro.props;
+
+const siteUrl = 'https://fridosfriends.de';
+const canonical = siteUrl + path;
+const fullTitle = `${title} | Frido’s Friends e.V.`;
+const isEn = lang === 'en';
+// hreflang partner path (best-effort mirror)
+const dePath = isEn ? path.replace(/^\/en/, '') || '/' : path;
+const enPath = isEn ? path : ('/en' + (path === '/' ? '/' : path));
+
+// Mobile sticky CTA: primary "Mitglied werden" + ghost "Spenden".
+// Suppressed on the donation hubs where the page itself is the completion action.
+const normPath = path.length > 1 ? path.replace(/\/$/, '') : path;
+const isHub = normPath === '/mitmachen' || normPath === '/en/donate';
+const stickyJoinHref = isEn ? '/en/donate' : '/mitmachen';
+const stickyJoinLabel = isEn ? 'Become a member' : 'Mitglied werden';
+const stickyDonateHref = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
+const stickyDonateLabel = isEn ? 'Donate' : 'Spenden';
 ---
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang={lang}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{fullTitle}</title>
   <meta name="description" content={description} />
-  <title>{title} | Frido's Friends e.V.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="canonical" href={canonical} />
+
+  <!-- Self-hosted font preloads (above-the-fold faces) -->
+  <link rel="preload" href="/fonts/source-serif-4-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content={canonical} />
+  <meta property="og:title"       content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image"       content={siteUrl + ogImage} />
+  <meta property="og:locale"      content={isEn ? 'en_GB' : 'de_DE'} />
+  <meta property="og:site_name"   content="Frido’s Friends e.V." />
+
+  <!-- Twitter -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content={fullTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image"       content={siteUrl + ogImage} />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <link rel="alternate" hreflang="de" href={siteUrl + dePath} />
+  <link rel="alternate" hreflang="en" href={siteUrl + enPath} />
+  <link rel="alternate" hreflang="x-default" href={siteUrl + dePath} />
 </head>
-<body style="margin:0;padding:0;background:var(--paper);">
-  <Header lang={lang} currentPath={currentPath} />
-  <main>
+<body class={bodyClass} data-spine={spine}>
+  <a class="skip-link" href="#main-content">{isEn ? 'Skip to content' : 'Zum Inhalt springen'}</a>
+
+  {spine !== 'none' && (
+    <div class="spine" aria-hidden="true">
+      <div class="spine__gold" data-spine-gold></div>
+    </div>
+  )}
+
+  <Header lang={lang} path={path} />
+
+  <main id="main-content" tabindex="-1">
     <slot />
   </main>
+
   <Footer lang={lang} />
+
+  {!isHub && (
+    <div class="sticky-cta" data-sticky-cta aria-hidden="true">
+      <a class="btn btn--primary btn--sm" href={stickyJoinHref}>{stickyJoinLabel}</a>
+      <a class="btn btn--secondary btn--sm" href={stickyDonateHref} rel="noopener" target="_blank">{stickyDonateLabel}</a>
+    </div>
+  )}
+
+  <script>
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ---------- Scroll-reveal (IntersectionObserver, 60ms stagger) ---------- */
+    const revealEls = Array.from(document.querySelectorAll('[data-reveal]'));
+    if (revealEls.length) {
+      if (reduce || !('IntersectionObserver' in window)) {
+        revealEls.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            const group = (e.target as HTMLElement).closest('[data-reveal-group]');
+            const items = group
+              ? Array.from(group.querySelectorAll('[data-reveal]'))
+              : [e.target];
+            items.forEach((el, i) => {
+              window.setTimeout(() => el.classList.add('is-visible'), i * 60);
+              io.unobserve(el);
+            });
+            io.unobserve(e.target);
+          }
+        }, { threshold: 0.12 });
+        revealEls.forEach((el) => io.observe(el));
+      }
+    }
+
+    /* ---------- Continuity line: gold scroll-progress / draw-in ---------- */
+    const gold = document.querySelector('[data-spine-gold]') as HTMLElement | null;
+    const mode = document.body.getAttribute('data-spine');
+    if (gold && mode !== 'none') {
+      const setP = (p: number) => gold.style.setProperty('--p', Math.max(0, Math.min(1, p)).toFixed(4));
+      const progress = () => {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        return scrollable > 0 ? window.scrollY / scrollable : 0;
+      };
+      let ticking = false;
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => { setP(progress()); ticking = false; });
+      };
+      const attachScroll = () => {
+        window.addEventListener('scroll', onScroll, { passive: true });
+        setP(progress());
+      };
+
+      if (reduce) {
+        setP(progress());
+        window.addEventListener('scroll', onScroll, { passive: true });
+      } else {
+        // hero draw-in: descend to current progress, then hand off to live scroll
+        const heroFraction = () => {
+          const hero = document.querySelector('.hero, [data-hero]') as HTMLElement | null;
+          const docH = document.documentElement.scrollHeight - window.innerHeight;
+          if (!hero || docH <= 0) return progress();
+          return Math.min(1, (hero.offsetTop + hero.offsetHeight) / docH * 0.4);
+        };
+        gold.style.transition = `transform ${1100}ms cubic-bezier(.22,.61,.36,1)`;
+        requestAnimationFrame(() => {
+          window.setTimeout(() => setP(heroFraction()), 200);
+        });
+        let handed = false;
+        const handoff = () => {
+          if (handed) return;
+          handed = true;
+          gold.style.transition = 'none';
+          attachScroll();
+        };
+        gold.addEventListener('transitionend', handoff, { once: true });
+        window.setTimeout(handoff, 1600); // safety net if transitionend never fires
+      }
+    }
+
+    /* ---------- Mobile sticky CTA: reveal after the hero leaves the viewport ---------- */
+    const stickyCta = document.querySelector('[data-sticky-cta]') as HTMLElement | null;
+    if (stickyCta) {
+      const hero = document.querySelector('.hero, [data-hero]') as HTMLElement | null;
+      const threshold = () => (hero ? hero.offsetTop + hero.offsetHeight - 80 : 480);
+      let cTicking = false;
+      const updateSticky = () => {
+        const shown = window.scrollY > threshold();
+        stickyCta.classList.toggle('is-shown', shown);
+        stickyCta.setAttribute('aria-hidden', shown ? 'false' : 'true');
+      };
+      const onCtaScroll = () => {
+        if (cTicking) return;
+        cTicking = true;
+        requestAnimationFrame(() => { updateSticky(); cTicking = false; });
+      };
+      updateSticky();
+      window.addEventListener('scroll', onCtaScroll, { passive: true });
+    }
+  </script>
 </body>
 </html>

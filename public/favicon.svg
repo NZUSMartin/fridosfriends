@@ -1,0 +1,13 @@
+<svg viewBox="0 0 64 96" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C8962B" stroke-width="3" stroke-linecap="square">
+  <!-- two parallel vertical shafts -->
+  <line x1="27" y1="6"  x2="27" y2="90" />
+  <line x1="37" y1="6"  x2="37" y2="90" />
+  <!-- upper crossbar (narrower) -->
+  <line x1="16" y1="26" x2="48" y2="26" />
+  <line x1="16" y1="26" x2="16" y2="32" />
+  <line x1="48" y1="26" x2="48" y2="32" />
+  <!-- lower crossbar (wider) -->
+  <line x1="8"  y1="52" x2="56" y2="52" />
+  <line x1="8"  y1="52" x2="8"  y2="62" />
+  <line x1="56" y1="52" x2="56" y2="62" />
+</svg>

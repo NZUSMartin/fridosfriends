@@ -1,45 +1,102 @@
 ---
-interface Props {
-  lang?: 'de' | 'en';
-}
+/**
+ * Footer.astro — ink background. Brand + mission, navigation, legal, Spendenkonto
+ * (IBAN/BIC/Sparkasse St. Blasien) + BetterPlace link, trust line, in-memoriam line.
+ *
+ * Props:
+ *   lang  'de' | 'en'  — language (default 'de')
+ */
+import Logo from './Logo.astro';
+
+interface Props { lang?: 'de' | 'en'; }
 const { lang = 'de' } = Astro.props;
+const isEn = lang === 'en';
+const year = new Date().getFullYear();
+
+const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
+
+const navDe = [
+  { href: '/projekt',     label: 'Das Projekt' },
+  { href: '/geschichten', label: 'Stipendiatinnen' },
+  { href: '/frido',       label: 'Pater Frido' },
+  { href: '/mitmachen',   label: 'Mitmachen' },
+  { href: '/ueber-uns',   label: 'Über uns' },
+];
+const navEn = [
+  { href: '/en/project', label: 'The Project' },
+  { href: '/en/stories', label: 'Scholars' },
+  { href: '/en/frido',   label: 'Father Frido' },
+  { href: '/en/donate',  label: 'Get involved' },
+  { href: '/en/about',   label: 'About us' },
+];
+const nav = isEn ? navEn : navDe;
 ---
-<footer style="background:var(--ink);color:#e8e4dc;margin-top:4rem;padding:3rem 1rem 2rem;">
-  <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-    <div>
-      <p style="font-family:'Source Serif 4',Georgia,serif;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;">Frido's Friends e.V.</p>
-      <p style="font-size:0.875rem;color:#b0aba0;line-height:1.7;">
-        Gemarkenstraße 12<br>51069 Köln<br>
-        <a href="mailto:martin.hirt@cassandra.ceo" style="color:#b0aba0;">martin.hirt@cassandra.ceo</a>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__grid">
+
+      <!-- Brand + mission + address -->
+      <div>
+        <span class="footer-brand">
+          <Logo size={26} color="var(--gold)" />
+          <span class="footer-brand__name">Frido&rsquo;s Friends e.V.</span>
+        </span>
+        <p>
+          {isEn
+            ? 'Secondary-school scholarships for girls in the Adjumani refugee district of northern Uganda — together with the Jesuit Refugee Service (JRS).'
+            : 'Schulstipendien für Mädchen im Flüchtlingsbezirk Adjumani im Norden Ugandas — gemeinsam mit dem Jesuit Refugee Service (JRS).'}
+        </p>
+        <p class="bank" style="margin-top:var(--sp-4)">
+          Gemarkenstraße 12, 51069 Köln<br />
+          <a href="mailto:martin.hirt@cassandra.ceo">martin.hirt@cassandra.ceo</a>
+        </p>
+      </div>
+
+      <!-- Navigation -->
+      <div>
+        <h3>{isEn ? 'Navigation' : 'Navigation'}</h3>
+        <ul>
+          {nav.map((item) => (<li><a href={item.href}>{item.label}</a></li>))}
+          <li>
+            <a href={isEn ? '/en/imprint' : '/impressum'}>{isEn ? 'Imprint' : 'Impressum'}</a>
+          </li>
+          <li>
+            <a href={isEn ? '/en/privacy' : '/datenschutz'}>{isEn ? 'Privacy' : 'Datenschutz'}</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Spendenkonto -->
+      <div>
+        <h3>{isEn ? 'Donation account' : 'Spendenkonto'}</h3>
+        <dl class="bank">
+          <dt>{isEn ? 'Recipient' : 'Empfänger'}</dt>
+          <dd>Frido&rsquo;s Friends e.V.</dd>
+          <dt>IBAN</dt>
+          <dd>DE44&nbsp;6805&nbsp;2230&nbsp;0000&nbsp;2055&nbsp;26</dd>
+          <dt>BIC</dt>
+          <dd>SOLADES1STB</dd>
+          <dt>{isEn ? 'Bank' : 'Bank'}</dt>
+          <dd>Sparkasse St.&nbsp;Blasien</dd>
+        </dl>
+        <p style="margin-top:var(--sp-4)">
+          <a href={betterplace} class="link-tertiary" rel="noopener" target="_blank">
+            {isEn ? 'Donate via betterplace.org →' : 'Spenden über betterplace.org →'}
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="legal">
+        {isEn
+          ? `Frido’s Friends e.V. · Registered charity (gemeinnützig anerkannt) · Amtsgericht Köln · founded 15 August 2025 · © ${year}`
+          : `Frido’s Friends e.V. · Gemeinnützig anerkannt · Amtsgericht Köln · gegründet 15. August 2025 · © ${year}`}
       </p>
-    </div>
-    <div>
-      <p style="font-weight:600;margin-bottom:0.5rem;font-size:0.875rem;color:var(--gold-soft);">{lang === 'de' ? 'Navigation' : 'Navigation'}</p>
-      {lang === 'de' ? (
-        <ul style="list-style:none;padding:0;margin:0;font-size:0.875rem;line-height:2;">
-          <li><a href="/projekt" style="color:#b0aba0;text-decoration:none;">Das Projekt</a></li>
-          <li><a href="/geschichten" style="color:#b0aba0;text-decoration:none;">Geschichten</a></li>
-          <li><a href="/frido" style="color:#b0aba0;text-decoration:none;">Pater Frido</a></li>
-          <li><a href="/ueber-uns" style="color:#b0aba0;text-decoration:none;">Über uns</a></li>
-          <li><a href="/mitmachen" style="color:#b0aba0;text-decoration:none;">Mitmachen</a></li>
-        </ul>
-      ) : (
-        <ul style="list-style:none;padding:0;margin:0;font-size:0.875rem;line-height:2;">
-          <li><a href="/en/project" style="color:#b0aba0;text-decoration:none;">The Project</a></li>
-          <li><a href="/en/stories" style="color:#b0aba0;text-decoration:none;">Stories</a></li>
-          <li><a href="/en/frido" style="color:#b0aba0;text-decoration:none;">Father Frido</a></li>
-          <li><a href="/en/about" style="color:#b0aba0;text-decoration:none;">About us</a></li>
-          <li><a href="/en/donate" style="color:#b0aba0;text-decoration:none;">Donate</a></li>
-        </ul>
-      )}
-    </div>
-    <div>
-      <p style="font-weight:600;margin-bottom:0.5rem;font-size:0.875rem;color:var(--gold-soft);">{lang === 'de' ? 'Rechtliches' : 'Legal'}</p>
-      <ul style="list-style:none;padding:0;margin:0;font-size:0.875rem;line-height:2;">
-        <li><a href="/impressum" style="color:#b0aba0;text-decoration:none;">{lang === 'de' ? 'Impressum' : 'Imprint'}</a></li>
-        <li><a href="/datenschutz" style="color:#b0aba0;text-decoration:none;">{lang === 'de' ? 'Datenschutz' : 'Privacy Policy'}</a></li>
-      </ul>
-      <p style="font-size:0.75rem;color:#6b6660;margin-top:1.5rem;">© 2025 Frido's Friends e.V.<br>{lang === 'de' ? 'Eingetragen beim Amtsgericht Köln' : 'Registered at Amtsgericht Köln'}</p>
+      <p class="footer-memoriam">
+        {isEn ? 'In memory of Father Frido Pflüger SJ (1947–2021)' : 'Im Andenken an Pater Frido Pflüger SJ (1947–2021)'}
+      </p>
     </div>
   </div>
 </footer>

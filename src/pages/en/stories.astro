@@ -1,23 +1,110 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import Story from '../../components/Story.astro';
+import CTABand from '../../components/CTABand.astro';
+
+const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 ---
-<Layout title="Stories" lang="en" currentPath="/en/stories">
-  <section style="padding:4rem 1.5rem;max-width:860px;margin:0 auto;">
-    <p style="color:var(--gold);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Stories</p>
-    <h1 style="font-family:'Source Serif 4',Georgia,serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:700;color:var(--ink);margin:0 0 1.5rem;">Voices from Adjumani</h1>
-    <p style="color:var(--stone);font-size:1.1rem;line-height:1.8;margin-bottom:3rem;">Every student has a story. These speak of courage, hope — and what education truly means.</p>
-    <div style="display:grid;grid-template-columns:280px 1fr;gap:2.5rem;align-items:start;" class="story-grid">
-      <figure style="margin:0;">
-        <img src="/images/student-classroom-portrait.jpg" alt="Grace, scholarship student from Adjumani"
-             style="width:100%;border-radius:10px;display:block;aspect-ratio:3/4;object-fit:cover;" />
-        <figcaption style="color:var(--stone);font-size:0.75rem;margin-top:0.5rem;text-align:center;">by JRS Uganda</figcaption>
-      </figure>
-      <div class="grid-child-min">
-        <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.8rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Grace</h2>
-        <p style="color:var(--stone);font-style:italic;margin:0 0 1.5rem;">Aspiration: Doctor</p>
-        <p style="color:var(--ink);line-height:1.8;">Grace is 16. She has lived in Adjumani since she was five. Without a scholarship, school would have ended after primary. Today she dreams of becoming a doctor for her community.</p>
-      </div>
+
+<Layout
+  title="Students"
+  description="Voices from Adjumani: how a school place changed the path of two girls — told in keeping with the safeguarding standards of the Jesuit Refugee Service."
+  lang="en"
+  path="/en/stories"
+  spine="progress"
+>
+
+  <!-- 1. INTRO -->
+  <section class="section">
+    <div class="container container-text" data-reveal-group>
+      <Eyebrow text="Scholars" />
+      <h1 data-reveal>Voices from Adjumani</h1>
+      <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
+        Behind every number stands a girl with a name, a path to school and a plan for her
+        life. We tell two of those paths here — standing in for the 24 children we support
+        in the Adjumani district of northern Uganda together with the Jesuit Refugee Service.
+      </p>
+      <p style="margin-top:var(--sp-4);color:var(--stone)" data-reveal>
+        To protect the girls, we give only their first name and what they want to become.
+        No surnames, no details about family or where they live, nothing that could identify
+        them — these are the safeguarding standards of the Jesuit Refugee Service, and we hold
+        to them.
+      </p>
     </div>
   </section>
-  <style>@media(max-width:640px){.story-grid{grid-template-columns:1fr!important;}}</style>
+
+  <!-- 2. GRACE -->
+  <section class="section">
+    <div class="container">
+      <Story
+        image="/images/student-classroom-portrait.jpg"
+        alt="A student sits upright and self-assured in front of a blackboard"
+        eyebrow="Scholar"
+        heading="Grace would have been married at 15."
+        quote="I want to become a midwife, so that mothers in my settlement can give birth safely."
+      >
+        <p>
+          At around 15, Grace was close to marriage. In her settlement that is a familiar
+          path — and for many girls the end of their schooling. A scholarship interrupted
+          that path: it let Grace stay in school.
+        </p>
+        <p>
+          Today she is class representative. She stands in front of her class, takes on
+          responsibility and is one of those the younger children look up to.
+        </p>
+        <p>
+          Her goal is concrete: she wants to become a midwife — not just anywhere, but in
+          her own settlement, so that mothers there can give birth safely. A school place
+          turns into a whole working life that saves the lives of others.
+        </p>
+      </Story>
+      <p class="caption" style="margin-top:var(--sp-5)" data-reveal>
+        For safeguarding reasons: first name and aspiration only, no identifying details (JRS safeguarding standards).
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. MARY -->
+  <section class="band band-pure section">
+    <div class="container">
+      <Story
+        image="/images/student-writing-closeup.jpg"
+        alt="A student's hands write with concentration in an exercise book"
+        eyebrow="Scholar"
+        heading="Mary could not read when she arrived."
+        quote="I want to teach, so the next children have a teacher who knows life in the settlement."
+      >
+        <p>
+          Mary fled South Sudan with her grandmother. When she arrived in Adjumani, she
+          could not read. Her mother had left school at twelve — because of an early
+          marriage. Mary is the first in her family to attend secondary school.
+        </p>
+        <p>
+          By now she is among the best in her class. She loves mathematics and biology and
+          already passes on what she has learned: she helps the younger children with their
+          studies before she sits down to her own work.
+        </p>
+        <p>
+          She wants to become a teacher — so that the children who come after her have a
+          teacher who understands life in the settlement from her own experience and trusts
+          that their path, too, can lead forward.
+        </p>
+      </Story>
+      <p class="caption" style="margin-top:var(--sp-5)" data-reveal>
+        For safeguarding reasons: first name and aspiration only, no identifying details (JRS safeguarding standards).
+      </p>
+    </div>
+  </section>
+
+  <!-- 4. CTA -->
+  <CTABand
+    heading="Give the next story a good ending."
+    text="One school year costs €900. Your membership turns a school place into a dependable future — for one more girl in Adjumani."
+    primaryHref="/en/donate"
+    primaryLabel="Become a member"
+    secondaryHref={betterplace}
+    secondaryLabel="Donate now"
+  />
+
 </Layout>
