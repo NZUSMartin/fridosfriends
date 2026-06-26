@@ -1,0 +1,23 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Stories" lang="en" currentPath="/en/stories">
+  <section style="padding:4rem 1.5rem;max-width:860px;margin:0 auto;">
+    <p style="color:var(--gold);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Stories</p>
+    <h1 style="font-family:'Source Serif 4',Georgia,serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:700;color:var(--ink);margin:0 0 1.5rem;">Voices from Adjumani</h1>
+    <p style="color:var(--stone);font-size:1.1rem;line-height:1.8;margin-bottom:3rem;">Every student has a story. These speak of courage, hope — and what education truly means.</p>
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:2.5rem;align-items:start;" class="story-grid">
+      <figure style="margin:0;">
+        <img src="/images/student-classroom-portrait.jpg" alt="Grace, scholarship student from Adjumani"
+             style="width:100%;border-radius:10px;display:block;aspect-ratio:3/4;object-fit:cover;" />
+        <figcaption style="color:var(--stone);font-size:0.75rem;margin-top:0.5rem;text-align:center;">by JRS Uganda</figcaption>
+      </figure>
+      <div class="grid-child-min">
+        <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.8rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Grace</h2>
+        <p style="color:var(--stone);font-style:italic;margin:0 0 1.5rem;">Aspiration: Doctor</p>
+        <p style="color:var(--ink);line-height:1.8;">Grace is 16. She has lived in Adjumani since she was five. Without a scholarship, school would have ended after primary. Today she dreams of becoming a doctor for her community.</p>
+      </div>
+    </div>
+  </section>
+  <style>@media(max-width:640px){.story-grid{grid-template-columns:1fr!important;}}</style>
+</Layout>

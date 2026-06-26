@@ -1,0 +1,66 @@
+---
+import Logo from './Logo.astro';
+interface Props {
+  lang?: 'de' | 'en';
+  currentPath?: string;
+}
+const { lang = 'de', currentPath = '/' } = Astro.props;
+
+const navDE = [
+  { href: '/projekt', label: 'Das Projekt' },
+  { href: '/geschichten', label: 'Geschichten' },
+  { href: '/frido', label: 'Pater Frido' },
+  { href: '/ueber-uns', label: 'Über uns' },
+  { href: '/mitmachen', label: 'Mitmachen' },
+];
+const navEN = [
+  { href: '/en/project', label: 'The Project' },
+  { href: '/en/stories', label: 'Stories' },
+  { href: '/en/frido', label: 'Father Frido' },
+  { href: '/en/about', label: 'About us' },
+  { href: '/en/donate', label: 'Donate' },
+];
+const nav = lang === 'de' ? navDE : navEN;
+const switchHref = lang === 'de' ? '/en/' : '/';
+const switchLabel = lang === 'de' ? 'EN' : 'DE';
+---
+<header style="background:var(--paper);border-bottom:1px solid var(--line);" class="sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+    <a href={lang === 'de' ? '/' : '/en/'} class="flex items-center gap-3" style="text-decoration:none;">
+      <Logo size={32} color="var(--gold)" />
+      <span style="font-family:'Source Serif 4',Georgia,serif;font-weight:700;font-size:1.1rem;color:var(--ink);">Frido's Friends</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-6">
+      {nav.map(item => (
+        <a href={item.href}
+           style={`color:var(--ink);font-size:0.9rem;font-weight:500;text-decoration:none;padding-bottom:2px;border-bottom:${currentPath === item.href ? '2px solid var(--gold)' : '2px solid transparent'};`}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+    <div class="flex items-center gap-3">
+      <a href={switchHref} style="font-size:0.85rem;color:var(--stone);font-weight:600;text-decoration:none;border:1px solid var(--line);padding:4px 10px;border-radius:4px;">{switchLabel}</a>
+      {lang === 'de' ? (
+        <a href="/mitmachen" style="background:var(--teal);color:#fff;padding:8px 18px;border-radius:6px;font-weight:600;font-size:0.9rem;text-decoration:none;">Jetzt spenden</a>
+      ) : (
+        <a href="/en/donate" style="background:var(--teal);color:#fff;padding:8px 18px;border-radius:6px;font-weight:600;font-size:0.9rem;text-decoration:none;">Donate now</a>
+      )}
+      <button id="menu-btn" class="md:hidden" aria-label="Menu" style="background:none;border:none;cursor:pointer;padding:4px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-menu" style="display:none;background:var(--paper);border-top:1px solid var(--line);padding:1rem;" class="md:hidden">
+    {nav.map(item => (
+      <a href={item.href} style="display:block;padding:10px 16px;color:var(--ink);font-weight:500;text-decoration:none;border-bottom:1px solid var(--line);">{item.label}</a>
+    ))}
+  </div>
+</header>
+<script>
+  document.getElementById('menu-btn')?.addEventListener('click', () => {
+    const m = document.getElementById('mobile-menu');
+    if (m) m.style.display = m.style.display === 'none' ? 'block' : 'none';
+  });
+</script>

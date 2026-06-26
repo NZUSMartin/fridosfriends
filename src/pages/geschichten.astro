@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Geschichten" lang="de" currentPath="/geschichten">
+
+  <section style="padding:4rem 1.5rem 2rem;max-width:860px;margin:0 auto;">
+    <p style="color:var(--gold);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Geschichten</p>
+    <h1 style="font-family:'Source Serif 4',Georgia,serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:700;color:var(--ink);margin:0 0 1rem;">Stimmen aus Adjumani</h1>
+    <p style="color:var(--stone);font-size:1.05rem;line-height:1.8;">Jede Schülerin hat eine Geschichte. Diese hier erzählen von Mut, Hoffnung — und davon, was Bildung wirklich bedeutet.</p>
+  </section>
+
+  <article style="padding:3rem 1.5rem;background:var(--paper-pure);border-top:1px solid var(--line);">
+    <div style="max-width:860px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:2.5rem;align-items:start;" class="story-grid">
+      <figure style="margin:0;">
+        <img src="/images/student-classroom-portrait.jpg" alt="Grace sitzt in einem Klassenzimmer in Adjumani"
+             style="width:100%;border-radius:10px;display:block;aspect-ratio:3/4;object-fit:cover;" />
+        <figcaption style="color:var(--stone);font-size:0.75rem;margin-top:0.5rem;text-align:center;">by JRS Uganda</figcaption>
+      </figure>
+      <div class="grid-child-min">
+        <p style="color:var(--gold);font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Stipendiatin</p>
+        <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.8rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Grace</h2>
+        <p style="color:var(--stone);font-size:0.9rem;margin:0 0 1.5rem;font-style:italic;">Berufswunsch: Ärztin</p>
+        <p style="color:var(--ink);line-height:1.8;margin-bottom:1rem;">Grace ist 16 Jahre alt. Sie lebt seit ihrem fünften Lebensjahr im Lager Adjumani. Mit dem Stipendium von Frido's Friends besucht Grace jetzt die Sekundarschule.</p>
+        <p style="color:var(--stone);font-size:0.85rem;font-style:italic;">* Name entspricht den JRS-Schutzrichtlinien.</p>
+      </div>
+    </div>
+  </article>
+
+  <article style="padding:3rem 1.5rem;background:var(--paper);border-top:1px solid var(--line);">
+    <div style="max-width:860px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:2.5rem;align-items:start;" class="story-grid">
+      <figure style="margin:0;">
+        <img src="/images/student-writing-closeup.jpg" alt="Schülerin schreibt in ihr Heft"
+             style="width:100%;border-radius:10px;display:block;aspect-ratio:3/4;object-fit:cover;" />
+        <figcaption style="color:var(--stone);font-size:0.75rem;margin-top:0.5rem;text-align:center;">by JRS Uganda</figcaption>
+      </figure>
+      <div class="grid-child-min">
+        <p style="color:var(--gold);font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Stipendiatin</p>
+        <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.8rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Mary</h2>
+        <p style="color:var(--stone);font-size:0.9rem;margin:0 0 1.5rem;font-style:italic;">Berufswunsch: Lehrerin</p>
+        <p style="color:var(--ink);line-height:1.8;margin-bottom:1rem;">Mary kommt als Erste in ihrer Familie in die Sekundarschule. Sie will diesen Kreislauf durchbrechen und Lehrerin werden.</p>
+        <p style="color:var(--stone);font-size:0.85rem;font-style:italic;">* Name entspricht den JRS-Schutzrichtlinien.</p>
+      </div>
+    </div>
+  </article>
+
+  <section style="padding:4rem 1.5rem;text-align:center;background:var(--paper-pure);">
+    <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.8rem;font-weight:700;color:var(--ink);margin:0 0 1rem;">Schreiben Sie die nächste Geschichte.</h2>
+    <a href="/mitmachen" style="background:var(--teal);color:#fff;padding:14px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:1rem;">Jetzt spenden</a>
+  </section>
+
+  <style>
+    @media (max-width: 640px) {
+      .story-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</Layout>

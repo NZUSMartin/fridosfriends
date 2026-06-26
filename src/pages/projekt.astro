@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Das Projekt" lang="de" currentPath="/projekt">
+
+  <section style="padding:4rem 1.5rem 2rem;max-width:860px;margin:0 auto;">
+    <p style="color:var(--gold);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Das Projekt</p>
+    <h1 style="font-family:'Source Serif 4',Georgia,serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:700;color:var(--ink);margin:0 0 1.5rem;">Uganda: Bildung im Flüchtlingslager Adjumani</h1>
+    <p style="color:var(--stone);font-size:1.1rem;line-height:1.8;margin-bottom:2rem;">
+      Adjumani im Norden Ugandas beherbergt eines der größten Flüchtlingslager Afrikas. Rund 240.000 Menschen — überwiegend aus dem Südsudan — leben hier unter schwierigen Bedingungen. Bildung ist für die meisten Kinder der einzige Ausweg aus diesem Kreislauf.
+    </p>
+  </section>
+
+  <figure style="margin:0 0 0;">
+    <img src="/images/student-corridor-flowers.jpg" alt="Schüler im Schulkorridor in Adjumani mit Blumen"
+         style="width:100%;height:420px;object-fit:cover;object-position:center;display:block;" />
+    <figcaption style="text-align:right;padding:0.5rem 1rem;background:var(--line);color:var(--stone);font-size:0.75rem;">by JRS Uganda</figcaption>
+  </figure>
+
+  <section style="padding:4rem 1.5rem;background:var(--paper-pure);">
+    <div style="max-width:860px;margin:0 auto;">
+      <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.8rem;font-weight:700;color:var(--ink);margin:0 0 0.5rem;">Was € 900 bewirkt</h2>
+      <p style="color:var(--stone);margin:0 0 2.5rem;">Ein Stipendium deckt alle Kosten für ein vollständiges Schuljahr:</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem;">
+        {[
+          { amount: '€ 350', label: 'Schulgebühren' },
+          { amount: '€ 200', label: 'Internat' },
+          { amount: '€ 200', label: 'Bücher & Materialien' },
+          { amount: '€ 150', label: 'Schuluniform' },
+        ].map(item => (
+          <div style="background:var(--paper);border-radius:10px;padding:1.5rem;border:1px solid var(--line);text-align:center;">
+            <p style="font-family:'Source Serif 4',Georgia,serif;font-size:2rem;font-weight:700;color:var(--gold);margin:0 0 0.5rem;">{item.amount}</p>
+            <p style="color:var(--stone);margin:0;font-size:0.9rem;">{item.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <figure style="margin:0;">
+    <img src="/images/girls-group-smiling.jpg" alt="Gruppe von Schülerinnen in Adjumani"
+         style="width:100%;height:380px;object-fit:cover;object-position:center top;display:block;" />
+    <figcaption style="text-align:right;padding:0.5rem 1rem;background:var(--line);color:var(--stone);font-size:0.75rem;">by JRS Uganda</figcaption>
+  </figure>
+
+  <section id="jrs" style="padding:4rem 1.5rem;background:var(--paper-pure);">
+    <div style="max-width:860px;margin:0 auto;">
+      <p style="color:var(--gold);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Unser Partner</p>
+      <h2 style="font-family:'Source Serif 4',Georgia,serif;font-size:1.8rem;font-weight:700;color:var(--ink);margin:0 0 1rem;">Jesuit Refugee Service (JRS) Uganda</h2>
+      <p style="color:var(--stone);line-height:1.8;margin-bottom:1.5rem;">
+        Der Jesuit Refugee Service ist seit Jahrzehnten in Adjumani aktiv und betreibt dort Schulen und Bildungsprogramme. JRS verfügt über tiefes lokales Wissen, etablierte Schutzstandards und direkten Zugang zu den Schülerinnen und Familien.
+      </p>
+      <a href="/mitmachen" style="background:var(--teal);color:#fff;padding:12px 24px;border-radius:8px;font-weight:600;text-decoration:none;display:inline-block;">Stipendium finanzieren</a>
+    </div>
+  </section>
+
+</Layout>

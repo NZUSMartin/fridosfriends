@@ -1,0 +1,17 @@
+---
+interface Props {
+  size?: number;
+  color?: string;
+}
+const { size = 40, color = 'currentColor' } = Astro.props;
+const height = Math.round(size * 80 / 60);
+---
+<svg width={size} height={height} viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg" aria-label="Frido's Friends Logo">
+  <rect x="24" y="0"  width="12" height="80" fill={color} />
+  <rect x="8"  y="14" width="44" height="12" fill={color} />
+  <rect x="8"  y="26" width="11" height="9"  fill={color} />
+  <rect x="41" y="26" width="11" height="9"  fill={color} />
+  <rect x="1"  y="38" width="58" height="12" fill={color} />
+  <rect x="1"  y="50" width="11" height="9"  fill={color} />
+  <rect x="48" y="50" width="11" height="9"  fill={color} />
+</svg>

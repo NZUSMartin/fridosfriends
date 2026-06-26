@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --teal: #1E5B57;
+  --gold: #C8962B;
+  --ink: #1C1B19;
+  --paper: #FBF9F4;
+  --paper-pure: #FFFFFF;
+  --gold-soft: #EBD9AE;
+  --stone: #6B675E;
+  --line: #E4DECF;
+}
+
+* {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+html {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  scroll-behavior: smooth;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Source Serif 4', Georgia, serif;
+}
+
+.grid-child-min { min-width: 0; }
+
+img {
+  max-width: 100%;
+  height: auto;
+}
