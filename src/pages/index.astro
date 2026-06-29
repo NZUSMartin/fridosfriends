@@ -19,7 +19,7 @@ const steps = [
   {
     n: '2',
     title: 'Wir finanzieren — zu 100 %',
-    body: '900 € tragen ein ganzes Schuljahr: Schulgebühren, Material, Hygieneartikel, das Internat und die Begleitung vor Ort. Jeder gespendete Euro fließt in Stipendien.',
+    body: '800 € tragen ein ganzes Schuljahr: Schulgebühren, Material, Hygieneartikel, das Wohnheim und die Begleitung vor Ort. Jeder gespendete Euro fließt in Stipendien.',
   },
   {
     n: '3',
@@ -61,18 +61,19 @@ const multiplier = [
             Norduganda — gemeinsam mit dem Jesuit Refugee Service und im Sinne von Pater Frido
             Pflüger. Wenn Sie ein Mädchen fördern, fördern Sie eine ganze Gemeinschaft.
           </p>
-          <p class="hero__cost" data-reveal><b>900 €</b> = ein ganzes Schuljahr für ein Mädchen.</p>
+          <p class="hero__cost" data-reveal><b>800 €</b> = ein ganzes Schuljahr für ein Mädchen.</p>
           <div class="btn-row" data-reveal>
-            <a class="btn btn--primary" href="/mitmachen">Mitglied werden</a>
+            <a class="btn btn--primary" href="/mitmachen">Mitmachen</a>
             <a class="btn btn--secondary" href="#so-funktioniert-es">Mehr erfahren</a>
           </div>
         </div>
 
         <figure class="figure hero__media" data-reveal>
           <img
-            src="/images/students-path.jpg"
-            alt="Drei Schülerinnen gehen selbstbewusst einen umzäunten Weg entlang zur Schule"
-            width="1200" height="1500"
+            src="/images/start-adjumani.jpg"
+            alt="Zwei Schülerinnen vor ihrer Schule in Adjumani, Norduganda"
+            width="1600" height="1067"
+            style="object-fit:cover"
             fetchpriority="high" loading="eager" decoding="async"
           />
           <figcaption>Foto: JRS Uganda</figcaption>
@@ -84,31 +85,7 @@ const multiplier = [
   <!-- 2. 100 % PROMISE BAND (LOUD, dark) -->
   <PromiseBand lang="de" />
 
-  <!-- 3. EINE GESCHICHTE — GRACE -->
-  <section class="section">
-    <div class="container">
-      <Story
-        image="/images/student-classroom-portrait.jpg"
-        alt="Eine Schülerin sitzt aufrecht und selbstbewusst vor einer Tafel"
-        eyebrow="Eine von 24"
-        heading="Grace wäre mit 15 verheiratet gewesen."
-        quote="Ich will Hebamme werden, damit Mütter in meiner Siedlung sicher zur Welt bringen können."
-        linkHref="/geschichten"
-        linkLabel="Mehr Geschichten →"
-      >
-        <p>
-          Mit etwa 15 Jahren stand Grace kurz vor der Heirat. Ein Stipendium ließ sie in der
-          Schule bleiben — und veränderte ihren Weg. Heute ist sie Klassensprecherin.
-        </p>
-        <p>
-          Sie möchte Hebamme werden: nicht irgendwo, sondern in ihrer eigenen Siedlung, damit
-          Mütter dort sicher gebären können. Ein Schulplatz, der zu einem ganzen Berufsleben wird.
-        </p>
-      </Story>
-    </div>
-  </section>
-
-  <!-- 4. WIRKUNG / STATS -->
+  <!-- 3. WIRKUNG / STATS — auf einen Blick -->
   <section class="band band-pure section">
     <div class="container">
       <div class="section-head" data-reveal>
@@ -119,9 +96,33 @@ const multiplier = [
         <Stat figure="24"   countTo={24}  label="Kinder gefördert" />
         <Stat figure="18"   countTo={18}  label="davon Mädchen" />
         <Stat figure="100%" countTo={100} suffix="%" label="bleiben in der Schule" />
-        <Stat figure="900 €" label="finanzieren ein Schuljahr" />
+        <Stat figure="800 €" label="finanzieren ein Schuljahr" />
       </div>
       <p class="caption" style="margin-top:var(--sp-5)" data-reveal>Stand: Schuljahr 2024/25</p>
+    </div>
+  </section>
+
+  <!-- 4. EINE GESCHICHTE — JO -->
+  <section class="section">
+    <div class="container">
+      <Story
+        image="/images/student-classroom-portrait.jpg"
+        alt="Jo sitzt aufrecht und selbstbewusst vor einer Tafel"
+        eyebrow="Eine von 24"
+        heading="Jo wäre mit 15 verheiratet gewesen."
+        quote="Ich will Hebamme werden, damit Mütter in meiner Siedlung sicher zur Welt bringen können."
+        linkHref="/geschichten"
+        linkLabel="Mehr Geschichten →"
+      >
+        <p>
+          Mit etwa 15 Jahren stand Jo kurz vor der Heirat. Ein Stipendium ließ sie in der
+          Schule bleiben — und veränderte ihren Weg. Heute ist sie Klassensprecherin.
+        </p>
+        <p>
+          Sie möchte Hebamme werden: nicht irgendwo, sondern in ihrer eigenen Siedlung, damit
+          Mütter dort sicher gebären können. Ein Schulplatz, der zu einem ganzen Berufsleben wird.
+        </p>
+      </Story>
     </div>
   </section>
 
@@ -158,7 +159,24 @@ const multiplier = [
     </div>
   </section>
 
-  <!-- 6. SO FUNKTIONIERT ES -->
+  <!-- 6. WORAN WIR GLAUBEN -->
+  <section class="section">
+    <div class="container container-text" data-reveal-group>
+      <Eyebrow text="Woran wir glauben" />
+      <h2 data-reveal>Woran wir glauben</h2>
+      <p class="prose" style="margin-top:var(--sp-5)" data-reveal>
+        Eine gute Schulbildung wird immer mehr zum Privileg — wir wollen dagegenhalten und dazu
+        beitragen, dass möglichst viele Kinder davon profitieren. Unser Erziehungsideal basiert
+        auf Respekt, Chancengleichheit und der Förderung jedes einzelnen Kindes. Wir sind
+        überzeugt, dass Bildung weit mehr ist als Wissensvermittlung: Sie stärkt
+        Selbstvertrauen, Verantwortungsbewusstsein und die Fähigkeit, die eigene Zukunft aktiv
+        zu gestalten. Dabei stehen die Würde, die individuellen Talente und die ganzheitliche
+        Entwicklung der Kinder stets im Mittelpunkt unseres Handelns.
+      </p>
+    </div>
+  </section>
+
+  <!-- 7. SO FUNKTIONIERT ES -->
   <section id="so-funktioniert-es" class="band band-pure section">
     <div class="container">
       <div class="section-head" data-reveal>
@@ -175,12 +193,12 @@ const multiplier = [
         ))}
       </div>
       <p style="margin-top:var(--sp-6)" data-reveal>
-        <a class="link-tertiary" href="/projekt">Den vollständigen Mittelfluss und die 900-€-Aufteilung ansehen →</a>
+        <a class="link-tertiary" href="/projekt">Den vollständigen Mittelfluss und die 800-€-Aufteilung ansehen →</a>
       </p>
     </div>
   </section>
 
-  <!-- 7. MITMACHEN — CALCULATOR -->
+  <!-- 8. MITMACHEN — CALCULATOR -->
   <section class="section">
     <div class="container">
       <div class="story">
@@ -189,8 +207,9 @@ const multiplier = [
           <h2>Werden Sie Teil von Frido&rsquo;s Friends.</h2>
           <p class="prose" style="margin-top:var(--sp-4);color:var(--stone)">
             Eine regelmäßige Mitgliedschaft gibt einem Mädchen Planungssicherheit über das
-            ganze Schuljahr. 75 € im Monat tragen ein komplettes Schuljahr — Schulgebühren,
-            Material, Hygieneartikel, Internat und Begleitung vor Ort.
+            ganze Schuljahr. Schon 75 € im Monat tragen ein komplettes Schuljahr — Schulgebühren,
+            Material, Hygieneartikel, das Wohnheim für diejenigen mit weitem Schulweg und die
+            Begleitung vor Ort.
           </p>
           <p class="prose" style="margin-top:var(--sp-4);color:var(--stone)">
             Lieber einmalig spenden? Auch das geht — über betterplace.org, inklusive
@@ -204,13 +223,13 @@ const multiplier = [
     </div>
   </section>
 
-  <!-- 8. FRIDO-TEASER (dark) -->
+  <!-- 9. FRIDO-TEASER (dark) -->
   <section class="band band-dark section">
     <div class="container container-text" data-reveal-group>
       <Eyebrow text="Warum wir das tun" />
       <p class="lead" data-reveal>
         „Begleitung, nicht nur Hilfe.&ldquo; — Pater Frido Pflüger SJ hat in Adjumani Bildung
-        als Dienst an der Würde des Menschen verstanden. Sieben Abiturienten des Kollegs
+        als Dienst an der Würde des Menschen verstanden. Sieben Freunde aus dem Kolleg
         St. Blasien setzen sein Werk fort.
       </p>
       <p style="margin-top:var(--sp-5)" data-reveal>
@@ -219,12 +238,12 @@ const multiplier = [
     </div>
   </section>
 
-  <!-- 9. DARK CTA BAND -->
+  <!-- 10. DARK CTA BAND -->
   <CTABand
     heading="Begleitung, nicht nur Hilfe."
-    text="Ein Schuljahr kostet 900 €. Ihre Mitgliedschaft macht es zur verlässlichen Zukunft eines Mädchens."
+    text="Ein Schuljahr kostet 800 €. Ihre Mitgliedschaft macht es zur verlässlichen Zukunft eines Mädchens."
     primaryHref="/mitmachen"
-    primaryLabel="Mitglied werden"
+    primaryLabel="Mitmachen"
     secondaryHref={betterplace}
     secondaryLabel="Jetzt spenden"
   />

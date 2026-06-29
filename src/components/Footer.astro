@@ -39,7 +39,7 @@ const nav = isEn ? navEn : navDe;
       <!-- Brand + mission + address -->
       <div>
         <span class="footer-brand">
-          <Logo size={26} color="var(--gold)" />
+          <Logo height={30} variant="icon" />
           <span class="footer-brand__name">Frido&rsquo;s Friends e.V.</span>
         </span>
         <p>
@@ -80,11 +80,17 @@ const nav = isEn ? navEn : navDe;
           <dt>{isEn ? 'Bank' : 'Bank'}</dt>
           <dd>Sparkasse St.&nbsp;Blasien</dd>
         </dl>
-        <p style="margin-top:var(--sp-4)">
-          <a href={betterplace} class="link-tertiary" rel="noopener" target="_blank">
-            {isEn ? 'Donate via betterplace.org →' : 'Spenden über betterplace.org →'}
-          </a>
-        </p>
+        <div class="footer-pay">
+          <h3>{isEn ? 'Ways to give' : 'So können Sie spenden'}</h3>
+          <div class="pay-badges">
+            <a class="pay-badge" href="https://www.betterplace.org/de/projects/165916" rel="noopener" target="_blank" aria-label="betterplace.org">
+              <img src="/images/betterplace-logo.png" alt="betterplace.org" width="128" height="19" loading="lazy" />
+            </a>
+            <a class="pay-badge" href="https://www.paypal.com/donate/?hosted_button_id=R94VT44NWJ7QY" rel="noopener" target="_blank" aria-label="PayPal">
+              <img src="/images/paypal-logo.png" alt="PayPal" width="136" height="34" loading="lazy" />
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 

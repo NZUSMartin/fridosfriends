@@ -15,7 +15,7 @@ const isEn = lang === 'en';
 
 const home = isEn ? '/en/' : '/';
 const joinHref = isEn ? '/en/donate' : '/mitmachen';
-const joinLabel = isEn ? 'Become a member' : 'Mitglied werden';
+const joinLabel = isEn ? 'Get involved' : 'Mitmachen';
 const altHref = isEn ? '/' : '/en/';
 const altLabel = isEn ? 'DE' : 'EN';
 
@@ -44,8 +44,7 @@ const langAriaCurrent = false;
 <header class="site-header" data-header>
   <div class="container site-header__inner">
     <a class="brand" href={home} aria-label={isEn ? "Frido's Friends e.V. — Home" : "Frido's Friends e.V. — Startseite"}>
-      <Logo size={28} color="var(--gold)" />
-      <span class="brand__name">Frido&rsquo;s Friends</span>
+      <Logo height={38} variant="full" />
     </a>
 
     <nav class="nav" aria-label={isEn ? 'Main navigation' : 'Hauptnavigation'}>

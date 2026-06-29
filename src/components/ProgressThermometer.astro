@@ -1,0 +1,57 @@
+---
+/**
+ * ProgressThermometer.astro — funding-progress bar for the current year's target.
+ * Elegant horizontal "thermometer": gold fill on a track, with raised / goal labels.
+ * Donations may exceed the goal (fill caps at 100%, label shows the real figures).
+ *
+ * Props:
+ *   lang    'de' | 'en'  — language (default 'de')
+ *   raised  number       — amount raised so far in EUR
+ *   goal    number       — target for the year in EUR
+ *   year    number       — the funding year
+ */
+interface Props { lang?: 'de' | 'en'; raised?: number; goal?: number; year?: number; }
+const { lang = 'de', raised = 25450, goal = 30000, year = 2026 } = Astro.props;
+const isEn = lang === 'en';
+const pct = goal > 0 ? Math.round((raised / goal) * 100) : 0;
+const fill = Math.min(100, pct);
+const fmt = (n: number) => new Intl.NumberFormat(isEn ? 'en-GB' : 'de-DE').format(n);
+
+const t = isEn
+  ? {
+      eyebrow: `Funding target ${year}`,
+      heading: 'Where we stand',
+      raised: 'raised so far',
+      goal: 'target',
+      reached: `${pct}% reached`,
+      note: 'Every contribution moves the bar — and donations may exceed the target.',
+    }
+  : {
+      eyebrow: `Förderziel ${year}`,
+      heading: 'Wo wir stehen',
+      raised: 'bereits gesammelt',
+      goal: 'Ziel',
+      reached: `${pct}% erreicht`,
+      note: 'Jeder Beitrag bewegt den Balken — und Spenden dürfen das Ziel übertreffen.',
+    };
+---
+<div class="thermo card">
+  <p class="eyebrow">{t.eyebrow}</p>
+  <div class="thermo__figures">
+    <span class="thermo__raised">{fmt(raised)}&nbsp;€</span>
+    <span class="thermo__goal">/ {fmt(goal)}&nbsp;€ {t.goal}</span>
+  </div>
+  <div
+    class="thermo__track"
+    role="progressbar"
+    aria-valuenow={raised}
+    aria-valuemin={0}
+    aria-valuemax={goal}
+    aria-label={`${t.eyebrow}: ${fmt(raised)} € / ${fmt(goal)} €`}
+  >
+    <div class="thermo__fill" style={`width:${fill}%`}>
+      <span class="thermo__pct">{t.reached}</span>
+    </div>
+  </div>
+  <p class="caption thermo__note">{t.note}</p>
+</div>

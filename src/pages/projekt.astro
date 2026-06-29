@@ -6,11 +6,11 @@ import CTABand from '../components/CTABand.astro';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 
-// (c) Was 900 € leisten — itemized breakdown of one scholarship
+// (c) Was 800 € leisten — itemized breakdown of one scholarship
 const coverage = [
   {
     title: '100 % der Schulgebühren',
-    body: 'Der vollständige Schulplatz an einer weiterführenden Schule — ohne Lücke, die eine Familie selbst tragen müsste.',
+    body: 'Der vollständige Schulplatz an einer weiterführenden Schule. Der JRS achtet auch auf unseren Wunsch hin darauf, dass Eltern, wenn möglich, einen Eigenanteil beisteuern. Das stärkt die Verantwortung vor Ort.',
   },
   {
     title: 'Schulmaterialien',
@@ -21,12 +21,12 @@ const coverage = [
     body: 'Damit kein Mädchen aus Mangel an Produkten Schultage verpasst.',
   },
   {
-    title: 'Internat / Boarding',
-    body: 'Ein sicherer Platz im Wohnheim hält das Mädchen in der Schule — und senkt das Risiko einer frühen Verheiratung.',
+    title: 'Internat — für Mädchen, deren Schulweg zu weit ist',
+    body: 'Nicht alle Stipendiatinnen wohnen im Internat; nur die, deren Schulweg zu weit ist, leben unter der Woche im Wohnheim. So bleibt der Schulbesuch verlässlich möglich.',
   },
   {
     title: 'Mentoring durch lokale Begleiter',
-    body: 'Begleitung statt bloßer Hilfe: Menschen vor Ort, die jedes Mädchen über das Schuljahr hinweg stärken.',
+    body: 'Begleitung statt bloßer Hilfe: Menschen vor Ort, die jedes Mädchen über das Schuljahr hinweg stärken. Es ist die Perspektive, die Bildung eröffnet, die die Dynamik früher Verheiratung verändert.',
   },
 ];
 
@@ -44,8 +44,8 @@ const flow = [
   },
   {
     n: '3',
-    title: 'JRS zahlt direkt an die Schulen',
-    body: 'Unser Partner vor Ort zahlt das Stipendium direkt an die Schule — kein Umweg, keine Verwaltungskosten.',
+    title: 'JRS führt Zahlungen und Sachleistungen durch und überwacht die Ausgaben',
+    body: 'Unser Partner vor Ort führt Zahlungen und Sachleistungen durch und überwacht, wie die Mittel verwendet werden — kein Umweg, keine Verwaltungskosten in Deutschland.',
   },
   {
     n: '4',
@@ -88,11 +88,11 @@ const jrsFacts = [
     heading="Für ein Mädchen beginnt Zukunft mit einem sicheren Schulweg."
   />
 
-  <!-- (c) WAS 900 € LEISTEN -->
+  <!-- (c) WAS 800 € LEISTEN -->
   <section class="band band-pure section">
     <div class="container">
       <div class="section-head" data-reveal>
-        <Eyebrow text="Was 900 € leisten" />
+        <Eyebrow text="Was 800 € leisten" />
         <h2>Ein Stipendium trägt ein ganzes Schuljahr — vollständig.</h2>
       </div>
 
@@ -108,11 +108,11 @@ const jrsFacts = [
 
         <aside class="coverage__total card card--story" data-reveal>
           <Eyebrow text="Ein Schuljahr" />
-          <p class="coverage__figure">900&nbsp;€</p>
+          <p class="coverage__figure">800&nbsp;€</p>
           <p class="coverage__per">pro Jahr und Mädchen</p>
           <p class="coverage__note">
             Alles oben Genannte ist darin enthalten. 100 % Ihrer Spende fließen direkt in
-            Stipendien — Verwaltungskosten tragen die Gründungsmitglieder privat.
+            Stipendien — keine Verwaltungskosten in Deutschland.
           </p>
         </aside>
       </div>
@@ -187,7 +187,7 @@ const jrsFacts = [
           </dl>
           <ul class="trust-row">
             <li>Schwerpunkt Sekundarabschluss</li>
-            <li>Begleitschutz gegen Frühverheiratung</li>
+            <li>Begleitung und Perspektive durch Bildung</li>
             <li>Berichtspflicht gegenüber Frido&rsquo;s Friends</li>
           </ul>
         </aside>
@@ -199,9 +199,9 @@ const jrsFacts = [
   <CTABand
     eyebrow="Mitmachen"
     heading="Geben Sie einem Mädchen ein ganzes Schuljahr."
-    text="900 € tragen ein Jahr — Schulgebühren, Material, Hygieneartikel, Internat und Begleitung. Ihre Mitgliedschaft macht daraus verlässliche Zukunft."
+    text="800 € tragen ein Jahr — Schulgebühren, Material, Hygieneartikel, Internat und Begleitung. Ihre Mitgliedschaft macht daraus verlässliche Zukunft."
     primaryHref="/mitmachen"
-    primaryLabel="Mitglied werden"
+    primaryLabel="Mitmachen"
     secondaryHref={betterplace}
     secondaryLabel="Jetzt spenden"
   />

@@ -16,14 +16,14 @@ const formName = isEn ? 'membership-en' : 'mitgliedschaft-de';
 const thanks = isEn ? '/en/thanks/' : '/danke/';
 
 const impactDe: Record<string, string> = {
-  '25': '25 €/Monat = 300 € im Jahr — Schulmaterial und Hygieneartikel für ein Mädchen.',
-  '75': '75 €/Monat = 900 € im Jahr — ein ganzes Schuljahr für ein Mädchen in Adjumani.',
-  '100': '100 €/Monat = 1.200 € im Jahr — ein Schuljahr plus Mentoring vor Ort.',
+  '25': '25 €/Monat = 300 € im Jahr — ein wichtiger Beitrag zu einem Schuljahr.',
+  '75': '75 €/Monat = 900 € im Jahr — deckt ein ganzes Schuljahr (800 €) für ein Mädchen.',
+  '100': '100 €/Monat = 1.200 € im Jahr — mehr als ein ganzes Schuljahr für ein Mädchen.',
 };
 const impactEn: Record<string, string> = {
-  '25': '€25/month = €300 a year — school materials and hygiene products for one girl.',
-  '75': '€75/month = €900 a year — a full school year for one girl in Adjumani.',
-  '100': '€100/month = €1,200 a year — a school year plus local mentoring.',
+  '25': '€25/month = €300 a year — a meaningful contribution toward a school year.',
+  '75': '€75/month = €900 a year — covers a full school year (€800) for one girl in Adjumani.',
+  '100': '€100/month = €1,200 a year — more than a full school year for one girl.',
 };
 const impacts = isEn ? impactEn : impactDe;
 
@@ -32,6 +32,7 @@ const t = isEn
       legend: 'Become a member — monthly',
       amountLabel: 'Monthly contribution',
       name: 'Name', email: 'Email',
+      emailNote: 'Please add your email — we would love to send you a donation receipt.',
       interval: 'Interval', monthly: 'monthly', yearly: 'yearly',
       message: 'Message (optional)',
       submit: 'Send membership application',
@@ -44,6 +45,7 @@ const t = isEn
       legend: 'Mitglied werden — monatlich',
       amountLabel: 'Monatlicher Beitrag',
       name: 'Name', email: 'E-Mail',
+      emailNote: 'Bitte E-Mail angeben — wir würden Ihnen sehr gerne eine Spendenquittung zukommen lassen.',
       interval: 'Intervall', monthly: 'monatlich', yearly: 'jährlich',
       message: 'Nachricht (optional)',
       submit: 'Mitgliedsantrag absenden',
@@ -95,6 +97,7 @@ const t = isEn
     <label class="field">
       <span>{t.email}</span>
       <input type="email" name="email" required autocomplete="email" />
+      <small class="field-note">{t.emailNote}</small>
     </label>
   </div>
 

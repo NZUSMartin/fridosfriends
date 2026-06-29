@@ -1,26 +1,27 @@
 ---
 /**
- * Logo.astro — the real Frido's Friends mark (Jesuit double-shaft patriarchal cross),
- * recoloured to gold with transparency from the original logo artwork.
- * Raster on purpose: the exact provided design, not a redrawing.
+ * Logo.astro — the Frido's Friends mark (gold figure rising from an open book).
+ * Recoloured/keyed to transparency from the supplied artwork; raster on purpose.
  *
  * Props:
- *   size   number  — rendered width in px (default 40). Height scales by the artwork ratio.
- *   color? string  — accepted for backwards compatibility; ignored (the mark is gold).
- *   class? string
+ *   height   number          — rendered height in px (default 40); width scales by ratio.
+ *   variant  'full' | 'icon' — full lockup (icon + wordmark) or icon only (default 'full').
+ *   class?   string
  */
-interface Props { size?: number; color?: string; class?: string; }
-const { size = 40, class: className = 'brand__mark' } = Astro.props;
-const ratio = 558 / 336; // intrinsic logo-gold.png aspect (height / width)
-const h = Math.round(size * ratio);
+interface Props { height?: number; variant?: 'full' | 'icon'; class?: string; }
+const { height = 40, variant = 'full', class: className = 'brand__mark' } = Astro.props;
+const isIcon = variant === 'icon';
+const src = isIcon ? '/images/logo-icon.png' : '/images/logo-full.png';
+const ratioWH = isIcon ? 315 / 258 : 772 / 262; // width / height of the artwork
+const w = Math.round(height * ratioWH);
 ---
 <img
   class={className}
-  src="/images/logo-gold.png"
-  width={size}
-  height={h}
+  src={src}
+  width={w}
+  height={height}
   alt=""
   aria-hidden="true"
   decoding="async"
-  style={`width:${size}px;height:auto;display:block`}
+  style={`height:${height}px;width:auto;display:block`}
 />

@@ -6,11 +6,11 @@ import CTABand from '../../components/CTABand.astro';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 
-// (c) What €900 covers — itemized breakdown of one scholarship
+// (c) What €800 covers — itemized breakdown of one scholarship
 const coverage = [
   {
     title: '100% of school fees',
-    body: 'The full place at a secondary school — with no gap that a family would have to cover on its own.',
+    body: 'The full place at a secondary school. At our request, JRS also ensures that parents, where possible, contribute a share themselves. This strengthens local ownership.',
   },
   {
     title: 'School materials',
@@ -21,12 +21,12 @@ const coverage = [
     body: 'So that no girl misses school days for lack of supplies.',
   },
   {
-    title: 'Boarding',
-    body: 'A safe place in the dormitory keeps a girl in school — and lowers the risk of an early marriage.',
+    title: 'Boarding — for girls whose journey to school is too far',
+    body: 'Not all scholars board; only those whose journey to school is too far live in the dormitory during the week. This keeps attending school reliably possible.',
   },
   {
     title: 'Mentoring by local companions',
-    body: 'Accompaniment, not just aid: people on the ground who strengthen every girl throughout the school year.',
+    body: 'Accompaniment, not just aid: people on the ground who strengthen every girl throughout the school year. It is the perspective that education opens that changes the dynamics of early marriage.',
   },
 ];
 
@@ -44,8 +44,8 @@ const flow = [
   },
   {
     n: '3',
-    title: 'JRS pays the schools directly',
-    body: 'Our partner on the ground pays the scholarship directly to the school — no detour, no administrative costs.',
+    title: 'JRS makes payments and in-kind contributions and monitors spending',
+    body: 'Our partner on the ground makes payments and in-kind contributions and monitors how funds are spent — no detour, no administrative costs in Germany.',
   },
   {
     n: '4',
@@ -88,11 +88,11 @@ const jrsFacts = [
     heading="For a girl, the future begins with a safe way to school."
   />
 
-  <!-- (c) WHAT €900 COVERS -->
+  <!-- (c) WHAT €800 COVERS -->
   <section class="band band-pure section">
     <div class="container">
       <div class="section-head" data-reveal>
-        <Eyebrow text="What €900 covers" />
+        <Eyebrow text="What €800 covers" />
         <h2>One scholarship carries an entire school year — in full.</h2>
       </div>
 
@@ -108,11 +108,11 @@ const jrsFacts = [
 
         <aside class="coverage__total card card--story" data-reveal>
           <Eyebrow text="One school year" />
-          <p class="coverage__figure">€900</p>
+          <p class="coverage__figure">€800</p>
           <p class="coverage__per">per year and per girl</p>
           <p class="coverage__note">
             Everything listed above is included. 100% of your donation flows directly into
-            scholarships — administrative costs are borne privately by the founding members.
+            scholarships — no administrative costs in Germany.
           </p>
         </aside>
       </div>
@@ -187,7 +187,7 @@ const jrsFacts = [
           </dl>
           <ul class="trust-row">
             <li>Focus on secondary completion</li>
-            <li>Protective accompaniment against early marriage</li>
+            <li>Accompaniment and perspective through education</li>
             <li>Reporting duty towards Frido&rsquo;s Friends</li>
           </ul>
         </aside>
@@ -199,9 +199,9 @@ const jrsFacts = [
   <CTABand
     eyebrow="Get involved"
     heading="Give a girl an entire school year."
-    text="€900 carries one year — school fees, materials, hygiene products, boarding and accompaniment. Your membership turns it into a dependable future."
+    text="€800 carries one year — school fees, materials, hygiene products, boarding and accompaniment. Your membership turns it into a dependable future."
     primaryHref="/en/donate"
-    primaryLabel="Become a member"
+    primaryLabel="Get involved"
     secondaryHref={betterplace}
     secondaryLabel="Donate now"
   />

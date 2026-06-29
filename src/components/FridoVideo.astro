@@ -1,0 +1,47 @@
+---
+/**
+ * FridoVideo.astro — privacy-friendly YouTube embed (click-to-load).
+ * Nothing is requested from Google until the visitor clicks play; then a
+ * youtube-nocookie iframe is injected. Keeps the "no cookies until consent" stance.
+ *
+ * Props:
+ *   lang  'de' | 'en'  — language (default 'de')
+ */
+interface Props { lang?: 'de' | 'en'; }
+const { lang = 'de' } = Astro.props;
+const isEn = lang === 'en';
+const videoId = 'Motd06pFb8c';
+---
+<div class="video-block">
+  <div class="video-embed" data-video-id={videoId}>
+    <button type="button" class="video-facade" data-video-play
+      aria-label={isEn ? 'Play the interview with Frido (loads YouTube, sets cookies)' : 'Interview mit Frido abspielen (lädt YouTube, setzt Cookies)'}>
+      <span class="video-facade__play" aria-hidden="true"></span>
+      <span class="video-facade__label">
+        {isEn
+          ? 'Watch the interview with Father Frido — clicking loads YouTube and may set cookies.'
+          : 'Interview mit Pater Frido ansehen — beim Klick wird YouTube geladen und kann Cookies setzen.'}
+      </span>
+    </button>
+  </div>
+  <p class="caption">
+    {isEn ? 'Video: courtesy of Jesuiten weltweit' : 'Video: mit freundlicher Genehmigung von Jesuiten weltweit'}
+  </p>
+</div>
+
+<script>
+  document.querySelectorAll('[data-video-play]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const wrap = btn.closest('.video-embed') as HTMLElement | null;
+      if (!wrap) return;
+      const id = wrap.getAttribute('data-video-id');
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+      iframe.title = 'Interview — Pater Frido Pflüger SJ';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.setAttribute('allowfullscreen', '');
+      wrap.innerHTML = '';
+      wrap.appendChild(iframe);
+    });
+  });
+</script>

@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
 import CTABand from '../../components/CTABand.astro';
+import FridoVideo from '../../components/FridoVideo.astro';
 
 // Timeline — IMMUTABLE FACTS, verbatim chronology (1947 → 19/20 June 2021).
 const timeline = [
@@ -75,7 +76,7 @@ const timeline = [
       </p>
       <p class="prose" style="margin-top:var(--sp-5);color:var(--stone)" data-reveal>
         This association carries his name — not as an obituary, but as a promise.
-        Seven graduates of Kolleg St. Blasien, who knew him as their teacher, carry
+        Seven friends from Kolleg St. Blasien, who knew him as their teacher, carry
         on what he began in Adjumani: school places for girls for whom education opens
         the way into a life of their own.
       </p>
@@ -95,6 +96,19 @@ const timeline = [
         />
         <figcaption>Father Frido Pflüger SJ — among the young people he devoted his life to.</figcaption>
       </figure>
+    </div>
+  </section>
+
+  <!-- (a3) INTERVIEW VIDEO — for visitors who didn't know him -->
+  <section class="section--tight">
+    <div class="container container-text" data-reveal-group>
+      <div class="section-head" data-reveal>
+        <Eyebrow text="Frido in his own words" />
+        <h2>Hear Frido himself.</h2>
+      </div>
+      <div data-reveal>
+        <FridoVideo lang="en" />
+      </div>
     </div>
   </section>
 
@@ -138,7 +152,7 @@ const timeline = [
       <Eyebrow text="The line does not break" />
       <h2 data-reveal>What he began goes on.</h2>
       <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
-        Seven graduates of Kolleg St. Blasien carry on Frido’s work. They are the
+        Seven friends from Kolleg St. Blasien carry on Frido’s work. They are the
         same schools, the same girls, the same partner: the Jesuit Refugee Service.
       </p>
       <p style="margin-top:var(--sp-5)" data-reveal>
@@ -147,7 +161,7 @@ const timeline = [
         in school. The accompaniment he meant has not ended; it has only changed hands.
       </p>
       <p style="margin-top:var(--sp-6)" data-reveal>
-        <a class="link-tertiary" href="/en/project">See how €900 becomes a school year →</a>
+        <a class="link-tertiary" href="/en/project">See how €800 becomes a school year →</a>
       </p>
     </div>
   </section>
@@ -156,9 +170,9 @@ const timeline = [
   <CTABand
     eyebrow="Act in his name"
     heading="Accompaniment, not just aid."
-    text="A school year costs €900. Your membership turns Frido’s promise into the dependable future of a girl."
+    text="A school year costs €800. Your membership turns Frido’s promise into the dependable future of a girl."
     primaryHref="/en/donate"
-    primaryLabel="Become a member"
+    primaryLabel="Get involved"
     secondaryHref="https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft"
     secondaryLabel="Donate now"
   />

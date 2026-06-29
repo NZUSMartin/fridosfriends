@@ -19,7 +19,7 @@ const steps = [
   {
     n: '2',
     title: 'We fund it — 100%',
-    body: '€900 cover a full school year: school fees, materials, hygiene products, boarding and local mentoring. Every euro donated flows into scholarships.',
+    body: '€800 cover a full school year: school fees, materials, hygiene products, boarding and local mentoring. Every euro donated flows into scholarships.',
   },
   {
     n: '3',
@@ -61,18 +61,19 @@ const multiplier = [
             northern Uganda — together with the Jesuit Refugee Service and in the spirit of
             Father Frido Pflüger. When you support one girl, you support a whole community.
           </p>
-          <p class="hero__cost" data-reveal><b>€900</b> = a full school year for one girl.</p>
+          <p class="hero__cost" data-reveal><b>€800</b> = a full school year for one girl.</p>
           <div class="btn-row" data-reveal>
-            <a class="btn btn--primary" href="/en/donate">Become a member</a>
+            <a class="btn btn--primary" href="/en/donate">Get involved</a>
             <a class="btn btn--secondary" href="#how-it-works">Learn more</a>
           </div>
         </div>
 
         <figure class="figure hero__media" data-reveal>
           <img
-            src="/images/students-path.jpg"
-            alt="Three schoolgirls walking confidently along a fenced path to school"
-            width="1200" height="1500"
+            src="/images/start-adjumani.jpg"
+            alt="Two students in front of their school in Adjumani, northern Uganda"
+            width="1600" height="1067"
+            style="object-fit:cover"
             fetchpriority="high" loading="eager" decoding="async"
           />
           <figcaption>Foto: JRS Uganda</figcaption>
@@ -84,31 +85,7 @@ const multiplier = [
   <!-- 2. 100% PROMISE BAND (LOUD, dark) -->
   <PromiseBand lang="en" />
 
-  <!-- 3. ONE STORY — GRACE -->
-  <section class="section">
-    <div class="container">
-      <Story
-        image="/images/student-classroom-portrait.jpg"
-        alt="A schoolgirl sits upright and confident in front of a blackboard"
-        eyebrow="One of 24"
-        heading="Grace would have been married at 15."
-        quote="I want to become a midwife so mothers in my settlement can give birth safely."
-        linkHref="/en/stories"
-        linkLabel="More stories →"
-      >
-        <p>
-          At around 15, Grace was on the verge of marriage. A scholarship let her stay in
-          school — and changed her path. Today she is class representative.
-        </p>
-        <p>
-          She wants to become a midwife: not just anywhere, but in her own settlement, so that
-          mothers there can give birth safely. A school place that becomes a whole working life.
-        </p>
-      </Story>
-    </div>
-  </section>
-
-  <!-- 4. IMPACT / STATS -->
+  <!-- 3. IMPACT / STATS — at a glance -->
   <section class="band band-pure section">
     <div class="container">
       <div class="section-head" data-reveal>
@@ -119,9 +96,33 @@ const multiplier = [
         <Stat figure="24"   countTo={24}  label="children supported" />
         <Stat figure="18"   countTo={18}  label="of them girls" />
         <Stat figure="100%" countTo={100} suffix="%" label="stay in school" />
-        <Stat figure="€900" label="fund one school year" />
+        <Stat figure="€800" label="fund one school year" />
       </div>
       <p class="caption" style="margin-top:var(--sp-5)" data-reveal>As of school year 2024/25</p>
+    </div>
+  </section>
+
+  <!-- 4. ONE STORY — JO -->
+  <section class="section">
+    <div class="container">
+      <Story
+        image="/images/student-classroom-portrait.jpg"
+        alt="Jo sits upright and confident in front of a blackboard"
+        eyebrow="One of 24"
+        heading="Jo would have been married at 15."
+        quote="I want to become a midwife so mothers in my settlement can give birth safely."
+        linkHref="/en/stories"
+        linkLabel="More stories →"
+      >
+        <p>
+          At around 15, Jo was on the verge of marriage. A scholarship let her stay in
+          school — and changed her path. Today she is class representative.
+        </p>
+        <p>
+          She wants to become a midwife: not just anywhere, but in her own settlement, so that
+          mothers there can give birth safely. A school place that becomes a whole working life.
+        </p>
+      </Story>
     </div>
   </section>
 
@@ -158,7 +159,24 @@ const multiplier = [
     </div>
   </section>
 
-  <!-- 6. HOW IT WORKS -->
+  <!-- 6. WHAT WE BELIEVE IN -->
+  <section class="section">
+    <div class="container container-text" data-reveal-group>
+      <Eyebrow text="What we believe in" />
+      <h2 data-reveal>What we believe in</h2>
+      <p class="prose" style="margin-top:var(--sp-5)" data-reveal>
+        A good education is becoming ever more of a privilege — we want to push back against
+        that and help as many children as possible benefit from it. Our educational ideal is
+        built on respect, equality of opportunity and the nurturing of every single child. We
+        are convinced that education is far more than the transfer of knowledge: it strengthens
+        self-confidence, a sense of responsibility and the ability to actively shape one's own
+        future. Throughout, the dignity, individual talents and holistic development of each
+        child remain at the heart of everything we do.
+      </p>
+    </div>
+  </section>
+
+  <!-- 7. HOW IT WORKS -->
   <section id="how-it-works" class="band band-pure section">
     <div class="container">
       <div class="section-head" data-reveal>
@@ -175,12 +193,12 @@ const multiplier = [
         ))}
       </div>
       <p style="margin-top:var(--sp-6)" data-reveal>
-        <a class="link-tertiary" href="/en/project">See the full flow of funds and the €900 breakdown →</a>
+        <a class="link-tertiary" href="/en/project">See the full flow of funds and the €800 breakdown →</a>
       </p>
     </div>
   </section>
 
-  <!-- 7. JOIN — CALCULATOR -->
+  <!-- 8. JOIN — CALCULATOR -->
   <section class="section">
     <div class="container">
       <div class="story">
@@ -189,8 +207,8 @@ const multiplier = [
           <h2>Become part of Frido&rsquo;s Friends.</h2>
           <p class="prose" style="margin-top:var(--sp-4);color:var(--stone)">
             A regular membership gives a girl planning security for the whole school year.
-            €75 a month cover a complete school year — school fees, materials, hygiene
-            products, boarding and local mentoring.
+            Just €75 a month cover a complete school year — school fees, materials, hygiene
+            products, boarding for those whose school commute is too far, and local mentoring.
           </p>
           <p class="prose" style="margin-top:var(--sp-4);color:var(--stone)">
             Prefer to give once? That works too — via betterplace.org, including a tax receipt.
@@ -203,13 +221,13 @@ const multiplier = [
     </div>
   </section>
 
-  <!-- 8. FRIDO TEASER (dark) -->
+  <!-- 9. FRIDO TEASER (dark) -->
   <section class="band band-dark section">
     <div class="container container-text" data-reveal-group>
       <Eyebrow text="Why we do this" />
       <p class="lead" data-reveal>
         &ldquo;Accompaniment, not just aid.&rdquo; — Father Frido Pflüger SJ understood
-        education in Adjumani as a service to human dignity. Seven graduates of Kolleg
+        education in Adjumani as a service to human dignity. Seven friends from Kolleg
         St. Blasien carry on his work.
       </p>
       <p style="margin-top:var(--sp-5)" data-reveal>
@@ -218,12 +236,12 @@ const multiplier = [
     </div>
   </section>
 
-  <!-- 9. DARK CTA BAND -->
+  <!-- 10. DARK CTA BAND -->
   <CTABand
     heading="Accompaniment, not just aid."
-    text="A school year costs €900. Your membership turns it into a reliable future for one girl."
+    text="A school year costs €800. Your membership turns it into a reliable future for one girl."
     primaryHref="/en/donate"
-    primaryLabel="Become a member"
+    primaryLabel="Get involved"
     secondaryHref={betterplace}
     secondaryLabel="Donate now"
   />

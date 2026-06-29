@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import MembershipForm from '../components/MembershipForm.astro';
+import ProgressThermometer from '../components/ProgressThermometer.astro';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 
@@ -63,6 +64,10 @@ const trust = [
         <h2>Eine Mitgliedschaft trägt ein ganzes Schuljahr.</h2>
       </div>
 
+      <div class="join-thermo" data-reveal>
+        <ProgressThermometer lang="de" raised={25450} goal={30000} year={2026} />
+      </div>
+
       <div class="join-grid">
         <!-- Ask column: real membership application form (Netlify → Vorstand) -->
         <div class="join-ask" data-reveal-group>
@@ -99,15 +104,20 @@ const trust = [
         <!-- (d) Einmalspende -->
         <article class="card" data-reveal>
           <Eyebrow text="Einmalspende" />
-          <p class="give-amount"><b>900 €</b> = ein ganzes Schuljahr.</p>
+          <p class="give-amount"><b>800 €</b> = ein ganzes Schuljahr.</p>
           <p style="color:var(--stone)">
-            Schulgebühren, Schulmaterialien, Hygieneartikel inklusive Menstruationsprodukte,
-            das Internat und die Begleitung vor Ort — ein einziger Betrag, der ein Jahr trägt.
-            Jeder Beitrag hilft, ob groß oder klein.
+            Schulgebühren, Schulmaterialien, Hygieneartikel inklusive Menstruationsprodukte
+            und die Begleitung vor Ort — für jene Mädchen, deren Schulweg zu weit ist, auch
+            das Wohnheim. Ein einziger Betrag, der ein Jahr trägt. Jeder Beitrag hilft, ob
+            groß oder klein.
           </p>
+          <a class="btn btn--primary give-card__btn" href="https://www.paypal.com/donate/?hosted_button_id=R94VT44NWJ7QY" rel="noopener" target="_blank">
+            Mit PayPal spenden
+          </a>
           <a class="btn btn--secondary give-card__btn" href={betterplace} rel="noopener" target="_blank">
             Einmalig spenden über betterplace.org
           </a>
+          <div class="pay-badges"><a class="pay-badge" href="https://www.betterplace.org/de/projects/165916" rel="noopener" target="_blank" aria-label="betterplace.org"><img src="/images/betterplace-logo.png" alt="betterplace.org" width="128" height="19" loading="lazy" /></a><a class="pay-badge" href="https://www.paypal.com/donate/?hosted_button_id=R94VT44NWJ7QY" rel="noopener" target="_blank" aria-label="PayPal"><img src="/images/paypal-logo.png" alt="PayPal" width="136" height="34" loading="lazy" /></a></div>
         </article>
 
         <!-- (e) Direct bank transfer -->
@@ -136,7 +146,7 @@ const trust = [
                 width="180" height="180"
                 loading="lazy" decoding="async"
               />
-              <figcaption>SEPA-QR-Code zum Einscannen</figcaption>
+              <figcaption>Bitte den QR-Code mit Hilfe Ihrer Banking-App einscannen — und bitte E-Mail-Adresse nicht vergessen, wir würden Ihnen sehr gerne eine Spendenquittung zukommen lassen.</figcaption>
             </figure>
           </div>
           <p class="caption" style="margin-top:var(--sp-5)">
@@ -201,6 +211,8 @@ const trust = [
     .join-grid { grid-template-columns: 1.15fr 0.85fr; gap: var(--sp-8); }
   }
   .join-ask > * + * { margin-top: var(--sp-6); }
+
+  .join-thermo { margin: var(--sp-6) 0 var(--sp-7); }
 
   .join-cta { text-align: center; }
   .join-cta__btn { width: 100%; }
@@ -272,4 +284,5 @@ const trust = [
     border: 1px solid var(--line);
     background: var(--paper-pure);
   }
+  .bank-qr figcaption { max-width: 22ch; margin-inline: auto; }
 </style>
