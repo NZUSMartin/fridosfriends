@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kolleg.netlify.app/sitemap-index.xml
+Sitemap: https://kolleg.netlify.app/sitemap.xml
