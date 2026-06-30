@@ -3,8 +3,9 @@ import Layout from '../../layouts/Layout.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
 import MembershipForm from '../../components/MembershipForm.astro';
 import ProgressThermometer from '../../components/ProgressThermometer.astro';
+import { FUNDING, BETTERPLACE, BETTERPLACE_SHORT, PAYPAL_DONATE, PAYPAL_SUBSCRIBE } from '../../consts';
 
-const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
+const IBAN = 'DE44 6805 2230 0000 2055 26';
 
 const trust = [
   {
@@ -35,14 +36,14 @@ const trust = [
 ---
 
 <Layout
-  title="Get involved"
-  description="Become a member of Frido's Friends e.V. and fund a school year for a girl in northern Uganda. 100% of your donation goes into scholarships."
+  title="Donate"
+  description="Donate to Frido's Friends e.V. or become a member and fund a school year for a girl in northern Uganda. 100% of your donation goes into scholarships."
   lang="en"
   path="/en/donate"
   spine="progress"
 >
 
-  <!-- (a) INTRO -->
+  <!-- (1) INTRO -->
   <section class="section">
     <div class="container container-text" data-reveal-group>
       <Eyebrow text="Get involved" />
@@ -50,22 +51,117 @@ const trust = [
       <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
         100% of your donation goes straight into school scholarships for girls in the Adjumani
         refugee settlement — administrative costs are covered privately by the founding members.
-        Not a single euro is lost. You decide how you help: as a member, month after month, with a
-        one-off gift, or by bank transfer.
+        Not a single euro is lost. You decide how you help: with a one-off gift, or as a member,
+        month after month.
       </p>
     </div>
   </section>
 
-  <!-- (b)+(c) MEMBERSHIP (dominant) + TRUST CLUSTER -->
+  <!-- (2) FUNDING THERMOMETER -->
+  <section class="section section--tight">
+    <div class="container container-text">
+      <div data-reveal>
+        <ProgressThermometer
+          lang="en"
+          raised={FUNDING.raised}
+          goal={FUNDING.goal}
+          year={FUNDING.year}
+          asof={FUNDING.asof}
+          sheetUrl={FUNDING.sheetUrl}
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- (3) DONATE — one-off (FIRST) -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <Eyebrow text="Donate" />
+        <h2>Every gift counts — no matter the size.</h2>
+        <p class="give-lead" data-reveal>
+          For reference: one school year costs around €800 per girl — but every contribution
+          helps, including small and recurring ones.
+        </p>
+      </div>
+
+      <div class="give-grid" data-reveal-group>
+        <!-- One-time payment options -->
+        <article class="card" data-reveal>
+          <Eyebrow text="Give online" />
+          <p style="color:var(--stone);margin:var(--sp-3) 0 var(--sp-5)">
+            Quick and secure via PayPal or through betterplace.org — every amount arrives
+            straight away.
+          </p>
+          <div class="pay-row">
+            <a class="btn btn--primary" href={PAYPAL_DONATE} rel="noopener" target="_blank">
+              Donate with PayPal
+            </a>
+            <a class="pay-badge" href={PAYPAL_DONATE} rel="noopener" target="_blank" aria-label="PayPal">
+              <img src="/images/paypal-logo.png" alt="PayPal" width="136" height="34" loading="lazy" />
+            </a>
+          </div>
+          <div class="pay-row" style="margin-top:var(--sp-5)">
+            <a class="btn btn--secondary" href={BETTERPLACE} rel="noopener" target="_blank">
+              Donate via betterplace.org
+            </a>
+            <a class="pay-badge" href={BETTERPLACE_SHORT} rel="noopener" target="_blank" aria-label="betterplace.org">
+              <img src="/images/betterplace-logo.png" alt="betterplace.org" width="128" height="19" loading="lazy" />
+            </a>
+          </div>
+        </article>
+
+        <!-- Direct bank transfer -->
+        <article class="card" data-reveal>
+          <Eyebrow text="Direct bank transfer" />
+          <p style="color:var(--stone);margin:var(--sp-3) 0 var(--sp-4)">
+            You can also transfer directly to our association account:
+          </p>
+          <div class="bank-grid">
+            <dl class="bank">
+              <dt>Recipient</dt>
+              <dd>Frido’s Friends e.V.</dd>
+              <dt>IBAN</dt>
+              <dd>{IBAN}</dd>
+              <dt>BIC</dt>
+              <dd>SOLADES1STB</dd>
+              <dt>Bank</dt>
+              <dd>Sparkasse St. Blasien</dd>
+              <dt>Reference</dt>
+              <dd>Spende Schulstipendien</dd>
+            </dl>
+            <figure class="figure bank-qr">
+              <img
+                src="/images/sepa-qr.svg"
+                alt="SEPA QR code for a donation to Frido's Friends e.V."
+                width="180" height="180"
+                loading="lazy" decoding="async"
+              />
+              <p class="qr-note">
+                Please scan the QR code with your banking app — and please don't forget your email
+                address; we would love to send you a donation receipt.
+              </p>
+            </figure>
+          </div>
+          <p class="caption" style="margin-top:var(--sp-5)">
+            For every donation we will issue a receipt on request; up to €300 the tax office accepts
+            your bank statement as proof.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- (4) BECOME A MEMBER — recurring (SECOND, equal weight) + (5) TRUST CLUSTER -->
   <section class="band band-pure section">
     <div class="container">
       <div class="section-head" data-reveal>
         <Eyebrow text="Become a member" />
-        <h2>One membership carries a full school year.</h2>
-      </div>
-
-      <div class="join-thermo" data-reveal>
-        <ProgressThermometer lang="en" raised={25450} goal={30000} year={2026} />
+        <h2>Become a member — give regularly.</h2>
+        <p class="give-lead" data-reveal>
+          Membership gives us planning security: your support becomes reliable, ongoing funding we
+          can build on year after year.
+        </p>
       </div>
 
       <div class="join-grid">
@@ -73,6 +169,40 @@ const trust = [
         <div class="join-ask" data-reveal-group>
           <div data-reveal>
             <MembershipForm lang="en" />
+          </div>
+
+          <!-- Recurring options -->
+          <div class="card" data-reveal>
+            <Eyebrow text="Give regularly" />
+            <h3 class="h4" style="margin-top:var(--sp-3)">SEPA standing order</h3>
+            <p style="color:var(--stone);margin-top:var(--sp-2)">
+              Set up a standing order with your bank to our account (e.g. €25 / €50 / €75 per
+              month), reference “Mitgliedsbeitrag” — that is all it takes to turn your gift into
+              reliable, ongoing support.
+            </p>
+            <dl class="bank" style="margin-top:var(--sp-4)">
+              <dt>Recipient</dt>
+              <dd>Frido’s Friends e.V.</dd>
+              <dt>IBAN</dt>
+              <dd>{IBAN}</dd>
+              <dt>BIC</dt>
+              <dd>SOLADES1STB</dd>
+              <dt>Reference</dt>
+              <dd>Mitgliedsbeitrag</dd>
+            </dl>
+
+            <h3 class="h4" style="margin-top:var(--sp-6)">PayPal</h3>
+            {PAYPAL_SUBSCRIBE ? (
+              <a class="btn btn--primary" style="margin-top:var(--sp-3)" href={PAYPAL_SUBSCRIBE} rel="noopener" target="_blank">
+                Monthly with PayPal
+              </a>
+            ) : (
+              <p class="caption" style="margin-top:var(--sp-3)">PayPal subscription coming soon.</p>
+            )}
+
+            <p class="caption" style="margin-top:var(--sp-5)">
+              <a class="link-tertiary" href="/en/promise">How we keep the 100% promise →</a>
+            </p>
           </div>
         </div>
 
@@ -92,75 +222,8 @@ const trust = [
     </div>
   </section>
 
-  <!-- (d)+(e) ONE-OFF GIFT + BANK TRANSFER -->
+  <!-- (5) MORE WAYS TO HELP -->
   <section class="section">
-    <div class="container">
-      <div class="section-head" data-reveal>
-        <Eyebrow text="Other ways to give" />
-        <h2>Prefer a one-off gift or a bank transfer?</h2>
-      </div>
-
-      <div class="give-grid" data-reveal-group>
-        <!-- (d) One-off gift -->
-        <article class="card" data-reveal>
-          <Eyebrow text="One-off gift" />
-          <p class="give-amount"><b>€800</b> = a full school year.</p>
-          <p style="color:var(--stone)">
-            School fees, school materials, hygiene products including menstrual supplies and local
-            mentoring — and, for those girls whose commute to school is too far, the boarding home
-            as well. A single amount that carries a whole year. Every contribution helps, large or
-            small.
-          </p>
-          <a class="btn btn--primary give-card__btn" href="https://www.paypal.com/donate/?hosted_button_id=R94VT44NWJ7QY" rel="noopener" target="_blank">
-            Donate with PayPal
-          </a>
-          <a class="btn btn--secondary give-card__btn" href={betterplace} rel="noopener" target="_blank">
-            Give a one-off gift via betterplace.org
-          </a>
-          <div class="pay-badges"><a class="pay-badge" href="https://www.betterplace.org/de/projects/165916" rel="noopener" target="_blank" aria-label="betterplace.org"><img src="/images/betterplace-logo.png" alt="betterplace.org" width="128" height="19" loading="lazy" /></a><a class="pay-badge" href="https://www.paypal.com/donate/?hosted_button_id=R94VT44NWJ7QY" rel="noopener" target="_blank" aria-label="PayPal"><img src="/images/paypal-logo.png" alt="PayPal" width="136" height="34" loading="lazy" /></a></div>
-        </article>
-
-        <!-- (e) Direct bank transfer -->
-        <article class="card" data-reveal>
-          <Eyebrow text="Direct bank transfer" />
-          <p style="color:var(--stone);margin-bottom:var(--sp-4)">
-            You can also transfer directly to our association account:
-          </p>
-          <div class="bank-grid">
-            <dl class="bank">
-              <dt>Recipient</dt>
-              <dd>Frido’s Friends e.V.</dd>
-              <dt>IBAN</dt>
-              <dd>DE44 6805 2230 0000 2055 26</dd>
-              <dt>BIC</dt>
-              <dd>SOLADES1STB</dd>
-              <dt>Bank</dt>
-              <dd>Sparkasse St. Blasien</dd>
-              <dt>Reference</dt>
-              <dd>Spende Schulstipendien</dd>
-            </dl>
-            <figure class="figure bank-qr">
-              <img
-                src="/images/sepa-qr.svg"
-                alt="SEPA QR code for a donation to Frido's Friends e.V."
-                width="180" height="180"
-                loading="lazy" decoding="async"
-              />
-              <figcaption>Please scan the QR code with your banking app — and please don't forget your email address; we would love to send you a donation receipt.</figcaption>
-            </figure>
-          </div>
-          <p class="caption" style="margin-top:var(--sp-5)">
-            For amounts up to €300, your bank statement suffices as proof of donation. For larger
-            amounts we are glad to issue a Zuwendungsbestätigung — just write to us at
-            <a class="link-tertiary" href="mailto:vorstand@fridosfriends.de">vorstand@fridosfriends.de</a>.
-          </p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- (f) MORE WAYS TO HELP -->
-  <section class="band band-pure section">
     <div class="container">
       <div class="section-head" data-reveal>
         <Eyebrow text="More than donating" />
@@ -199,7 +262,26 @@ const trust = [
 </Layout>
 
 <style>
-  /* Membership ask (calculator + CTA) beside the trust cluster — page-local layout only */
+  .section--tight { padding-top: 0; }
+
+  .give-lead {
+    color: var(--stone);
+    font-size: var(--step-0);
+    margin-top: var(--sp-3);
+  }
+
+  /* Donate: online options beside bank transfer */
+  .give-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-6);
+    align-items: start;
+  }
+  @media (min-width: 768px) {
+    .give-grid { grid-template-columns: 1fr 1fr; gap: var(--sp-7); }
+  }
+
+  /* Membership ask beside the trust cluster — page-local layout only */
   .join-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -211,12 +293,6 @@ const trust = [
   }
   .join-ask > * + * { margin-top: var(--sp-6); }
 
-  .join-thermo { margin: var(--sp-6) 0 var(--sp-7); }
-
-  .join-cta { text-align: center; }
-  .join-cta__btn { width: 100%; }
-  .join-cta__note { margin-top: var(--sp-4); }
-
   .join-trust__list {
     list-style: none;
     margin: var(--sp-2) 0 0;
@@ -226,26 +302,6 @@ const trust = [
   }
   .join-trust__list li { max-width: none; }
   .join-trust__list p { color: var(--stone); margin-top: var(--sp-1); }
-
-  /* One-off gift + bank-transfer cards */
-  .give-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--sp-6);
-    align-items: start;
-  }
-  @media (min-width: 768px) {
-    .give-grid { grid-template-columns: 1fr 1fr; gap: var(--sp-7); }
-  }
-  .give-amount {
-    font-family: var(--font-serif);
-    font-weight: 500;
-    font-size: var(--step-2);
-    color: var(--ink);
-    margin: var(--sp-2) 0 var(--sp-4);
-  }
-  .give-amount b { color: var(--gold); font-weight: 600; }
-  .give-card__btn { margin-top: var(--sp-5); }
 
   .bank-grid {
     display: grid;
@@ -283,5 +339,4 @@ const trust = [
     border: 1px solid var(--line);
     background: var(--paper-pure);
   }
-  .bank-qr figcaption { max-width: 22ch; margin-inline: auto; }
 </style>

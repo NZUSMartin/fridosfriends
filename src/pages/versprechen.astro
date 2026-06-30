@@ -1,0 +1,109 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import CTABand from '../components/CTABand.astro';
+
+const facts = [
+  { dt: 'Rechtsform', dd: 'Gemeinnütziger eingetragener Verein (e.V.)' },
+  { dt: 'Registergericht', dd: 'Amtsgericht Köln' },
+  { dt: 'Vereinsregister-Nr.', dd: 'VR __________  (bitte ergänzen)' },
+  { dt: 'Gegründet', dd: '15. August 2025' },
+];
+---
+
+<Layout title="Unser Versprechen" lang="de" path="/versprechen" spine="none">
+
+  <!-- (a) INTRO -->
+  <section class="section">
+    <div class="container container-text" data-reveal-group>
+      <Eyebrow text="Transparenz" />
+      <h1 data-reveal>Wie wir das 100-%-Versprechen halten.</h1>
+      <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
+        100&nbsp;% jeder Spende fließen in Schulstipendien für Mädchen in Adjumani. Kein Euro
+        Ihrer Spende geht in die Verwaltung — das ist kein Marketingversprechen, sondern in
+        unserer Satzung verankert.
+      </p>
+      <p class="prose" style="margin-top:var(--sp-5);color:var(--stone)" data-reveal>
+        Alle Verwaltungskosten in Deutschland — Kontoführung, Registerkosten, Reisen — tragen
+        die Gründungsmitglieder privat. So ist es in der Satzung festgeschrieben. Wir haben
+        keine Verwaltungskosten in Deutschland, die von Spenden gedeckt werden müssten. Genau
+        diese Klarheit erlaubt uns das Versprechen, das größere Organisationen selten geben
+        können.
+      </p>
+    </div>
+  </section>
+
+  <!-- (b) FAKTEN -->
+  <section class="band band-pure section">
+    <div class="container container-text" data-reveal-group>
+      <div class="section-head" data-reveal>
+        <Eyebrow text="Der Verein in Zahlen" />
+        <h2>Wer wir rechtlich sind.</h2>
+      </div>
+
+      <dl class="facts" data-reveal>
+        {facts.map((f) => (
+          <div class="facts__row">
+            <dt>{f.dt}</dt>
+            <dd>{f.dd}</dd>
+          </div>
+        ))}
+        <div class="facts__row">
+          <dt>Satzung</dt>
+          <dd>
+            <a class="link-tertiary" href="/satzung.pdf" target="_blank" rel="noopener">Satzung herunterladen (PDF)</a>
+          </dd>
+        </div>
+      </dl>
+
+      <p class="prose" style="color:var(--stone);margin-top:var(--sp-6)" data-reveal>
+        Unseren ersten Rechenschaftsbericht veröffentlichen wir im Januar 2027. Was wir
+        versprechen, können Sie dann nachvollziehen — offen und ohne Beschönigung.
+      </p>
+    </div>
+  </section>
+
+  <!-- (c) CTA -->
+  <CTABand
+    eyebrow="Mitmachen"
+    heading="Vertrauen, das Sie überprüfen können."
+    text="Werden Sie Mitglied — und geben Sie einem Mädchen Planungssicherheit über ein ganzes Schuljahr. Ein Stipendium kostet rund 800 € im Jahr."
+    primaryHref="/mitmachen"
+    primaryLabel="Mitmachen"
+  />
+
+</Layout>
+
+<style>
+  /* Page-local layout only — uses existing design tokens (var(--...)). */
+  .facts {
+    margin: var(--sp-6) 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .facts__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-1);
+    padding: var(--sp-4) 0;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 768px) {
+    .facts__row {
+      grid-template-columns: 220px 1fr;
+      gap: var(--sp-5);
+      align-items: baseline;
+    }
+  }
+  .facts dt {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--stone);
+  }
+  .facts dd {
+    margin: 0;
+    color: var(--ink);
+  }
+</style>

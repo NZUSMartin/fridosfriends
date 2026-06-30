@@ -56,7 +56,7 @@ const flow = [
 
 // (f) JRS in Zahlen
 const jrsFacts = [
-  { figure: '~30.000', label: 'Mädchen über die Jahre durch JRS-nahe Bildung im Raum Adjumani erreicht' },
+  { figure: '~30.000', label: 'Mädchen über die Jahre durch JRS-nahe Bildung im Raum Adjumani erreicht (Quelle: JRS)' },
   { figure: 'Seit 2003', label: 'baute Pater Frido mit JRS in Adjumani Bildungsprogramme auf' },
   { figure: '100 %', label: 'der geförderten Kinder bleiben in der Schule (Stand: Schuljahr 2024/25)' },
 ];
@@ -185,6 +185,7 @@ const jrsFacts = [
               </div>
             ))}
           </dl>
+          <p class="jrs-card__source">Quelle: JRS. Angaben über die Jahre; Schulverbleib Stand Schuljahr&nbsp;2024/25.</p>
           <ul class="trust-row">
             <li>Schwerpunkt Sekundarabschluss</li>
             <li>Begleitung und Perspektive durch Bildung</li>
@@ -340,6 +341,12 @@ const jrsFacts = [
     margin: var(--sp-2) 0 0;
     color: var(--stone);
     font-size: var(--step--1);
+    line-height: 1.5;
+  }
+  .jrs-card__source {
+    margin: var(--sp-4) 0 0;
+    color: var(--stone);
+    font-size: var(--step--2);
     line-height: 1.5;
   }
 </style>

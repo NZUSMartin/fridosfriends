@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import CTABand from '../../components/CTABand.astro';
+
+const facts = [
+  { dt: 'Legal form', dd: 'Charitable registered association (gemeinnütziger e.V.)' },
+  { dt: 'Court of registration', dd: 'Amtsgericht Köln' },
+  { dt: 'Register number', dd: 'VR __________  (to be added)' },
+  { dt: 'Founded', dd: '15 August 2025' },
+];
+---
+
+<Layout title="Our promise" lang="en" path="/en/promise" spine="none">
+
+  <!-- (a) INTRO -->
+  <section class="section">
+    <div class="container container-text" data-reveal-group>
+      <Eyebrow text="Transparency" />
+      <h1 data-reveal>How we keep the 100% promise.</h1>
+      <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
+        100% of every donation flows into school scholarships for girls in Adjumani. Not one
+        euro of your donation goes into administration — this is not a marketing claim, it is
+        anchored in our statutes.
+      </p>
+      <p class="prose" style="margin-top:var(--sp-5);color:var(--stone)" data-reveal>
+        All administrative costs in Germany — bank fees, register costs, travel — are covered
+        privately by the founding members. This is written into our statutes. We have no
+        administrative costs in Germany that would need to be funded from donations. It is
+        precisely this clarity that lets us make a promise larger organisations can rarely
+        give.
+      </p>
+    </div>
+  </section>
+
+  <!-- (b) FACTS -->
+  <section class="band band-pure section">
+    <div class="container container-text" data-reveal-group>
+      <div class="section-head" data-reveal>
+        <Eyebrow text="The association in figures" />
+        <h2>Who we are, legally.</h2>
+      </div>
+
+      <dl class="facts" data-reveal>
+        {facts.map((f) => (
+          <div class="facts__row">
+            <dt>{f.dt}</dt>
+            <dd>{f.dd}</dd>
+          </div>
+        ))}
+        <div class="facts__row">
+          <dt>Statutes</dt>
+          <dd>
+            <a class="link-tertiary" href="/satzung.pdf" target="_blank" rel="noopener">Download the statutes (PDF)</a>
+          </dd>
+        </div>
+      </dl>
+
+      <p class="prose" style="color:var(--stone);margin-top:var(--sp-6)" data-reveal>
+        We will publish our first accountability report in January 2027. What we promise, you
+        will then be able to verify — openly and without gloss.
+      </p>
+    </div>
+  </section>
+
+  <!-- (c) CTA -->
+  <CTABand
+    eyebrow="Get involved"
+    heading="Trust you can verify."
+    text="Become a member — and give a girl the security of a whole school year. One scholarship costs around €800 per year."
+    primaryHref="/en/donate"
+    primaryLabel="Get involved"
+  />
+
+</Layout>
+
+<style>
+  /* Page-local layout only — uses existing design tokens (var(--...)). */
+  .facts {
+    margin: var(--sp-6) 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .facts__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-1);
+    padding: var(--sp-4) 0;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 768px) {
+    .facts__row {
+      grid-template-columns: 220px 1fr;
+      gap: var(--sp-5);
+      align-items: baseline;
+    }
+  }
+  .facts dt {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--stone);
+  }
+  .facts dd {
+    margin: 0;
+    color: var(--ink);
+  }
+</style>

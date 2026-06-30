@@ -59,6 +59,9 @@ const nav = isEn ? navEn : navDe;
         <ul>
           {nav.map((item) => (<li><a href={item.href}>{item.label}</a></li>))}
           <li>
+            <a href={isEn ? '/en/promise' : '/versprechen'}>{isEn ? 'Our promise' : 'Unser Versprechen'}</a>
+          </li>
+          <li>
             <a href={isEn ? '/en/imprint' : '/impressum'}>{isEn ? 'Imprint' : 'Impressum'}</a>
           </li>
           <li>

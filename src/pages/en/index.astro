@@ -7,6 +7,8 @@ import PhotoBreak from '../../components/PhotoBreak.astro';
 import PromiseBand from '../../components/PromiseBand.astro';
 import CTABand from '../../components/CTABand.astro';
 import MembershipCalculator from '../../components/MembershipCalculator.astro';
+import ProgressThermometer from '../../components/ProgressThermometer.astro';
+import { FUNDING } from '../../consts';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 
@@ -32,7 +34,7 @@ const multiplier = [
   {
     num: '3–6',
     title: 'Children per woman',
-    body: 'Every educated woman directly influences three to six children — through what she passes on, earns and lives by.',
+    body: 'Every educated woman directly influences three to six children — through what she passes on, earns and lives by (illustrative projection).',
   },
   {
     num: '~40',
@@ -61,7 +63,7 @@ const multiplier = [
             northern Uganda — together with the Jesuit Refugee Service and in the spirit of
             Father Frido Pflüger. When you support one girl, you support a whole community.
           </p>
-          <p class="hero__cost" data-reveal><b>€800</b> = a full school year for one girl.</p>
+          <p class="hero__cost" data-reveal>Every gift counts — a full school year costs about <b>€800</b>.</p>
           <div class="btn-row" data-reveal>
             <a class="btn btn--primary" href="/en/donate">Get involved</a>
             <a class="btn btn--secondary" href="#how-it-works">Learn more</a>
@@ -98,7 +100,24 @@ const multiplier = [
         <Stat figure="100%" countTo={100} suffix="%" label="stay in school" />
         <Stat figure="€800" label="fund one school year" />
       </div>
-      <p class="caption" style="margin-top:var(--sp-5)" data-reveal>As of school year 2024/25</p>
+      <p class="caption" style="margin-top:var(--sp-5)" data-reveal>
+        We primarily support girls, but occasionally also include particularly gifted boys.
+        <br />As of school year 2024/25
+      </p>
+    </div>
+  </section>
+
+  <!-- 3b. FUNDING TARGET — THERMOMETER -->
+  <section class="section">
+    <div class="container" data-reveal>
+      <ProgressThermometer
+        lang="en"
+        raised={FUNDING.raised}
+        goal={FUNDING.goal}
+        year={FUNDING.year}
+        asof={FUNDING.asof}
+        sheetUrl={FUNDING.sheetUrl}
+      />
     </div>
   </section>
 
@@ -154,7 +173,7 @@ const multiplier = [
       </div>
       <p class="caption" style="margin-top:var(--sp-5)" data-reveal>
         Numbers shown as an illustrative projection. In the Adjumani region, JRS-associated
-        girls' education has reached around 30,000 girls over the years.
+        girls' education has reached around 30,000 girls over the years (source: JRS).
       </p>
     </div>
   </section>

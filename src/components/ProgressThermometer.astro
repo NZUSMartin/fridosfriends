@@ -1,57 +1,62 @@
 ---
 /**
- * ProgressThermometer.astro — funding-progress bar for the current year's target.
- * Elegant horizontal "thermometer": gold fill on a track, with raised / goal labels.
- * Donations may exceed the goal (fill caps at 100%, label shows the real figures).
+ * ProgressThermometer.astro — funding-progress bar for the year's target.
+ * Renders build-time figures; if a published Google-Sheet CSV URL is passed via
+ * `sheetUrl`, it fetches live on page load and updates WITHOUT a rebuild.
  *
- * Props:
- *   lang    'de' | 'en'  — language (default 'de')
- *   raised  number       — amount raised so far in EUR
- *   goal    number       — target for the year in EUR
- *   year    number       — the funding year
+ * Props: lang, raised, goal, year, asof, sheetUrl
  */
-interface Props { lang?: 'de' | 'en'; raised?: number; goal?: number; year?: number; }
-const { lang = 'de', raised = 25450, goal = 30000, year = 2026 } = Astro.props;
+interface Props { lang?: 'de' | 'en'; raised?: number; goal?: number; year?: number; asof?: string; sheetUrl?: string; }
+const { lang = 'de', raised = 25450, goal = 30000, year = 2026, asof = '', sheetUrl = '' } = Astro.props;
 const isEn = lang === 'en';
 const pct = goal > 0 ? Math.round((raised / goal) * 100) : 0;
 const fill = Math.min(100, pct);
 const fmt = (n: number) => new Intl.NumberFormat(isEn ? 'en-GB' : 'de-DE').format(n);
-
 const t = isEn
-  ? {
-      eyebrow: `Funding target ${year}`,
-      heading: 'Where we stand',
-      raised: 'raised so far',
-      goal: 'target',
-      reached: `${pct}% reached`,
-      note: 'Every contribution moves the bar — and donations may exceed the target.',
-    }
-  : {
-      eyebrow: `Förderziel ${year}`,
-      heading: 'Wo wir stehen',
-      raised: 'bereits gesammelt',
-      goal: 'Ziel',
-      reached: `${pct}% erreicht`,
-      note: 'Jeder Beitrag bewegt den Balken — und Spenden dürfen das Ziel übertreffen.',
-    };
+  ? { eyebrow: `Funding target ${year}`, goal: 'target', reached: `${pct}% reached`, asof: 'As of', note: 'Every gift moves the bar — and donations may exceed the target.' }
+  : { eyebrow: `Förderziel ${year}`, goal: 'Ziel', reached: `${pct}% erreicht`, asof: 'Stand', note: 'Jeder Beitrag bewegt den Balken — und Spenden dürfen das Ziel übertreffen.' };
 ---
-<div class="thermo card">
+<div class="thermo card" data-thermo data-sheet={sheetUrl} data-lang={lang} data-goal={goal}>
   <p class="eyebrow">{t.eyebrow}</p>
   <div class="thermo__figures">
-    <span class="thermo__raised">{fmt(raised)}&nbsp;€</span>
-    <span class="thermo__goal">/ {fmt(goal)}&nbsp;€ {t.goal}</span>
+    <span class="thermo__raised" data-thermo-raised set:html={`${fmt(raised)}&nbsp;€`}></span>
+    <span class="thermo__goal" data-thermo-goal set:html={`/ ${fmt(goal)}&nbsp;€ ${t.goal}`}></span>
   </div>
-  <div
-    class="thermo__track"
-    role="progressbar"
-    aria-valuenow={raised}
-    aria-valuemin={0}
-    aria-valuemax={goal}
-    aria-label={`${t.eyebrow}: ${fmt(raised)} € / ${fmt(goal)} €`}
-  >
-    <div class="thermo__fill" style={`width:${fill}%`}>
-      <span class="thermo__pct">{t.reached}</span>
+  <div class="thermo__track" role="progressbar" data-thermo-track
+       aria-valuenow={raised} aria-valuemin={0} aria-valuemax={goal}
+       aria-label={`${t.eyebrow}: ${fmt(raised)} € / ${fmt(goal)} €`}>
+    <div class="thermo__fill" data-thermo-fill style={`width:${fill}%`}>
+      <span class="thermo__pct" data-thermo-pct>{t.reached}</span>
     </div>
   </div>
-  <p class="caption thermo__note">{t.note}</p>
+  <p class="caption thermo__note">{asof ? `${t.asof}: ${asof} · ` : ''}{t.note}</p>
 </div>
+
+<script>
+  document.querySelectorAll('[data-thermo]').forEach(async (el) => {
+    const url = el.getAttribute('data-sheet');
+    if (!url) return;
+    const en = el.getAttribute('data-lang') === 'en';
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) return;
+      const txt = await res.text();
+      const rows = txt.trim().split(/\r?\n/).map((l) => l.split(',').map((c) => c.replace(/^"|"$/g, '').trim()));
+      const row = rows.find((c) => isFinite(parseFloat(c[0])));
+      if (!row) return;
+      const raised = parseFloat(row[0]);
+      const goal = parseFloat(row[1]) || parseFloat(el.getAttribute('data-goal') || '0');
+      if (!isFinite(raised) || !isFinite(goal) || goal <= 0) return;
+      const fmt = new Intl.NumberFormat(en ? 'en-GB' : 'de-DE');
+      const pct = Math.round((raised / goal) * 100);
+      const fill = Math.min(100, pct);
+      (el.querySelector('[data-thermo-raised]') as HTMLElement).innerHTML = fmt.format(raised) + '&nbsp;€';
+      (el.querySelector('[data-thermo-goal]') as HTMLElement).innerHTML = '/ ' + fmt.format(goal) + '&nbsp;€ ' + (en ? 'target' : 'Ziel');
+      (el.querySelector('[data-thermo-fill]') as HTMLElement).style.width = fill + '%';
+      (el.querySelector('[data-thermo-pct]') as HTMLElement).textContent = pct + '% ' + (en ? 'reached' : 'erreicht');
+      const tr = el.querySelector('[data-thermo-track]') as HTMLElement;
+      tr.setAttribute('aria-valuenow', String(raised));
+      tr.setAttribute('aria-valuemax', String(goal));
+    } catch (e) { /* keep build-time figures on any error */ }
+  });
+</script>

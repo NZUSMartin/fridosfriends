@@ -1,17 +1,15 @@
 ---
 /**
- * MembershipForm.astro — the real "Mitgliedschaft by email" flow.
- * A Netlify Form (static, no backend): amount + interval + name + email + message,
- * submitted to the Vorstand (vorstand@fridosfriends.de via Netlify notification),
- * redirecting to a thank-you page. Honeypot for spam. Teal primary submit.
+ * MembershipForm.astro — the "Mitgliedschaft by email" flow.
+ * Netlify Form (no backend): amount + interval + name + email + message + report opt-in,
+ * submitted to the Vorstand. Progressive enhancement: AJAX submit shows an instant
+ * inline confirmation; without JS it falls back to a POST → thank-you page.
  *
- * Props:
- *   lang  'de' | 'en'  — language (default 'de')
+ * Props: lang 'de' | 'en'
  */
 interface Props { lang?: 'de' | 'en'; }
 const { lang = 'de' } = Astro.props;
 const isEn = lang === 'en';
-
 const formName = isEn ? 'membership-en' : 'mitgliedschaft-de';
 const thanks = isEn ? '/en/thanks/' : '/danke/';
 
@@ -29,104 +27,108 @@ const impacts = isEn ? impactEn : impactDe;
 
 const t = isEn
   ? {
-      legend: 'Become a member — monthly',
-      amountLabel: 'Monthly contribution',
+      legend: 'Become a member — monthly', amountLabel: 'Monthly contribution',
       name: 'Name', email: 'Email',
       emailNote: 'Please add your email — we would love to send you a donation receipt.',
       interval: 'Interval', monthly: 'monthly', yearly: 'yearly',
       message: 'Message (optional)',
+      optin: 'Yes, please send me the annual report and updates on the girls.',
       submit: 'Send membership application',
       followup: 'We get back to you within 24–48 hours with the membership form and SEPA mandate.',
       direct: 'Or write to us directly:',
       minimum: 'Statutory minimum contribution: €50/year.',
       trust: ['Registered charity', '100% promise', 'Tax receipt', 'Partner JRS'],
+      successEyebrow: 'Application received',
+      success: 'Thank you! Your application has reached us — the board will be in touch personally within 24–48 hours with the membership form and SEPA mandate.',
     }
   : {
-      legend: 'Mitglied werden — monatlich',
-      amountLabel: 'Monatlicher Beitrag',
+      legend: 'Mitglied werden — monatlich', amountLabel: 'Monatlicher Beitrag',
       name: 'Name', email: 'E-Mail',
       emailNote: 'Bitte E-Mail angeben — wir würden Ihnen sehr gerne eine Spendenquittung zukommen lassen.',
       interval: 'Intervall', monthly: 'monatlich', yearly: 'jährlich',
       message: 'Nachricht (optional)',
+      optin: 'Ja, bitte senden Sie mir den Jahresbericht und Updates zu den Mädchen.',
       submit: 'Mitgliedsantrag absenden',
       followup: 'Wir melden uns innerhalb von 24–48 Stunden mit Beitrittserklärung und SEPA-Mandat.',
       direct: 'Oder schreiben Sie uns direkt:',
       minimum: 'Satzungsgemäßer Mindestbeitrag: 50 €/Jahr.',
       trust: ['Gemeinnützigkeit', '100 %-Versprechen', 'Spendenquittung', 'Partner JRS'],
+      successEyebrow: 'Antrag eingegangen',
+      success: 'Vielen Dank! Ihr Mitgliedsantrag ist eingegangen — der Vorstand meldet sich innerhalb von 24–48 Stunden persönlich bei Ihnen, mit Beitrittserklärung und SEPA-Mandat.',
     };
 ---
-<form
-  class="calc card membership-form"
-  name={formName}
-  method="POST"
-  action={thanks}
-  data-netlify="true"
-  netlify-honeypot="bot-field"
-  data-donate
-  aria-label={t.legend}
->
-  <input type="hidden" name="form-name" value={formName} />
-  <p class="hp" hidden aria-hidden="true">
-    <label>{isEn ? 'Leave this field empty' : 'Dieses Feld bitte leer lassen'}: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
-  </p>
+<div class="membership-block">
+  <form
+    class="calc card membership-form"
+    name={formName}
+    method="POST"
+    action={thanks}
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    data-donate
+    aria-label={t.legend}
+  >
+    <input type="hidden" name="form-name" value={formName} />
+    <p class="hp" hidden aria-hidden="true">
+      <label>{isEn ? 'Leave this field empty' : 'Dieses Feld bitte leer lassen'}: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+    </p>
 
-  <fieldset>
-    <legend class="eyebrow">{t.legend}</legend>
-    <div class="calc__tiers" role="radiogroup" aria-label={t.amountLabel}>
-      <label class="tier">
-        <input type="radio" name="betrag" value="25" />
-        <span>25&nbsp;€</span>
+    <fieldset>
+      <legend class="eyebrow">{t.legend}</legend>
+      <div class="calc__tiers" role="radiogroup" aria-label={t.amountLabel}>
+        <label class="tier"><input type="radio" name="betrag" value="25" /><span>25&nbsp;€</span></label>
+        <label class="tier tier--featured"><input type="radio" name="betrag" value="75" checked /><span>75&nbsp;€</span></label>
+        <label class="tier"><input type="radio" name="betrag" value="100" /><span>100&nbsp;€</span></label>
+      </div>
+      <p class="calc__impact" aria-live="polite" data-impact>{impacts['75']}</p>
+    </fieldset>
+
+    <div class="field-grid">
+      <label class="field">
+        <span>{t.name}</span>
+        <input type="text" name="name" required autocomplete="name" />
       </label>
-      <label class="tier tier--featured">
-        <input type="radio" name="betrag" value="75" checked />
-        <span>75&nbsp;€</span>
-      </label>
-      <label class="tier">
-        <input type="radio" name="betrag" value="100" />
-        <span>100&nbsp;€</span>
+      <label class="field">
+        <span>{t.email}</span>
+        <input type="email" name="email" required autocomplete="email" />
+        <small class="field-note">{t.emailNote}</small>
       </label>
     </div>
-    <p class="calc__impact" aria-live="polite" data-impact>{impacts['75']}</p>
-  </fieldset>
 
-  <div class="field-grid">
     <label class="field">
-      <span>{t.name}</span>
-      <input type="text" name="name" required autocomplete="name" />
+      <span>{t.interval}</span>
+      <select name="intervall">
+        <option value="monatlich">{t.monthly}</option>
+        <option value="jaehrlich">{t.yearly}</option>
+      </select>
     </label>
+
     <label class="field">
-      <span>{t.email}</span>
-      <input type="email" name="email" required autocomplete="email" />
-      <small class="field-note">{t.emailNote}</small>
+      <span>{t.message}</span>
+      <textarea name="nachricht" rows="3"></textarea>
     </label>
+
+    <label class="field-check">
+      <input type="checkbox" name="newsletter" value="ja" />
+      <span>{t.optin}</span>
+    </label>
+
+    <button type="submit" class="btn btn--primary membership-form__submit">{t.submit}</button>
+
+    <p class="calc__secondary">
+      {t.followup}<br />
+      {t.direct} <a class="link-tertiary" href="mailto:vorstand@fridosfriends.de">vorstand@fridosfriends.de</a>
+    </p>
+
+    <ul class="trust-row">{t.trust.map((x) => (<li>{x}</li>))}</ul>
+    <p class="caption">{t.minimum}</p>
+  </form>
+
+  <div class="form-success card" data-form-success hidden tabindex="-1" role="status" aria-live="polite">
+    <p class="eyebrow">{t.successEyebrow}</p>
+    <p style="margin-top:var(--sp-3)">{t.success}</p>
   </div>
-
-  <label class="field">
-    <span>{t.interval}</span>
-    <select name="intervall">
-      <option value="monatlich">{t.monthly}</option>
-      <option value="jaehrlich">{t.yearly}</option>
-    </select>
-  </label>
-
-  <label class="field">
-    <span>{t.message}</span>
-    <textarea name="nachricht" rows="3"></textarea>
-  </label>
-
-  <button type="submit" class="btn btn--primary membership-form__submit">{t.submit}</button>
-
-  <p class="calc__secondary">
-    {t.followup}<br />
-    {t.direct} <a class="link-tertiary" href="mailto:vorstand@fridosfriends.de">vorstand@fridosfriends.de</a>
-  </p>
-
-  <ul class="trust-row">
-    {t.trust.map((x) => (<li>{x}</li>))}
-  </ul>
-
-  <p class="caption">{t.minimum}</p>
-</form>
+</div>
 
 <script is:inline define:vars={{ impacts }}>
   document.querySelectorAll('.membership-form[data-donate]').forEach((form) => {
@@ -135,6 +137,24 @@ const t = isEn
       input.addEventListener('change', () => {
         if (out && impacts[input.value]) out.textContent = impacts[input.value];
       });
+    });
+  });
+</script>
+
+<script>
+  document.querySelectorAll('.membership-form').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = form as HTMLFormElement;
+      const data = new URLSearchParams(new FormData(f) as any);
+      fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: data.toString() })
+        .then((r) => {
+          if (!r.ok) throw new Error('submit failed');
+          const ok = f.parentElement?.querySelector('[data-form-success]') as HTMLElement | null;
+          f.hidden = true;
+          if (ok) { ok.hidden = false; ok.focus(); ok.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        })
+        .catch(() => { f.submit(); }); // no-JS / error fallback → normal POST to the thank-you page
     });
   });
 </script>

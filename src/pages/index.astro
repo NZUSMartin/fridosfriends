@@ -7,6 +7,8 @@ import PhotoBreak from '../components/PhotoBreak.astro';
 import PromiseBand from '../components/PromiseBand.astro';
 import CTABand from '../components/CTABand.astro';
 import MembershipCalculator from '../components/MembershipCalculator.astro';
+import ProgressThermometer from '../components/ProgressThermometer.astro';
+import { FUNDING } from '../consts';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 
@@ -32,7 +34,7 @@ const multiplier = [
   {
     num: '3–6',
     title: 'Kinder pro Frau',
-    body: 'Jede ausgebildete Frau beeinflusst direkt drei bis sechs Kinder — durch das, was sie weitergibt, verdient und vorlebt.',
+    body: 'Jede ausgebildete Frau beeinflusst direkt drei bis sechs Kinder — durch das, was sie weitergibt, verdient und vorlebt (illustrative Projektion).',
   },
   {
     num: '~40',
@@ -61,7 +63,7 @@ const multiplier = [
             Norduganda — gemeinsam mit dem Jesuit Refugee Service und im Sinne von Pater Frido
             Pflüger. Wenn Sie ein Mädchen fördern, fördern Sie eine ganze Gemeinschaft.
           </p>
-          <p class="hero__cost" data-reveal><b>800 €</b> = ein ganzes Schuljahr für ein Mädchen.</p>
+          <p class="hero__cost" data-reveal>Jede Spende zählt — ein ganzes Schuljahr kostet rund <b>800 €</b>.</p>
           <div class="btn-row" data-reveal>
             <a class="btn btn--primary" href="/mitmachen">Mitmachen</a>
             <a class="btn btn--secondary" href="#so-funktioniert-es">Mehr erfahren</a>
@@ -98,7 +100,24 @@ const multiplier = [
         <Stat figure="100%" countTo={100} suffix="%" label="bleiben in der Schule" />
         <Stat figure="800 €" label="finanzieren ein Schuljahr" />
       </div>
-      <p class="caption" style="margin-top:var(--sp-5)" data-reveal>Stand: Schuljahr 2024/25</p>
+      <p class="caption" style="margin-top:var(--sp-5)" data-reveal>
+        Wir fördern vorrangig Mädchen, beziehen aber gelegentlich auch besonders begabte Jungen ein.
+        <br />Stand: Schuljahr 2024/25
+      </p>
+    </div>
+  </section>
+
+  <!-- 3b. FÖRDERZIEL — THERMOMETER -->
+  <section class="section">
+    <div class="container" data-reveal>
+      <ProgressThermometer
+        lang="de"
+        raised={FUNDING.raised}
+        goal={FUNDING.goal}
+        year={FUNDING.year}
+        asof={FUNDING.asof}
+        sheetUrl={FUNDING.sheetUrl}
+      />
     </div>
   </section>
 
@@ -154,7 +173,7 @@ const multiplier = [
       </div>
       <p class="caption" style="margin-top:var(--sp-5)" data-reveal>
         Zahlen als illustrative Projektion. Im Raum Adjumani hat JRS-nahe Mädchenbildung über
-        die Jahre rund 30.000 Mädchen erreicht.
+        die Jahre rund 30.000 Mädchen erreicht (Quelle: JRS).
       </p>
     </div>
   </section>
