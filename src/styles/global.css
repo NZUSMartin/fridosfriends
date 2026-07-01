@@ -786,7 +786,7 @@ figcaption, .caption {
 .form-success { border-left: 4px solid var(--teal); }
 
 /* left-aligned, tight QR caption */
-.qr-note { text-align: left; font-size: var(--step--1); line-height: 1.4; color: var(--stone); max-width: 34ch; margin-top: var(--sp-3); }
+.qr-note { text-align: left; font-size: var(--step--1); line-height: 1.4; color: var(--stone); width: 180px; max-width: 100%; margin-top: var(--sp-3); }
 
 /* a give-method: a button with its payment logo beside it */
 .pay-row { display: flex; align-items: center; gap: var(--sp-4); }
