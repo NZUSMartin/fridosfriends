@@ -115,7 +115,7 @@
 
   /* ----- Spine (continuity line) ----- */
   --spine-x:        64px;
-  --spine-x-mobile: 20px;
+  --spine-x-mobile: 8px;
   --spine-w:        1px;
   --spine-w-active: 2px;
 
