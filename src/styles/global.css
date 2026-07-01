@@ -789,6 +789,12 @@ figcaption, .caption {
 .qr-note { text-align: left; font-size: var(--step--1); line-height: 1.4; color: var(--stone); max-width: 34ch; margin-top: var(--sp-3); }
 
 /* a give-method: a button with its payment logo beside it */
-.pay-row { display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap; }
-.pay-row .btn { flex: 0 1 auto; }
-.pay-row .pay-badge { flex: 0 0 auto; }
+.pay-row { display: flex; align-items: center; gap: var(--sp-4); }
+.pay-row .btn { flex: 1 1 0; text-align: center; }
+.pay-row .pay-badge { flex: 0 0 auto; width: 140px; justify-content: center; padding: 8px 10px; }
+.pay-row .pay-badge img { height: auto; width: auto; max-width: 100%; max-height: 24px; }
+@media (max-width: 520px) {
+  .pay-row { flex-wrap: wrap; }
+  .pay-row .btn { flex: 1 1 100%; }
+  .pay-row .pay-badge { margin: 0 auto; }
+}
