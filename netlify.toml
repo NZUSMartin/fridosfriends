@@ -16,8 +16,8 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Images may be swapped occasionally — cache for a day.
+# Images may be swapped occasionally — short cache so updates appear quickly.
 [[headers]]
   for = "/images/*"
   [headers.values]
-    Cache-Control = "public, max-age=86400"
+    Cache-Control = "public, max-age=3600"
