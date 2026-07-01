@@ -798,3 +798,8 @@ figcaption, .caption {
   .pay-row .btn { flex: 1 1 100%; }
   .pay-row .pay-badge { margin: 0 auto; }
 }
+
+/* Further founding members — single box, names in the board serif font */
+.founders-more { margin-top: var(--sp-6); }
+.founders-list { list-style: none; margin: var(--sp-4) 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--sp-4); }
+.founders-list li { font-family: var(--font-serif); font-weight: 600; font-size: var(--step-1); color: var(--ink); }
