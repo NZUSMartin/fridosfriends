@@ -16,7 +16,6 @@ interface Props { lang?: 'de' | 'en'; ctaHref?: string; }
 const { lang = 'de', ctaHref } = Astro.props;
 const isEn = lang === 'en';
 
-const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 const joinHref = ctaHref ?? (isEn ? '/en/donate' : '/mitmachen');
 
 const impactDe: Record<string, string> = {
@@ -55,11 +54,6 @@ const trust = isEn
   </fieldset>
 
   <a class="btn btn--primary" href={joinHref} data-join>{isEn ? 'Become a member' : 'Mitglied werden'}</a>
-
-  <p class="calc__secondary">
-    {isEn ? 'Prefer a one-off gift? ' : 'Lieber einmalig? '}
-    <a class="link-tertiary" href={betterplace} rel="noopener" target="_blank">{isEn ? 'Donate now →' : 'Jetzt spenden →'}</a>
-  </p>
 
   <ul class="trust-row">
     {trust.map((t) => (<li>{t}</li>))}
