@@ -13,8 +13,8 @@ const pct = goal > 0 ? Math.round((raised / goal) * 100) : 0;
 const fill = Math.min(100, pct);
 const fmt = (n: number) => new Intl.NumberFormat(isEn ? 'en-GB' : 'de-DE').format(n);
 const t = isEn
-  ? { eyebrow: `Funding target ${year}`, goal: 'target', reached: `${pct}% reached`, asof: 'As of', note: 'Every gift moves the bar — and donations may exceed the target.' }
-  : { eyebrow: `Förderziel ${year}`, goal: 'Ziel', reached: `${pct}% erreicht`, asof: 'Stand', note: 'Jeder Beitrag bewegt den Balken — und Spenden dürfen das Ziel übertreffen.' };
+  ? { eyebrow: `Funding target ${year}`, goal: 'target', reached: `${pct}% reached`, asof: 'As of', note: 'Every gift moves the bar.' }
+  : { eyebrow: `Förderziel ${year}`, goal: 'Ziel', reached: `${pct}% erreicht`, asof: 'Stand', note: 'Jeder Beitrag bewegt den Balken.' };
 ---
 <div class="thermo card" data-thermo data-sheet={sheetUrl} data-lang={lang} data-goal={goal}>
   <p class="eyebrow">{t.eyebrow}</p>
