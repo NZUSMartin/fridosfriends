@@ -6,7 +6,7 @@ import CTABand from '../../components/CTABand.astro';
 const facts = [
   { dt: 'Legal form', dd: 'Charitable registered association (gemeinnütziger e.V.)' },
   { dt: 'Court of registration', dd: 'Amtsgericht Köln' },
-  { dt: 'Register number', dd: 'VR __________  (to be added)' },
+  { dt: 'Register number', dd: 'VR 22446' },
   { dt: 'Founded', dd: '15 August 2025' },
 ];
 ---
@@ -48,12 +48,6 @@ const facts = [
             <dd>{f.dd}</dd>
           </div>
         ))}
-        <div class="facts__row">
-          <dt>Statutes</dt>
-          <dd>
-            <a class="link-tertiary" href="/satzung.pdf" target="_blank" rel="noopener">Download the statutes (PDF)</a>
-          </dd>
-        </div>
       </dl>
 
       <p class="prose" style="color:var(--stone);margin-top:var(--sp-6)" data-reveal>
