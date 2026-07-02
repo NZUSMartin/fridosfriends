@@ -16,7 +16,7 @@ const t = isEn
   ? { eyebrow: `Funding target ${year}`, goal: 'target', reached: `${pct}% reached`, asof: 'As of', note: 'Every gift moves the bar.' }
   : { eyebrow: `Förderziel ${year}`, goal: 'Ziel', reached: `${pct}% erreicht`, asof: 'Stand', note: 'Jeder Beitrag bewegt den Balken.' };
 ---
-<div class="thermo card" data-thermo data-sheet={sheetUrl} data-lang={lang} data-goal={goal}>
+<div class="thermo card" data-thermo data-sheet={sheetUrl} data-lang={lang} data-goal={goal} data-year={year}>
   <p class="eyebrow">{t.eyebrow}</p>
   <div class="thermo__figures">
     <span class="thermo__raised" data-thermo-raised set:html={`${fmt(raised)}&nbsp;€`}></span>
@@ -29,7 +29,7 @@ const t = isEn
       <span class="thermo__pct" data-thermo-pct>{t.reached}</span>
     </div>
   </div>
-  <p class="caption thermo__note">{asof ? `${t.asof}: ${asof} · ` : ''}{t.note}</p>
+  <p class="caption thermo__note"><span data-thermo-asof>{asof ? `${t.asof}: ${asof} · ` : ''}</span>{t.note}</p>
 </div>
 
 <script>
@@ -37,15 +37,40 @@ const t = isEn
     const url = el.getAttribute('data-sheet');
     if (!url) return;
     const en = el.getAttribute('data-lang') === 'en';
+    const wantYear = el.getAttribute('data-year');
+
+    // Split one CSV line, respecting double-quoted fields (values may contain commas).
+    const splitCsv = (line: string): string[] => {
+      const out: string[] = []; let cur = '', q = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') { if (q && line[i + 1] === '"') { cur += '"'; i++; } else q = !q; }
+        else if (ch === ',' && !q) { out.push(cur); cur = ''; }
+        else cur += ch;
+      }
+      out.push(cur);
+      return out.map((c) => c.trim());
+    };
+    // German-formatted number -> Number:  "35.401,26" -> 35401.26 ,  "30.000" -> 30000
+    const num = (s: string): number => {
+      if (s == null) return NaN;
+      let t = String(s).replace(/[^\d.,-]/g, '');
+      if (t.indexOf(',') > -1) t = t.replace(/\./g, '').replace(',', '.');
+      else t = t.replace(/\.(?=\d{3}(?:\D|$))/g, '');
+      return parseFloat(t);
+    };
+
     try {
       const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) return;
       const txt = await res.text();
-      const rows = txt.trim().split(/\r?\n/).map((l) => l.split(',').map((c) => c.replace(/^"|"$/g, '').trim()));
-      const row = rows.find((c) => isFinite(parseFloat(c[0])));
+      const rows = txt.trim().split(/\r?\n/).map(splitCsv);
+      // Prefer the row whose year matches this thermometer; else the first row with a numeric amount.
+      let row = wantYear ? rows.find((c) => c[2] === wantYear && isFinite(num(c[0]))) : undefined;
+      if (!row) row = rows.find((c) => c[0] !== '' && !/[a-zA-Z]/.test(c[0]) && isFinite(num(c[0])));
       if (!row) return;
-      const raised = parseFloat(row[0]);
-      const goal = parseFloat(row[1]) || parseFloat(el.getAttribute('data-goal') || '0');
+      const raised = num(row[0]);
+      const goal = num(row[1]) || parseFloat(el.getAttribute('data-goal') || '0');
       if (!isFinite(raised) || !isFinite(goal) || goal <= 0) return;
       const fmt = new Intl.NumberFormat(en ? 'en-GB' : 'de-DE');
       const pct = Math.round((raised / goal) * 100);
@@ -57,6 +82,9 @@ const t = isEn
       const tr = el.querySelector('[data-thermo-track]') as HTMLElement;
       tr.setAttribute('aria-valuenow', String(raised));
       tr.setAttribute('aria-valuemax', String(goal));
+      const asof = row[3];
+      const asofEl = el.querySelector('[data-thermo-asof]') as HTMLElement | null;
+      if (asofEl && asof) asofEl.textContent = (en ? 'As of' : 'Stand') + ': ' + asof + ' · ';
     } catch (e) { /* keep build-time figures on any error */ }
   });
 </script>

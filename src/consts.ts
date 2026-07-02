@@ -5,14 +5,15 @@
  * thermometer updates live on every visit with NO rebuild needed.
  */
 export const FUNDING = {
-  raised: 25450,        // EUR raised so far (fallback if no live sheet)
+  raised: 2285,         // EUR raised in the current year (fallback if no live sheet)
   goal: 30000,          // EUR target for the year
   year: 2026,
-  asof: 'Juni 2026',    // "as of" stamp (fallback)
+  asof: 'Juli 2026',    // "as of" stamp (fallback; the live sheet's "Stand" column overrides it)
   // Published Google-Sheet CSV link (File → Share → Publish to web → CSV).
-  // First data row must be: raised,goal,year,asof   e.g.  25450,30000,2026,Juli 2026
+  // Columns: "Bisher gesammelt", "Ziel", "Jahr", "Stand", …  — one row per year; a header row is fine.
+  // German number format ("2.285,06") is fine. The row whose "Jahr" equals `year` above drives the bar.
   // Leave '' to use the fixed numbers above.
-  sheetUrl: '',
+  sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkXKBVSF_b8GISfrET7J01Ym7i6kJfBZ5tLXfBLxI-r6RtFb1kau-XTmwH0hyoEpZ7AzwV1zZP82CH/pub?output=csv',
 };
 
 export const BETTERPLACE =
