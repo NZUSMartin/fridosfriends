@@ -13,8 +13,8 @@ const pct = goal > 0 ? Math.round((raised / goal) * 100) : 0;
 const fill = Math.min(100, pct);
 const fmt = (n: number) => new Intl.NumberFormat(isEn ? 'en-GB' : 'de-DE').format(n);
 const t = isEn
-  ? { eyebrow: `Funding target ${year}`, goal: 'target', reached: `${pct}% reached`, asof: 'As of', note: 'Every gift moves the bar.' }
-  : { eyebrow: `Förderziel ${year}`, goal: 'Ziel', reached: `${pct}% erreicht`, asof: 'Stand', note: 'Jeder Beitrag bewegt den Balken.' };
+  ? { eyebrow: `Funding target ${year}`, goal: 'target', reached: `${pct}%`, asof: 'As of', note: 'Every gift moves the bar.' }
+  : { eyebrow: `Förderziel ${year}`, goal: 'Ziel', reached: `${pct}%`, asof: 'Stand', note: 'Jeder Beitrag bewegt den Balken.' };
 ---
 <div class="thermo card" data-thermo data-sheet={sheetUrl} data-lang={lang} data-goal={goal} data-year={year}>
   <p class="eyebrow">{t.eyebrow}</p>
@@ -78,7 +78,7 @@ const t = isEn
       (el.querySelector('[data-thermo-raised]') as HTMLElement).innerHTML = fmt.format(raised) + '&nbsp;€';
       (el.querySelector('[data-thermo-goal]') as HTMLElement).innerHTML = '/ ' + fmt.format(goal) + '&nbsp;€ ' + (en ? 'target' : 'Ziel');
       (el.querySelector('[data-thermo-fill]') as HTMLElement).style.width = fill + '%';
-      (el.querySelector('[data-thermo-pct]') as HTMLElement).textContent = pct + '% ' + (en ? 'reached' : 'erreicht');
+      (el.querySelector('[data-thermo-pct]') as HTMLElement).textContent = pct + '%';
       const tr = el.querySelector('[data-thermo-track]') as HTMLElement;
       tr.setAttribute('aria-valuenow', String(raised));
       tr.setAttribute('aria-valuemax', String(goal));
