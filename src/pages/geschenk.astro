@@ -1,9 +1,10 @@
 ---
 /**
- * /geschenk — Geschenk (gift-voucher) — POSITIONING TEST PAGE (unlinked).
- * Option 3: brand fonts (Source Serif 4 for names, Inter for the rest), no script.
- * One coordinate map (FIELDS) drives BOTH the live preview and the pdf-lib PDF.
- * Not linked from nav/home/footer yet — for review only.
+ * /geschenk — Geschenk (gift-voucher) — POSITIONING TEST (unlinked).
+ * ROBUST approach: render the voucher on a <canvas> (image + text with explicit
+ * pixel coords, textBaseline='top') — the SAME imperative drawing that was verified
+ * correct. The canvas IS the preview; the download is that canvas wrapped in one A4 PDF.
+ * No CSS-% positioning, no drawing onto the loaded template PDF. Option 3 = brand fonts.
  */
 import Layout from '../layouts/Layout.astro';
 import Eyebrow from '../components/Eyebrow.astro';
@@ -15,13 +16,12 @@ import Eyebrow from '../components/Eyebrow.astro';
         <Eyebrow text="Geschenk · Positionierungs-Test" />
         <h1>Bildung, die Deinen Namen trägt.</h1>
         <p class="prose" style="color:var(--stone);margin-top:var(--sp-3)">
-          Testseite (noch nicht verlinkt). Tippen Sie Namen &amp; Jahr — die Vorschau rechts
-          aktualisiert sich, und „Als PDF herunterladen" erzeugt den echten Vordruck.
+          Testseite (noch nicht verlinkt). Die Vorschau rechts ist eine Canvas-Zeichnung —
+          exakt das, was heruntergeladen wird. Tippen, Betrag wählen, „Als PDF herunterladen".
         </p>
       </div>
 
       <div class="gk">
-        <!-- FORM -->
         <div class="gk__form" data-reveal>
           <label class="gk__fld"><span>Name des/der Beschenkten</span>
             <input type="text" id="f-recipient" placeholder="z. B. Pater Muster" /></label>
@@ -34,22 +34,13 @@ import Eyebrow from '../components/Eyebrow.astro';
           <label class="gk__fld"><span>Oder freier Betrag (€)</span>
             <input type="text" id="f-free" inputmode="numeric" placeholder="z. B. 150" /></label>
           <button class="btn btn--primary" id="f-dl" style="width:100%;margin-top:var(--sp-4)">Als PDF herunterladen</button>
+          <button class="btn" id="f-png" style="width:100%;margin-top:var(--sp-2)">Als Bild (PNG) herunterladen</button>
           <p id="f-status" class="gk__status"></p>
         </div>
 
-        <!-- PREVIEW -->
         <div class="gk__previewcol" data-reveal>
-          <p class="gk__plabel">Live-Vorschau</p>
-          <div class="gk__frame" id="gk-frame">
-            <img src="/voucher/geschenk-preview.png" alt="Geschenk-Vorschau" id="gk-img" />
-            <span class="gk-ov" id="ov-recipient" data-k="recipient"></span>
-            <span class="gk-ov" id="ov-year" data-k="year"></span>
-            <span class="gk-ov" id="ov-giverBody" data-k="giverBody"></span>
-            <span class="gk-ov" id="ov-signature" data-k="signature"></span>
-            <span class="gk-ov" id="ov-amount" data-k="amount"></span>
-            <span class="gk-ov" id="ov-date" data-k="date"></span>
-            <span class="gk-ov" id="ov-footline" data-k="footline"></span>
-          </div>
+          <p class="gk__plabel">Live-Vorschau (Canvas)</p>
+          <canvas id="gk-canvas" class="gk__canvas"></canvas>
         </div>
       </div>
     </div>
@@ -69,104 +60,101 @@ import Eyebrow from '../components/Eyebrow.astro';
   .gk__status { font-size:var(--step--1); color:var(--stone); margin-top:var(--sp-3); min-height:1.2em; }
   .gk__previewcol { position:sticky; top:16px; }
   .gk__plabel { font-family:var(--font-sans); font-size:var(--step--1); font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--gold-text); text-align:center; margin-bottom:var(--sp-3); }
-  .gk__frame { position:relative; width:100%; max-width:460px; margin:0 auto; border-radius:var(--r-card); overflow:hidden; box-shadow:var(--shadow-lift); }
-  .gk__frame img { display:block; width:100%; height:auto; }
-  .gk-ov { position:absolute; line-height:1; white-space:nowrap; }
+  .gk__canvas { display:block; width:100%; max-width:460px; height:auto; margin:0 auto; border-radius:var(--r-card); box-shadow:var(--shadow-lift); }
 </style>
 
 <script>
-  const PAGE_W = 595.28, PAGE_H = 841.89;
-  // Single source of truth. x/y = fraction of page (y = TOP of text). sizePt = PDF points.
+  const PAGE_W = 595.28, PAGE_H = 841.89;               // A4 in points (for PDF wrap)
+  const IMG_W = 1054, IMG_H = 1492;                     // native template image size
+  const SCALE = 2;                                      // canvas render scale (crisper text/print)
+  const CW = IMG_W * SCALE, CH = IMG_H * SCALE;
+
+  // ONE map. x/y = fraction of page (y = TOP of text). sizeFrac = fraction of width.
   const FIELDS = {
-    recipient: { x:0.18,  y:0.188, align:'left',   kind:'serif',   sizePt:22.6, color:'gold' },
-    year:      { x:0.24,  y:0.246, align:'center', kind:'serif',   sizePt:15.0, color:'gold' },
-    giverBody: { x:0.115, y:0.318, align:'left',   kind:'sansBold',sizePt:8.3,  color:'gold' },
-    signature: { x:0.40,  y:0.680, align:'center', kind:'serif',   sizePt:19.6, color:'gold' },
-    amount:    { x:0.83,  y:0.618, align:'center', kind:'sansBold',sizePt:12.0, color:'gold' },
-    date:      { x:0.80,  y:0.693, align:'left',   kind:'sans',    sizePt:8.3,  color:'ink' },
-    footline:  { x:0.50,  y:0.718, align:'center', kind:'sans',    sizePt:6.0,  color:'grey' },
+    recipient: { x:0.18,  y:0.188, align:'left',   kind:'serif',    sizeFrac:0.0380, color:'gold' },
+    year:      { x:0.24,  y:0.246, align:'center', kind:'serif',    sizeFrac:0.0252, color:'gold' },
+    giverBody: { x:0.115, y:0.318, align:'left',   kind:'sansBold', sizeFrac:0.0139, color:'gold' },
+    signature: { x:0.40,  y:0.680, align:'center', kind:'serif',    sizeFrac:0.0329, color:'gold' },
+    amount:    { x:0.83,  y:0.618, align:'center', kind:'sansBold', sizeFrac:0.0202, color:'gold' },
+    date:      { x:0.80,  y:0.693, align:'left',   kind:'sans',     sizeFrac:0.0139, color:'ink' },
+    footline:  { x:0.50,  y:0.718, align:'center', kind:'sans',     sizeFrac:0.0101, color:'grey' },
   };
-  const COLORS = { gold:[168,120,28], ink:[55,53,49], grey:[120,116,107] };
-  const CSSFONT = { serif:'"Source Serif 4",Georgia,serif', sans:'"Inter",system-ui,sans-serif', sansBold:'"Inter",system-ui,sans-serif' };
+  const COLORS = { gold:'rgb(168,120,28)', ink:'rgb(55,53,49)', grey:'rgb(120,116,107)' };
+  const FONTDEF = { serif:'600 %PX% "Source Serif 4",Georgia,serif', sans:'400 %PX% "Inter",system-ui,sans-serif', sansBold:'600 %PX% "Inter",system-ui,sans-serif' };
   const FOOTLINE = 'Dies ist keine Spendenbescheinigung – bitte anfordern bei vorstand@fridosfriends.de';
 
-  const state = { recipient:'', year:'', giverBody:'', signature:'', amount:100 };
+  const state = { recipient:'', year:'', giver:'', amount:100 };
   const $ = (id) => document.getElementById(id);
   const euro = (n) => new Intl.NumberFormat('de-DE').format(n) + ' €';
   const today = () => new Date().toLocaleDateString('de-DE', { day:'numeric', month:'long', year:'numeric' });
+  const canvas = $('gk-canvas'); canvas.width = CW; canvas.height = CH;
+  const ctx = canvas.getContext('2d');
+  const tmpl = new Image(); let tmplReady = false;
+  tmpl.onload = () => { tmplReady = true; draw(); };
+  tmpl.src = '/voucher/geschenk-preview.png';
 
-  // tiers
   const TIERS = [25,50,100,200,800];
   const tc = $('f-tiers');
   TIERS.forEach((t) => {
     const el = document.createElement('div');
-    el.className = 'gk__tier' + (t===100?' sel':'');
-    el.textContent = t + ' €';
-    el.onclick = () => { $('f-free').value=''; state.amount=t; [...tc.children].forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); render(); };
+    el.className = 'gk__tier' + (t===100?' sel':''); el.textContent = t + ' €';
+    el.onclick = () => { $('f-free').value=''; state.amount=t; [...tc.children].forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); draw(); };
     tc.appendChild(el);
   });
-  $('f-free').addEventListener('input', (e) => { const v=parseInt((e.target.value||'').replace(/\D/g,''),10); [...tc.children].forEach(c=>c.classList.remove('sel')); if(v){ state.amount=v; render(); } });
-  $('f-recipient').addEventListener('input', (e)=>{ state.recipient=e.target.value; render(); });
-  $('f-year').addEventListener('input', (e)=>{ state.year=e.target.value; render(); });
-  $('f-giver').addEventListener('input', (e)=>{ state.giverBody=e.target.value; state.signature=e.target.value; render(); });
+  $('f-free').addEventListener('input', (e)=>{ const v=parseInt((e.target.value||'').replace(/\D/g,''),10); [...tc.children].forEach(c=>c.classList.remove('sel')); if(v){ state.amount=v; draw(); } });
+  $('f-recipient').addEventListener('input',(e)=>{ state.recipient=e.target.value; draw(); });
+  $('f-year').addEventListener('input',(e)=>{ state.year=e.target.value; draw(); });
+  $('f-giver').addEventListener('input',(e)=>{ state.giver=e.target.value; draw(); });
 
-  // ---- preview (uses the SAME FIELDS map) ----
   function textFor(k){
     if(k==='amount') return euro(state.amount);
     if(k==='date') return today();
     if(k==='footline') return FOOTLINE;
+    if(k==='giverBody'||k==='signature') return state.giver || '';
     return state[k] || '';
   }
-  function placeOverlay(el, f){
-    el.style.left = (f.x*100)+'%'; el.style.top = (f.y*100)+'%';
-    el.style.transform = f.align==='center' ? 'translateX(-50%)' : (f.align==='right' ? 'translateX(-100%)' : 'none');
-    el.style.fontFamily = CSSFONT[f.kind];
-    el.style.fontWeight = f.kind==='sansBold' ? '600' : (f.kind==='serif' ? '600' : '400');
-    const c = COLORS[f.color]; el.style.color = `rgb(${c[0]},${c[1]},${c[2]})`;
+  function draw(){
+    if(!tmplReady) return;
+    ctx.clearRect(0,0,CW,CH);
+    ctx.drawImage(tmpl, 0, 0, CW, CH);
+    ctx.textBaseline = 'top';
+    Object.keys(FIELDS).forEach((k)=>{
+      const f = FIELDS[k]; const txt = textFor(k); if(!txt) return;
+      const px = Math.round(f.sizeFrac * CW);
+      ctx.font = FONTDEF[f.kind].replace('%PX%', px + 'px');
+      ctx.textAlign = f.align; ctx.fillStyle = COLORS[f.color];
+      ctx.fillText(txt, f.x*CW, f.y*CH);
+    });
   }
-  function sizeOverlays(){
-    const fw = $('gk-frame').clientWidth || 460;
-    Object.keys(FIELDS).forEach((k)=>{ $('ov-'+k).style.fontSize = (FIELDS[k].sizePt / PAGE_W * fw) + 'px'; });
+  // wait for brand fonts before first paint, then draw
+  async function ready(){
+    try { await Promise.all([
+      document.fonts.load('600 80px "Source Serif 4"'),
+      document.fonts.load('600 40px "Inter"'),
+      document.fonts.load('400 40px "Inter"'),
+    ]); } catch(e){}
+    draw();
   }
-  function render(){
-    Object.keys(FIELDS).forEach((k)=>{ $('ov-'+k).textContent = textFor(k); placeOverlay($('ov-'+k), FIELDS[k]); });
-    sizeOverlays();
-  }
+  ready();
 
-  // ---- PDF (uses the SAME FIELDS map) ----
-  async function makePDF(){
+  function dl(blob, name){ const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); }
+
+  $('f-png').addEventListener('click', ()=>{ draw(); canvas.toBlob((b)=>{ dl(b,'Fridos-Friends-Geschenk.png'); $('f-status').textContent='Fertig — Bild (PNG) heruntergeladen.'; }, 'image/png'); });
+
+  $('f-dl').addEventListener('click', async ()=>{
     $('f-status').textContent = 'PDF wird erstellt …';
     try {
-      const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
-      const bytes = await fetch('/voucher/geschenk-template.pdf').then(r=>r.arrayBuffer());
-      const pdf = await PDFDocument.load(bytes);
-      const page = pdf.getPages()[0];
-      const { width:W, height:H } = page.getSize();
-      const fonts = {
-        serif: await pdf.embedFont(StandardFonts.TimesRoman),
-        sans: await pdf.embedFont(StandardFonts.Helvetica),
-        sansBold: await pdf.embedFont(StandardFonts.HelveticaBold),
-      };
-      Object.keys(FIELDS).forEach((k)=>{
-        const f = FIELDS[k]; const txt = textFor(k); if(!txt) return;
-        const font = fonts[f.kind]; const size = f.sizePt;
-        const tw = font.widthOfTextAtSize(txt, size);
-        let x = f.x*W; if(f.align==='center') x-=tw/2; else if(f.align==='right') x-=tw;
-        const y = H - (f.y*H + size*0.72);
-        const c = COLORS[f.color];
-        page.drawText(txt, { x, y, size, font, color: rgb(c[0]/255,c[1]/255,c[2]/255) });
-      });
+      draw();
+      const png = await new Promise((res)=>canvas.toBlob(res,'image/png'));
+      const bytes = new Uint8Array(await png.arrayBuffer());
+      const { PDFDocument } = await import('pdf-lib');
+      const pdf = await PDFDocument.create();                 // NEW doc — 1 page only
+      const page = pdf.addPage([PAGE_W, PAGE_H]);
+      const img = await pdf.embedPng(bytes);
+      page.drawImage(img, { x:0, y:0, width:PAGE_W, height:PAGE_H });
       const out = await pdf.save();
-      const blob = new Blob([out], { type:'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download='Fridos-Friends-Geschenk.pdf';
-      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 4000);
-      $('f-status').textContent = 'Fertig — PDF heruntergeladen.';
+      dl(new Blob([out], { type:'application/pdf' }), 'Fridos-Friends-Geschenk.pdf');
+      $('f-status').textContent = 'Fertig — PDF (1 Seite) heruntergeladen.';
     } catch(err){ $('f-status').textContent = 'Fehler: ' + (err && err.message ? err.message : err); }
-  }
-  $('f-dl').addEventListener('click', makePDF);
-
-  const img = $('gk-img'); if(img.complete) sizeOverlays(); img.addEventListener('load', sizeOverlays);
-  window.addEventListener('resize', sizeOverlays);
-  render();
+  });
 </script>
