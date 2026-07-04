@@ -1,0 +1,435 @@
+---
+/**
+ * VoucherStudio.astro — the full Geschenk (gift-voucher) flow.
+ * 6 steps: Betrag → Empfänger+Anlass → Spenden → Ihr Name → (optional) Spendenbescheinigung → Herunterladen.
+ * The voucher is rendered on a <canvas> (image + text at PIXEL-MEASURED baselines) — the canvas IS the
+ * preview and the download (PDF = the canvas image on one fresh A4 page). The card is always German;
+ * only the surrounding UI is bilingual. Honor system (no payment verification). GDPR: nothing stored.
+ *
+ * Props: lang 'de' | 'en'
+ */
+import Eyebrow from './Eyebrow.astro';
+import { BETTERPLACE, BETTERPLACE_SHORT, PAYPAL_DONATE } from '../consts';
+
+interface Props { lang?: 'de' | 'en'; }
+const { lang = 'de' } = Astro.props;
+const isEn = lang === 'en';
+const IBAN = 'DE44 6805 2230 0000 2055 26';
+const formName = isEn ? 'geschenk-en' : 'geschenk-de';
+const thanks = isEn ? '/en/thanks/' : '/danke/';
+
+const t = isEn
+  ? {
+      eyebrow: 'Gift', h1: 'Education that carries your name.',
+      sub: 'Give a donation in your name — and give a girl in northern Uganda a piece of her future. Personalise it, donate, then download a printable PDF to give.',
+      steps: ['Amount', 'Recipient', 'Donate', 'Your name', 'Receipt', 'Done'],
+      s1h: 'Choose an amount', s1lead: 'How much would you like to donate in the recipient’s name?',
+      freeLabel: 'Or a free amount (€)', freePh: 'e.g. 150',
+      s2h: 'Recipient & occasion', s2lead: 'Who is the gift for?',
+      recLabel: 'Name of the recipient', recPh: 'e.g. Pater Muster',
+      occLabel: 'Occasion', occBirthday: 'Birthday', occSoon: 'soon',
+      yearLabel: 'Which birthday? (optional)', yearPh: 'e.g. 80.',
+      yearHint: 'Appears as „zu Deinem 80. Geburtstag“. Leave empty for a plain birthday greeting.',
+      s3h: 'Make your donation', s3lead: 'You’re giving education worth',
+      honorNote: 'We work on trust — there is no payment check. That is exactly why 100% goes straight into the scholarships.',
+      payPaypal: 'Donate with PayPal', payBetter: 'Donate with betterplace', bankTitle: 'Bank transfer',
+      bankLead: 'Or transfer directly to our association account:',
+      recipient: 'Recipient', purpose: 'Reference', purposeVal: 'Spende Schulstipendien',
+      qrNote: 'Scan the QR with your banking app.',
+      s4h: 'Your name', s4lead: 'From whom is the gift? Your name appears in the text and as the signature on the card.',
+      giverLabel: 'Your name', giverPh: 'e.g. Sabine Beispiel',
+      s5h: 'Donation receipt?', s5lead: 'Optional — as the donor, you receive the tax receipt (the recipient does not).',
+      wantReceipt: 'Yes, please send me a donation receipt.',
+      rcptNameLabel: 'Name', rcptEmailLabel: 'Email', rcptEmailPh: 'name@example.com',
+      rcptHint: 'For a formal receipt we’ll ask for your postal address by email.', rcptSent: 'Request sent — thank you.',
+      s6h: 'Download your gift', s6lead: 'Almost done — confirm briefly and your gift is ready as a PDF.',
+      honorCheck: 'I have made my donation and would like to download the gift now.',
+      dl: 'Download gift (PDF)', dlPng: 'Download as image (PNG)',
+      done: 'Your gift is ready.', doneMore: 'Create another gift',
+      shareLead: 'Know someone else who’d love to give this?', shareCopy: 'Copy link',
+      back: '← Back', next: 'Next →',
+      privacy: 'Made in your browser — no data stored.',
+      tax: 'Your donation, your receipt: as the donor you receive the tax receipt — not the recipient. This is a symbolic gift (a donation in your name), not a redeemable coupon.',
+      pvLabel: 'Live preview', pvNote: 'The card is in German (a German-charity keepsake).',
+    }
+  : {
+      eyebrow: 'Geschenk', h1: 'Bildung, die Deinen Namen trägt.',
+      sub: 'Verschenken Sie eine Spende in Ihrem Namen — und schenken Sie einem Mädchen in Norduganda ein Stück Zukunft. Gestalten, spenden, dann als PDF zum Ausdrucken herunterladen.',
+      steps: ['Betrag', 'Empfänger', 'Spenden', 'Ihr Name', 'Quittung', 'Fertig'],
+      s1h: 'Betrag wählen', s1lead: 'Wie viel möchten Sie im Namen der beschenkten Person spenden?',
+      freeLabel: 'Oder freier Betrag (€)', freePh: 'z. B. 150',
+      s2h: 'Empfänger & Anlass', s2lead: 'Für wen ist das Geschenk?',
+      recLabel: 'Name des/der Beschenkten', recPh: 'z. B. Pater Muster',
+      occLabel: 'Anlass', occBirthday: 'Geburtstag', occSoon: 'bald',
+      yearLabel: 'Welcher Geburtstag? (optional)', yearPh: 'z. B. 80.',
+      yearHint: 'Erscheint als „zu Deinem 80. Geburtstag“. Leer lassen für einen schlichten Geburtstagsgruß.',
+      s3h: 'Jetzt Ihre Spende leisten', s3lead: 'Sie verschenken Bildung im Wert von',
+      honorNote: 'Wir arbeiten auf Vertrauensbasis — es gibt keine Zahlungsprüfung. Dafür fließen 100 % direkt in die Stipendien.',
+      payPaypal: 'Mit PayPal spenden', payBetter: 'Mit betterplace spenden', bankTitle: 'Direkte Überweisung',
+      bankLead: 'Oder überweisen Sie direkt auf unser Vereinskonto:',
+      recipient: 'Empfänger', purpose: 'Verwendungszweck', purposeVal: 'Spende Schulstipendien',
+      qrNote: 'QR-Code mit Ihrer Banking-App scannen.',
+      s4h: 'Ihr Name', s4lead: 'Von wem ist das Geschenk? Ihr Name erscheint im Text und als Unterschrift auf dem Geschenk.',
+      giverLabel: 'Ihr Name', giverPh: 'z. B. Sabine Beispiel',
+      s5h: 'Spendenbescheinigung?', s5lead: 'Optional — als Spender:in erhalten Sie die Zuwendungsbestätigung (die beschenkte Person nicht).',
+      wantReceipt: 'Ja, bitte schickt mir eine Spendenbescheinigung.',
+      rcptNameLabel: 'Name', rcptEmailLabel: 'E-Mail', rcptEmailPh: 'name@beispiel.de',
+      rcptHint: 'Für eine förmliche Bescheinigung fragen wir die Postanschrift per E-Mail nach.', rcptSent: 'Anfrage gesendet — vielen Dank.',
+      s6h: 'Geschenk herunterladen', s6lead: 'Fast geschafft — bestätigen Sie kurz, dann liegt Ihr Geschenk als PDF bereit.',
+      honorCheck: 'Ich habe meine Spende ausgelöst und möchte das Geschenk jetzt herunterladen.',
+      dl: 'Geschenk herunterladen (PDF)', dlPng: 'Als Bild (PNG) herunterladen',
+      done: 'Ihr Geschenk ist fertig.', doneMore: 'Noch ein Geschenk gestalten',
+      shareLead: 'Kennen Sie jemanden, der das auch verschenken möchte?', shareCopy: 'Link kopieren',
+      back: '← Zurück', next: 'Weiter →',
+      privacy: 'In Ihrem Browser erstellt — keine Daten gespeichert.',
+      tax: 'Ihre Spende, Ihre Spendenquittung: als Spender:in erhalten Sie die Zuwendungsbestätigung — nicht die beschenkte Person. Es ist ein symbolisches Geschenk (eine Spende in Ihrem Namen), kein einlösbarer Gutschein.',
+      pvLabel: 'Live-Vorschau', pvNote: 'Die Karte ist auf Deutsch (ein Andenken der deutschen Organisation).',
+    };
+---
+<section class="section">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <Eyebrow text={t.eyebrow} />
+      <h1>{t.h1}</h1>
+      <p class="prose" style="color:var(--stone);margin-top:var(--sp-3);max-width:60ch">{t.sub}</p>
+    </div>
+
+    <div class="gstudio" data-gstudio>
+      <!-- LEFT: wizard -->
+      <div class="gstudio__flow">
+        <ol class="gstepper" data-stepper>
+          {t.steps.map((s, i) => (
+            <li class={i === 0 ? 'is-active' : ''}><span class="gstepper__n">{i + 1}</span>{s}</li>
+          ))}
+        </ol>
+
+        <!-- 1 · Betrag -->
+        <section class="gpanel is-active" data-step="0">
+          <h2 class="h4">1 · {t.s1h}</h2>
+          <p class="gpanel__lead">{t.s1lead}</p>
+          <div class="gtiers" data-tiers></div>
+          <label class="field"><span>{t.freeLabel}</span><input type="text" inputmode="numeric" data-free placeholder={t.freePh} /></label>
+        </section>
+
+        <!-- 2 · Empfänger + Anlass -->
+        <section class="gpanel" data-step="1">
+          <h2 class="h4">2 · {t.s2h}</h2>
+          <p class="gpanel__lead">{t.s2lead}</p>
+          <label class="field"><span>{t.recLabel}</span><input type="text" data-recipient maxlength="40" placeholder={t.recPh} /></label>
+          <span class="field__lab">{t.occLabel}</span>
+          <div class="gtiers gtiers--occ">
+            <button type="button" class="gtier is-sel" aria-pressed="true">🎂<small>{t.occBirthday}</small></button>
+            <span class="gtier is-soon">Hochzeit<small>{t.occSoon}</small></span>
+            <span class="gtier is-soon">Weihnachten<small>{t.occSoon}</small></span>
+          </div>
+          <label class="field"><span>{t.yearLabel}</span><input type="text" data-year maxlength="16" placeholder={t.yearPh} /><small class="field-note">{t.yearHint}</small></label>
+        </section>
+
+        <!-- 3 · Spenden -->
+        <section class="gpanel" data-step="2">
+          <h2 class="h4">3 · {t.s3h}</h2>
+          <p class="gpanel__lead">{t.s3lead} <strong data-donsum>100&nbsp;€</strong>.</p>
+          <div class="pay-row">
+            <a class="btn btn--primary" href={PAYPAL_DONATE} rel="noopener" target="_blank" data-donate>{t.payPaypal}</a>
+            <a class="pay-badge" href={PAYPAL_DONATE} rel="noopener" target="_blank" aria-label="PayPal"><img src="/images/paypal-logo.png" alt="PayPal" width="136" height="34" loading="lazy" /></a>
+          </div>
+          <div class="pay-row" style="margin-top:var(--sp-4)">
+            <a class="btn btn--secondary" href={BETTERPLACE} rel="noopener" target="_blank" data-donate>{t.payBetter}</a>
+            <a class="pay-badge" href={BETTERPLACE_SHORT} rel="noopener" target="_blank" aria-label="betterplace.org"><img src="/images/betterplace-logo.png" alt="betterplace.org" width="128" height="19" loading="lazy" /></a>
+          </div>
+          <div class="gbank">
+            <p class="field__lab" style="margin-bottom:var(--sp-2)">{t.bankTitle}</p>
+            <p style="color:var(--stone);font-size:var(--step--1);margin:0 0 var(--sp-3)">{t.bankLead}</p>
+            <div class="gbank__row">
+              <dl class="bank">
+                <dt>{t.recipient}</dt><dd>Frido&rsquo;s Friends e.V.</dd>
+                <dt>IBAN</dt><dd>{IBAN}</dd>
+                <dt>BIC</dt><dd>SOLADES1STB</dd>
+                <dt>{t.purpose}</dt><dd>{t.purposeVal}</dd>
+              </dl>
+              <figure class="gbank__qr">
+                <img src="/images/sepa-qr.png" alt="SEPA-QR" width="150" height="150" loading="lazy" decoding="async" />
+                <figcaption>{t.qrNote}</figcaption>
+              </figure>
+            </div>
+          </div>
+          <p class="gcallout">{t.honorNote}</p>
+        </section>
+
+        <!-- 4 · Ihr Name -->
+        <section class="gpanel" data-step="3">
+          <h2 class="h4">4 · {t.s4h}</h2>
+          <p class="gpanel__lead">{t.s4lead}</p>
+          <label class="field"><span>{t.giverLabel}</span><input type="text" data-giver maxlength="40" placeholder={t.giverPh} /></label>
+        </section>
+
+        <!-- 5 · Spendenbescheinigung (optional, Netlify form) -->
+        <section class="gpanel" data-step="4">
+          <h2 class="h4">5 · {t.s5h}</h2>
+          <p class="gpanel__lead">{t.s5lead}</p>
+          <form class="grcpt" name={formName} method="POST" action={thanks} data-netlify="true" netlify-honeypot="bot-field" data-rcpt-form>
+            <input type="hidden" name="form-name" value={formName} />
+            <p class="hp" hidden aria-hidden="true"><label>Leave empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+            <label class="field-check"><input type="checkbox" data-want-receipt /><span>{t.wantReceipt}</span></label>
+            <div class="grcpt__fields" data-rcpt-fields hidden>
+              <label class="field"><span>{t.rcptNameLabel}</span><input type="text" name="name" data-rcpt-name autocomplete="name" /></label>
+              <label class="field"><span>{t.rcptEmailLabel}</span><input type="email" name="email" placeholder={t.rcptEmailPh} autocomplete="email" /></label>
+              <small class="field-note">{t.rcptHint}</small>
+              <input type="hidden" name="betrag" data-rcpt-betrag />
+              <input type="hidden" name="empfaenger" data-rcpt-empf />
+              <input type="hidden" name="anlass" data-rcpt-anlass />
+              <button type="submit" class="btn btn--secondary" style="margin-top:var(--sp-3)">{isEn ? 'Send request' : 'Anfrage senden'}</button>
+              <p class="grcpt__sent" data-rcpt-sent hidden>{t.rcptSent}</p>
+            </div>
+          </form>
+        </section>
+
+        <!-- 6 · Download -->
+        <section class="gpanel" data-step="5">
+          <h2 class="h4">6 · {t.s6h}</h2>
+          <p class="gpanel__lead">{t.s6lead}</p>
+          <label class="field-check"><input type="checkbox" data-honor /><span>{t.honorCheck}</span></label>
+          <button type="button" class="btn btn--primary" style="width:100%;margin-top:var(--sp-3)" data-dl-pdf disabled>{t.dl}</button>
+          <button type="button" class="btn btn--secondary" style="width:100%;margin-top:var(--sp-2)" data-dl-png disabled>{t.dlPng}</button>
+          <p class="gstatus" data-status aria-live="polite"></p>
+          <div class="gdone card" data-done hidden>
+            <p class="eyebrow">{t.done}</p>
+            <p style="margin-top:var(--sp-2);color:var(--stone)">{t.shareLead}</p>
+            <div class="pay-row" style="margin-top:var(--sp-3)">
+              <button type="button" class="btn btn--secondary" data-share>{t.shareCopy}</button>
+              <button type="button" class="btn" data-reset>{t.doneMore}</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="gnav">
+          <button type="button" class="btn btn--ghost" data-back disabled>{t.back}</button>
+          <button type="button" class="btn btn--primary" data-next>{t.next}</button>
+        </div>
+        <p class="gprivacy">{t.privacy}</p>
+        <p class="caption" style="margin-top:var(--sp-3)">{t.tax}</p>
+      </div>
+
+      <!-- RIGHT: live preview (canvas) -->
+      <div class="gstudio__preview">
+        <p class="gpv-label">{t.pvLabel}</p>
+        <canvas class="gpv-canvas" data-canvas></canvas>
+        <p class="caption" style="text-align:center;margin-top:var(--sp-3)">{t.pvNote}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gstudio { display:grid; grid-template-columns:1fr 0.9fr; gap:var(--sp-7); align-items:start; margin-top:var(--sp-6); }
+  @media (max-width:860px){ .gstudio{ grid-template-columns:1fr; } .gstudio__preview{ order:-1; } }
+  .gstepper { list-style:none; display:flex; flex-wrap:wrap; gap:var(--sp-2); margin:0 0 var(--sp-5); padding:0; }
+  .gstepper li { display:flex; align-items:center; gap:.45em; font-family:var(--font-sans); font-size:var(--step--1); font-weight:600; color:var(--stone); background:#fff; border:1px solid var(--line); border-radius:var(--r-pill); padding:.3em .7em; }
+  .gstepper__n { width:1.5em; height:1.5em; border-radius:50%; display:grid; place-items:center; background:var(--line); color:var(--stone); font-size:.85em; }
+  .gstepper li.is-active { border-color:var(--teal); color:var(--teal-dark); }
+  .gstepper li.is-active .gstepper__n { background:var(--teal); color:#fff; }
+  .gstepper li.is-done .gstepper__n { background:var(--gold); color:#fff; }
+  .gpanel { display:none; }
+  .gpanel.is-active { display:block; }
+  .gpanel .h4 { margin:0 0 var(--sp-1); }
+  .gpanel__lead { color:var(--stone); font-size:var(--step-0); margin:0 0 var(--sp-5); }
+  .field { display:block; margin-bottom:var(--sp-4); }
+  .field > span, .field__lab { display:block; font-family:var(--font-sans); font-size:var(--step--1); font-weight:600; margin-bottom:var(--sp-2); }
+  .field input, .field select, .field textarea { width:100%; font:inherit; font-size:var(--step-0); padding:.6em .75em; border:1px solid var(--line-strong,#D6CDB6); border-radius:var(--r-input); background:#fff; color:var(--ink); }
+  .field input:focus { outline:2px solid var(--teal); outline-offset:1px; border-color:var(--teal); }
+  .field-note { display:block; font-size:var(--step--1); color:var(--stone); margin-top:var(--sp-2); }
+  .gtiers { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--sp-2); margin-bottom:var(--sp-4); }
+  .gtier, .gtiers[data-tiers] > button { border:1px solid var(--line-strong,#D6CDB6); background:#fff; border-radius:var(--r-card); padding:.7em .4em; text-align:center; cursor:pointer; font:inherit; font-family:var(--font-serif); font-weight:600; color:var(--ink); display:flex; flex-direction:column; align-items:center; gap:.15em; }
+  .gtier small, .gtiers[data-tiers] > button small { font-family:var(--font-sans); font-weight:400; font-size:.62rem; color:var(--stone); letter-spacing:.02em; }
+  .gtier.is-sel, .gtiers[data-tiers] > button.is-sel { border-color:var(--teal); background:var(--paper); }
+  .gtier.is-soon { opacity:.5; cursor:default; }
+  .gbank { border-top:1px solid var(--line); margin-top:var(--sp-5); padding-top:var(--sp-4); }
+  .gbank__row { display:flex; gap:var(--sp-5); flex-wrap:wrap; align-items:flex-start; }
+  .gbank__qr { margin:0; text-align:center; }
+  .gbank__qr img { width:130px; height:130px; }
+  .gbank__qr figcaption { font-size:var(--step--1); color:var(--stone); max-width:130px; margin-top:var(--sp-2); }
+  .gcallout { background:var(--gold-wash,#F6EFDD); border:1px solid var(--line-strong,#D6CDB6); border-radius:var(--r-card); padding:.8em 1em; font-size:var(--step--1); margin-top:var(--sp-4); }
+  .field-check { display:flex; gap:.6em; align-items:flex-start; font-size:var(--step-0); cursor:pointer; }
+  .field-check input { margin-top:.2em; width:18px; height:18px; accent-color:var(--teal); flex:none; }
+  .grcpt__fields { margin-top:var(--sp-3); }
+  .grcpt__sent { color:var(--gold-text); font-weight:600; margin-top:var(--sp-3); }
+  .gnav { display:flex; justify-content:space-between; gap:var(--sp-3); margin-top:var(--sp-5); padding-top:var(--sp-4); border-top:1px solid var(--line); }
+  .btn--ghost { background:transparent; border-color:transparent; color:var(--stone); }
+  .gprivacy { font-size:var(--step--1); color:var(--stone); margin-top:var(--sp-3); }
+  .gprivacy::before { content:"🔒 "; }
+  .gstatus { font-size:var(--step--1); color:var(--stone); margin-top:var(--sp-3); min-height:1.2em; }
+  .gdone { margin-top:var(--sp-4); }
+  .gstudio__preview { position:sticky; top:16px; }
+  .gpv-label { font-family:var(--font-sans); font-size:var(--step--1); font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--gold-text); text-align:center; margin-bottom:var(--sp-3); }
+  .gpv-canvas { display:block; width:100%; max-width:460px; height:auto; margin:0 auto; border-radius:var(--r-card); box-shadow:var(--shadow-lift); }
+</style>
+
+<script>
+  document.querySelectorAll('[data-gstudio]').forEach((root) => {
+    const $ = (sel: string) => root.querySelector(sel) as HTMLElement | null;
+    const canvas = $('[data-canvas]') as HTMLCanvasElement;
+    const IMG_W = 1054, IMG_H = 1492, SCALE = 2, CW = IMG_W * SCALE, CH = IMG_H * SCALE;
+    const PAGE_W = 595.28, PAGE_H = 841.89;
+    // Accepted, pixel-measured coordinate map (y = BASELINE fraction; sizeFrac = fraction of width).
+    const FIELDS: Record<string, any> = {
+      recipient: { x:0.205, y:0.221, align:'left',   kind:'serif',    sizeFrac:0.0380, color:'gold' },
+      year:      { x:0.30,  y:0.293, align:'center', kind:'serif',    sizeFrac:0.0252, color:'gold' },
+      giverBody: { x:0.075, y:0.346, align:'left',   kind:'sansBold', sizeFrac:0.0329, color:'gold' },
+      signature: { x:0.459, y:0.769, align:'center', kind:'serif',    sizeFrac:0.0329, color:'gold' },
+      amount:    { x:0.865, y:0.653, align:'right',  kind:'sansBold', sizeFrac:0.0240, color:'gold' },
+      date:      { x:0.75,  y:0.779, align:'left',   kind:'sans',     sizeFrac:0.0150, color:'ink' },
+      footline:  { x:0.50,  y:0.745, align:'center', kind:'sans',     sizeFrac:0.0105, color:'grey' },
+    };
+    const COLORS: Record<string,string> = { gold:'rgb(200,150,43)', ink:'rgb(55,53,49)', grey:'rgb(120,116,107)' };
+    const FONTDEF: Record<string,string> = { serif:'600 %PX% "Source Serif 4",Georgia,serif', sans:'400 %PX% "Inter",system-ui,sans-serif', sansBold:'600 %PX% "Inter",system-ui,sans-serif' };
+    const FOOTLINE = 'Dies ist keine Spendenbescheinigung – bitte anfordern bei vorstand@fridosfriends.de';
+
+    const state = { amount: 100, recipient: '', year: '', giver: '' };
+    const deNum = (n: number) => new Intl.NumberFormat('de-DE').format(n);
+    const euro = (n: number) => deNum(n) + ' €';
+    const cardDate = () => new Date().toLocaleDateString('de-DE', { day:'numeric', month:'long', year:'numeric' });
+
+    canvas.width = CW; canvas.height = CH;
+    const ctx = canvas.getContext('2d')!;
+    const tmpl = new Image(); let tmplReady = false;
+    tmpl.onload = () => { tmplReady = true; draw(); };
+    tmpl.src = '/voucher/geschenk-preview.png';
+
+    const textFor = (k: string): string => {
+      if (k === 'amount') return deNum(state.amount);
+      if (k === 'date') return cardDate();
+      if (k === 'footline') return FOOTLINE;
+      if (k === 'giverBody' || k === 'signature') return state.giver;
+      return (state as any)[k] || '';
+    };
+    function draw() {
+      if (!tmplReady) return;
+      ctx.clearRect(0, 0, CW, CH);
+      ctx.drawImage(tmpl, 0, 0, CW, CH);
+      ctx.textBaseline = 'alphabetic';
+      Object.keys(FIELDS).forEach((k) => {
+        const f = FIELDS[k]; const txt = textFor(k); if (!txt) return;
+        ctx.font = FONTDEF[f.kind].replace('%PX%', Math.round(f.sizeFrac * CW) + 'px');
+        ctx.textAlign = f.align; ctx.fillStyle = COLORS[f.color];
+        ctx.fillText(txt, f.x * CW, f.y * CH);
+      });
+    }
+    (async () => { try { await Promise.all([
+      (document as any).fonts.load('600 80px "Source Serif 4"'),
+      (document as any).fonts.load('600 40px "Inter"'),
+      (document as any).fonts.load('400 40px "Inter"'),
+    ]); } catch (e) {} draw(); })();
+
+    // amount tiers
+    const TIERS = [[25,''],[50,''],[100,''],[200,''],[800, isDeSchoolyear()]];
+    function isDeSchoolyear(){ return document.documentElement.lang === 'en' ? 'a whole school year' : 'ein ganzes Schuljahr'; }
+    const tiersEl = $('[data-tiers]')!;
+    TIERS.forEach(([amt, desc]) => {
+      const b = document.createElement('button'); b.type = 'button';
+      b.className = (amt === 100 ? 'is-sel' : '');
+      b.innerHTML = amt + ' €' + (desc ? '<small>' + desc + '</small>' : '');
+      b.addEventListener('click', () => {
+        (root.querySelector('[data-free]') as HTMLInputElement).value = '';
+        state.amount = amt as number; tiersEl.querySelectorAll('button').forEach((x) => x.classList.remove('is-sel')); b.classList.add('is-sel'); sync();
+      });
+      tiersEl.appendChild(b);
+    });
+    (root.querySelector('[data-free]') as HTMLInputElement).addEventListener('input', (e) => {
+      const v = parseInt(((e.target as HTMLInputElement).value || '').replace(/\D/g, ''), 10);
+      tiersEl.querySelectorAll('button').forEach((x) => x.classList.remove('is-sel'));
+      if (v) { state.amount = v; sync(); }
+    });
+    const bind = (sel: string, key: 'recipient'|'year'|'giver') => (root.querySelector(sel) as HTMLInputElement)?.addEventListener('input', (e) => { state[key] = (e.target as HTMLInputElement).value; sync(); });
+    bind('[data-recipient]', 'recipient'); bind('[data-year]', 'year'); bind('[data-giver]', 'giver');
+
+    function sync() {
+      draw();
+      const ds = $('[data-donsum]'); if (ds) ds.innerHTML = euro(state.amount);
+    }
+
+    // sizing + resize (crisp preview across widths)
+    function fit() { const w = (canvas.clientWidth || 460); /* canvas is fixed-res; nothing to recompute */ }
+    window.addEventListener('resize', fit);
+
+    // donate → advance
+    root.querySelectorAll('[data-donate]').forEach((b) => b.addEventListener('click', () => setTimeout(() => goto(3), 150)));
+
+    // receipt form
+    const want = root.querySelector('[data-want-receipt]') as HTMLInputElement;
+    const rcptFields = $('[data-rcpt-fields]');
+    want?.addEventListener('change', () => {
+      if (rcptFields) rcptFields.hidden = !want.checked;
+      const nm = root.querySelector('[data-rcpt-name]') as HTMLInputElement;
+      if (want.checked && nm && !nm.value) nm.value = state.giver;
+    });
+    const rcptForm = root.querySelector('[data-rcpt-form]') as HTMLFormElement;
+    rcptForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      (root.querySelector('[data-rcpt-betrag]') as HTMLInputElement).value = deNum(state.amount) + ' EUR';
+      (root.querySelector('[data-rcpt-empf]') as HTMLInputElement).value = state.recipient;
+      (root.querySelector('[data-rcpt-anlass]') as HTMLInputElement).value = state.year ? state.year + ' Geburtstag' : 'Geburtstag';
+      const data = new URLSearchParams(new FormData(rcptForm) as any);
+      fetch('/', { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body:data.toString() })
+        .then((r) => { if (!r.ok) throw 0; const s = $('[data-rcpt-sent]'); if (s) s.hidden = false; rcptForm.querySelector('button[type=submit]')?.setAttribute('disabled','true'); })
+        .catch(() => rcptForm.submit());
+    });
+
+    // honor + download
+    const honor = root.querySelector('[data-honor]') as HTMLInputElement;
+    const dlPdf = root.querySelector('[data-dl-pdf]') as HTMLButtonElement;
+    const dlPng = root.querySelector('[data-dl-png]') as HTMLButtonElement;
+    honor?.addEventListener('change', () => { dlPdf.disabled = !honor.checked; dlPng.disabled = !honor.checked; });
+    const status = $('[data-status]');
+    const trigger = (blob: Blob, name: string) => { const u = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); };
+    const showDone = () => { const d = $('[data-done]'); if (d) d.hidden = false; };
+    dlPng?.addEventListener('click', () => { draw(); canvas.toBlob((b) => { if (b) trigger(b, 'Fridos-Friends-Geschenk.png'); if (status) status.textContent = ''; showDone(); }, 'image/png'); });
+    dlPdf?.addEventListener('click', async () => {
+      if (status) status.textContent = isEnLang() ? 'Creating PDF …' : 'PDF wird erstellt …';
+      try {
+        draw();
+        const png = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/png'));
+        const bytes = new Uint8Array(await png!.arrayBuffer());
+        const { PDFDocument } = await import('pdf-lib');
+        const pdf = await PDFDocument.create();
+        const page = pdf.addPage([PAGE_W, PAGE_H]);
+        const img = await pdf.embedPng(bytes);
+        page.drawImage(img, { x:0, y:0, width:PAGE_W, height:PAGE_H });
+        const out = await pdf.save();
+        trigger(new Blob([out], { type:'application/pdf' }), 'Fridos-Friends-Geschenk.pdf');
+        if (status) status.textContent = '';
+        showDone();
+      } catch (err: any) { if (status) status.textContent = 'Fehler: ' + (err?.message || err); }
+    });
+    function isEnLang(){ return document.documentElement.lang === 'en'; }
+
+    // share
+    root.querySelector('[data-share]')?.addEventListener('click', () => {
+      const url = location.origin + location.pathname;
+      navigator.clipboard?.writeText(url);
+      const b = root.querySelector('[data-share]') as HTMLButtonElement; const o = b.textContent; b.textContent = '✓'; setTimeout(() => b.textContent = o, 1500);
+    });
+    root.querySelector('[data-reset]')?.addEventListener('click', () => { state.recipient=''; state.year=''; state.giver=''; state.amount=100;
+      root.querySelectorAll('input[type=text],input[type=email]').forEach((i) => (i as HTMLInputElement).value = '');
+      tiersEl.querySelectorAll('button').forEach((x,i)=>x.classList.toggle('is-sel', i===2)); sync(); goto(0);
+    });
+
+    // stepper nav
+    const MAX = 6; let step = 0;
+    const panels = root.querySelectorAll('.gpanel');
+    const dots = root.querySelectorAll('.gstepper li');
+    const backB = root.querySelector('[data-back]') as HTMLButtonElement;
+    const nextB = root.querySelector('[data-next]') as HTMLButtonElement;
+    function goto(s: number) {
+      step = Math.max(0, Math.min(MAX - 1, s));
+      panels.forEach((p) => p.classList.toggle('is-active', Number((p as HTMLElement).dataset.step) === step));
+      dots.forEach((d, i) => { d.classList.toggle('is-active', i === step); d.classList.toggle('is-done', i < step); });
+      backB.disabled = step === 0;
+      nextB.style.visibility = step === MAX - 1 ? 'hidden' : 'visible';
+      root.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+    nextB.addEventListener('click', () => goto(step + 1));
+    backB.addEventListener('click', () => goto(step - 1));
+
+    sync();
+  });
+</script>
