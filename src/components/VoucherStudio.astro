@@ -41,7 +41,9 @@ const t = isEn
       s5h: 'Donation receipt?', s5lead: 'Optional — as the donor, you receive the tax receipt (the recipient does not).',
       wantReceipt: 'Yes, please send me a donation receipt.',
       rcptNameLabel: 'Name', rcptEmailLabel: 'Email', rcptEmailPh: 'name@example.com',
-      rcptHint: 'For a formal receipt we’ll ask for your postal address by email.', rcptSent: 'Request sent — thank you.',
+      rcptAddrLabel: 'Postal address (optional)', rcptAddrPh: 'Street, ZIP city',
+      rcptHint: 'For a formal donation receipt, please include your postal address.', rcptSent: 'Request sent — thank you.',
+      occNote: 'Currently for birthdays — more occasions coming soon.',
       s6h: 'Download your gift', s6lead: 'Almost done — confirm briefly and your gift is ready as a PDF.',
       honorCheck: 'I have made my donation and would like to download the gift now.',
       dl: 'Download gift (PDF)', dlPng: 'Download as image (PNG)',
@@ -74,7 +76,9 @@ const t = isEn
       s5h: 'Spendenbescheinigung?', s5lead: 'Optional — als Spender:in erhalten Sie die Zuwendungsbestätigung (die beschenkte Person nicht).',
       wantReceipt: 'Ja, bitte schickt mir eine Spendenbescheinigung.',
       rcptNameLabel: 'Name', rcptEmailLabel: 'E-Mail', rcptEmailPh: 'name@beispiel.de',
-      rcptHint: 'Für eine förmliche Bescheinigung fragen wir die Postanschrift per E-Mail nach.', rcptSent: 'Anfrage gesendet — vielen Dank.',
+      rcptAddrLabel: 'Postanschrift (optional)', rcptAddrPh: 'Straße, PLZ Ort',
+      rcptHint: 'Für eine förmliche Zuwendungsbestätigung geben Sie bitte Ihre Postanschrift an.', rcptSent: 'Anfrage gesendet — vielen Dank.',
+      occNote: 'Aktuell für Geburtstage — weitere Anlässe folgen bald.',
       s6h: 'Geschenk herunterladen', s6lead: 'Fast geschafft — bestätigen Sie kurz, dann liegt Ihr Geschenk als PDF bereit.',
       honorCheck: 'Ich habe meine Spende ausgelöst und möchte das Geschenk jetzt herunterladen.',
       dl: 'Geschenk herunterladen (PDF)', dlPng: 'Als Bild (PNG) herunterladen',
@@ -107,7 +111,13 @@ const t = isEn
         <section class="gpanel is-active" data-step="0">
           <h2 class="h4">1 · {t.s1h}</h2>
           <p class="gpanel__lead">{t.s1lead}</p>
-          <div class="gtiers" data-tiers></div>
+          <div class="gtiers" data-tiers>
+            <button type="button" class="gtier" data-amt="25">25&nbsp;€</button>
+            <button type="button" class="gtier" data-amt="50">50&nbsp;€</button>
+            <button type="button" class="gtier is-sel" data-amt="100">100&nbsp;€</button>
+            <button type="button" class="gtier" data-amt="200">200&nbsp;€</button>
+            <button type="button" class="gtier" data-amt="800">800&nbsp;€<small>{isEn ? 'a whole school year' : 'ein ganzes Schuljahr'}</small></button>
+          </div>
           <label class="field"><span>{t.freeLabel}</span><input type="text" inputmode="numeric" data-free placeholder={t.freePh} /></label>
         </section>
 
@@ -116,12 +126,7 @@ const t = isEn
           <h2 class="h4">2 · {t.s2h}</h2>
           <p class="gpanel__lead">{t.s2lead}</p>
           <label class="field"><span>{t.recLabel}</span><input type="text" data-recipient maxlength="40" placeholder={t.recPh} /></label>
-          <span class="field__lab">{t.occLabel}</span>
-          <div class="gtiers gtiers--occ">
-            <button type="button" class="gtier is-sel" aria-pressed="true">🎂<small>{t.occBirthday}</small></button>
-            <span class="gtier is-soon">Hochzeit<small>{t.occSoon}</small></span>
-            <span class="gtier is-soon">Weihnachten<small>{t.occSoon}</small></span>
-          </div>
+          <p class="caption" style="margin:0 0 var(--sp-4)">{t.occNote}</p>
           <label class="field"><span>{t.yearLabel}</span><input type="text" data-year maxlength="16" placeholder={t.yearPh} /><small class="field-note">{t.yearHint}</small></label>
         </section>
 
@@ -174,11 +179,11 @@ const t = isEn
             <div class="grcpt__fields" data-rcpt-fields hidden>
               <label class="field"><span>{t.rcptNameLabel}</span><input type="text" name="name" data-rcpt-name autocomplete="name" /></label>
               <label class="field"><span>{t.rcptEmailLabel}</span><input type="email" name="email" placeholder={t.rcptEmailPh} autocomplete="email" /></label>
+              <label class="field"><span>{t.rcptAddrLabel}</span><textarea name="anschrift" rows="2" placeholder={t.rcptAddrPh} autocomplete="street-address"></textarea></label>
               <small class="field-note">{t.rcptHint}</small>
               <input type="hidden" name="betrag" data-rcpt-betrag />
               <input type="hidden" name="empfaenger" data-rcpt-empf />
               <input type="hidden" name="anlass" data-rcpt-anlass />
-              <button type="submit" class="btn btn--secondary" style="margin-top:var(--sp-3)">{isEn ? 'Send request' : 'Anfrage senden'}</button>
               <p class="grcpt__sent" data-rcpt-sent hidden>{t.rcptSent}</p>
             </div>
           </form>
@@ -197,7 +202,7 @@ const t = isEn
             <p style="margin-top:var(--sp-2);color:var(--stone)">{t.shareLead}</p>
             <div class="pay-row" style="margin-top:var(--sp-3)">
               <button type="button" class="btn btn--secondary" data-share>{t.shareCopy}</button>
-              <button type="button" class="btn" data-reset>{t.doneMore}</button>
+              <button type="button" class="btn btn--secondary" data-reset>{t.doneMore}</button>
             </div>
           </div>
         </section>
@@ -241,7 +246,7 @@ const t = isEn
   .gtiers { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--sp-2); margin-bottom:var(--sp-4); }
   .gtier, .gtiers[data-tiers] > button { border:1px solid var(--line-strong,#D6CDB6); background:#fff; border-radius:var(--r-card); padding:.7em .4em; text-align:center; cursor:pointer; font:inherit; font-family:var(--font-serif); font-weight:600; color:var(--ink); display:flex; flex-direction:column; align-items:center; gap:.15em; }
   .gtier small, .gtiers[data-tiers] > button small { font-family:var(--font-sans); font-weight:400; font-size:.62rem; color:var(--stone); letter-spacing:.02em; }
-  .gtier.is-sel, .gtiers[data-tiers] > button.is-sel { border-color:var(--teal); background:var(--paper); }
+  .gtier.is-sel, .gtiers[data-tiers] > button.is-sel { border-color:var(--teal); background:var(--gold-wash,#F6EFDD); box-shadow:inset 0 0 0 1px var(--teal); }
   .gtier.is-soon { opacity:.5; cursor:default; }
   .gbank { border-top:1px solid var(--line); margin-top:var(--sp-5); padding-top:var(--sp-4); }
   .gbank__row { display:flex; gap:var(--sp-5); flex-wrap:wrap; align-items:flex-start; }
@@ -321,18 +326,15 @@ const t = isEn
     ]); } catch (e) {} draw(); })();
 
     // amount tiers
-    const TIERS = [[25,''],[50,''],[100,''],[200,''],[800, isDeSchoolyear()]];
-    function isDeSchoolyear(){ return document.documentElement.lang === 'en' ? 'a whole school year' : 'ein ganzes Schuljahr'; }
     const tiersEl = $('[data-tiers]')!;
-    TIERS.forEach(([amt, desc]) => {
-      const b = document.createElement('button'); b.type = 'button';
-      b.className = (amt === 100 ? 'is-sel' : '');
-      b.innerHTML = amt + ' €' + (desc ? '<small>' + desc + '</small>' : '');
+    tiersEl.querySelectorAll('button').forEach((b) => {
+      const amt = parseInt(((b as HTMLElement).dataset.amt) || '0', 10);
+      /* class + label are static HTML */
+      b.innerHTML = amt + ' €' + ((b.querySelector('small') as any)?.outerHTML || '');
       b.addEventListener('click', () => {
         (root.querySelector('[data-free]') as HTMLInputElement).value = '';
         state.amount = amt as number; tiersEl.querySelectorAll('button').forEach((x) => x.classList.remove('is-sel')); b.classList.add('is-sel'); sync();
       });
-      tiersEl.appendChild(b);
     });
     (root.querySelector('[data-free]') as HTMLInputElement).addEventListener('input', (e) => {
       const v = parseInt(((e.target as HTMLInputElement).value || '').replace(/\D/g, ''), 10);
@@ -363,16 +365,17 @@ const t = isEn
       if (want.checked && nm && !nm.value) nm.value = state.giver;
     });
     const rcptForm = root.querySelector('[data-rcpt-form]') as HTMLFormElement;
-    rcptForm?.addEventListener('submit', (e) => {
-      e.preventDefault();
+    let rcptSentDone = false;
+    function submitReceipt() {
+      if (rcptSentDone || !want?.checked) return;
       (root.querySelector('[data-rcpt-betrag]') as HTMLInputElement).value = deNum(state.amount) + ' EUR';
       (root.querySelector('[data-rcpt-empf]') as HTMLInputElement).value = state.recipient;
       (root.querySelector('[data-rcpt-anlass]') as HTMLInputElement).value = state.year ? state.year + ' Geburtstag' : 'Geburtstag';
       const data = new URLSearchParams(new FormData(rcptForm) as any);
       fetch('/', { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body:data.toString() })
-        .then((r) => { if (!r.ok) throw 0; const s = $('[data-rcpt-sent]'); if (s) s.hidden = false; rcptForm.querySelector('button[type=submit]')?.setAttribute('disabled','true'); })
-        .catch(() => rcptForm.submit());
-    });
+        .then((r) => { if (!r.ok) throw 0; rcptSentDone = true; const s = $('[data-rcpt-sent]'); if (s) s.hidden = false; })
+        .catch(() => {});
+    }
 
     // honor + download
     const honor = root.querySelector('[data-honor]') as HTMLInputElement;
@@ -425,9 +428,8 @@ const t = isEn
       dots.forEach((d, i) => { d.classList.toggle('is-active', i === step); d.classList.toggle('is-done', i < step); });
       backB.disabled = step === 0;
       nextB.style.visibility = step === MAX - 1 ? 'hidden' : 'visible';
-      root.scrollIntoView({ behavior:'smooth', block:'start' });
     }
-    nextB.addEventListener('click', () => goto(step + 1));
+    nextB.addEventListener('click', () => { if (step === 4) submitReceipt(); goto(step + 1); });
     backB.addEventListener('click', () => goto(step - 1));
 
     sync();
