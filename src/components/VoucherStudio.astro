@@ -277,10 +277,10 @@ const t = isEn
     const PAGE_W = 595.28, PAGE_H = 841.89;
     // Accepted, pixel-measured coordinate map (y = BASELINE fraction; sizeFrac = fraction of width).
     const FIELDS: Record<string, any> = {
-      recipient: { x:0.205, y:0.221, align:'left',   kind:'serif',    sizeFrac:0.0380, color:'gold' },
+      recipient: { x:0.205, y:0.221, align:'left',   kind:'serif',    sizeFrac:0.0380, color:'gold', maxW:0.255 },
       year:      { x:0.30,  y:0.293, align:'center', kind:'serif',    sizeFrac:0.0252, color:'gold' },
-      giverBody: { x:0.075, y:0.346, align:'left',   kind:'sansBold', sizeFrac:0.0329, color:'gold' },
-      signature: { x:0.459, y:0.769, align:'center', kind:'serif',    sizeFrac:0.0329, color:'gold' },
+      giverBody: { x:0.075, y:0.346, align:'left',   kind:'sansBold', sizeFrac:0.0240, color:'gold', maxW:0.150 },
+      signature: { x:0.459, y:0.769, align:'center', kind:'serif',    sizeFrac:0.0329, color:'gold', maxW:0.320 },
       amount:    { x:0.865, y:0.653, align:'right',  kind:'sansBold', sizeFrac:0.0240, color:'gold' },
       date:      { x:0.75,  y:0.779, align:'left',   kind:'sans',     sizeFrac:0.0150, color:'ink' },
       footline:  { x:0.50,  y:0.745, align:'center', kind:'sans',     sizeFrac:0.0105, color:'grey' },
@@ -314,7 +314,15 @@ const t = isEn
       ctx.textBaseline = 'alphabetic';
       Object.keys(FIELDS).forEach((k) => {
         const f = FIELDS[k]; const txt = textFor(k); if (!txt) return;
-        ctx.font = FONTDEF[f.kind].replace('%PX%', Math.round(f.sizeFrac * CW) + 'px');
+        let px = Math.round(f.sizeFrac * CW);
+        ctx.font = FONTDEF[f.kind].replace('%PX%', px + 'px');
+        if (f.maxW) {
+          const maxPx = f.maxW * CW;
+          while (px > 8 && ctx.measureText(txt).width > maxPx) {
+            px -= 1;
+            ctx.font = FONTDEF[f.kind].replace('%PX%', px + 'px');
+          }
+        }
         ctx.textAlign = f.align; ctx.fillStyle = COLORS[f.color];
         ctx.fillText(txt, f.x * CW, f.y * CH);
       });
