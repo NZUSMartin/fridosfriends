@@ -8,6 +8,7 @@ import PromiseBand from '../components/PromiseBand.astro';
 import CTABand from '../components/CTABand.astro';
 import MembershipCalculator from '../components/MembershipCalculator.astro';
 import Logo from '../components/Logo.astro';
+import { CREDIT_AI_DE } from '../consts';
 
 const colors = [
   { name: '--ink', hex: '#1C1B19', note: 'Text, dark sections, logo' },
@@ -143,6 +144,7 @@ const typeScale = [
       <Story
         image="/images/student-classroom-portrait.jpg"
         alt="Eine Schülerin sitzt aufrecht und selbstbewusst vor einer Tafel"
+        credit={CREDIT_AI_DE}
         eyebrow="Eine von 24"
         heading="Jo wäre mit 15 verheiratet gewesen."
         quote="Ich will Hebamme werden."
@@ -162,6 +164,7 @@ const typeScale = [
     alt="Sieben Mädchen in rot-weißen Schuluniformen stehen selbstbewusst zusammen"
     eyebrow="Photo-Break"
     heading="Voll-Bild mit Overlay und sichtbarer Bildunterschrift."
+    credit={CREDIT_AI_DE}
   />
 
   <!-- CALCULATOR -->

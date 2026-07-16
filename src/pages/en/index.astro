@@ -8,7 +8,7 @@ import PromiseBand from '../../components/PromiseBand.astro';
 import CTABand from '../../components/CTABand.astro';
 import MembershipCalculator from '../../components/MembershipCalculator.astro';
 import ProgressThermometer from '../../components/ProgressThermometer.astro';
-import { FUNDING } from '../../consts';
+import { FUNDING, CREDIT_AI_EN } from '../../consts';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 
@@ -78,7 +78,7 @@ const multiplier = [
             style="object-fit:cover"
             fetchpriority="high" loading="eager" decoding="async"
           />
-          <figcaption>Foto: JRS Uganda</figcaption>
+          <figcaption>{CREDIT_AI_EN}</figcaption>
         </figure>
       </div>
     </div>
@@ -127,6 +127,7 @@ const multiplier = [
       <Story
         image="/images/student-classroom-portrait.jpg"
         alt="Jo sits upright and confident in front of a blackboard"
+        credit={CREDIT_AI_EN}
         eyebrow="One of 24"
         heading="Jo would have been married at 15."
         quote="I want to become a midwife so mothers in my settlement can give birth safely."
@@ -151,6 +152,7 @@ const multiplier = [
     alt="A full classroom of attentive schoolgirls and schoolboys"
     eyebrow="The multiplier"
     heading="Educate one girl, and you change a whole community."
+    credit={CREDIT_AI_EN}
   />
 
   <section class="section">

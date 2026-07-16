@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import Story from '../components/Story.astro';
 import CTABand from '../components/CTABand.astro';
+import { CREDIT_AI_DE } from '../consts';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 ---
@@ -44,6 +45,7 @@ const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipend
       <Story
         image="/images/student-classroom-portrait.jpg"
         alt="Jo sitzt aufrecht und selbstbewusst vor einer Tafel"
+        credit={CREDIT_AI_DE}
         eyebrow="Stipendiatin"
         heading="Jo wäre mit 15 verheiratet gewesen."
         quote="Ich will Hebamme werden, damit Mütter in meiner Siedlung sicher Kinder zur Welt bringen können."

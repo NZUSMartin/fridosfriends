@@ -8,7 +8,7 @@ import PromiseBand from '../components/PromiseBand.astro';
 import CTABand from '../components/CTABand.astro';
 import MembershipCalculator from '../components/MembershipCalculator.astro';
 import ProgressThermometer from '../components/ProgressThermometer.astro';
-import { FUNDING } from '../consts';
+import { FUNDING, CREDIT_AI_DE } from '../consts';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 
@@ -78,7 +78,7 @@ const multiplier = [
             style="object-fit:cover"
             fetchpriority="high" loading="eager" decoding="async"
           />
-          <figcaption>Foto: JRS Uganda</figcaption>
+          <figcaption>{CREDIT_AI_DE}</figcaption>
         </figure>
       </div>
     </div>
@@ -127,6 +127,7 @@ const multiplier = [
       <Story
         image="/images/student-classroom-portrait.jpg"
         alt="Jo sitzt aufrecht und selbstbewusst vor einer Tafel"
+        credit={CREDIT_AI_DE}
         eyebrow="Eine von 24"
         heading="Jo wäre mit 15 verheiratet gewesen."
         quote="Ich will Hebamme werden, damit Mütter in meiner Siedlung sicher Kinder zur Welt bringen können."
@@ -151,6 +152,7 @@ const multiplier = [
     alt="Ein voll besetztes Klassenzimmer mit aufmerksamen Schülerinnen und Schülern"
     eyebrow="Der Multiplikator"
     heading="Wer ein Mädchen ausbildet, verändert eine Gemeinschaft."
+    credit={CREDIT_AI_DE}
   />
 
   <section class="section">

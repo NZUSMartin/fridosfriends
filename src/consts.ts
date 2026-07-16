@@ -22,3 +22,11 @@ export const BETTERPLACE_SHORT = 'https://www.betterplace.org/de/projects/165916
 export const PAYPAL_DONATE =
   'https://www.paypal.com/donate/?hosted_button_id=R94VT44NWJ7QY'; // one-time
 export const PAYPAL_SUBSCRIBE = ''; // paste the PayPal *subscription* button link here once created
+
+// Photo credit + AI-modification disclosure. Used as the figcaption under every
+// sensitive photo that was AI-modified for privacy (faces are synthetic stand-ins).
+// Unmodified images (e.g. the hands close-up, Pater Frido) keep the plain credit.
+export const CREDIT_AI_DE =
+  'Foto: JRS Uganda · Sensible Bilder mit KI modifiziert – abgebildete Personen sind nicht real.';
+export const CREDIT_AI_EN =
+  'Foto: JRS Uganda · Sensitive images modified with AI – the people shown are not real.';
