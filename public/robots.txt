@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kolleg.netlify.app/sitemap.xml
+Sitemap: https://www.fridosfriends.de/sitemap.xml
