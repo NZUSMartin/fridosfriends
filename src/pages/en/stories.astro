@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
 import Story from '../../components/Story.astro';
 import CTABand from '../../components/CTABand.astro';
+import TestimonialVideo from '../../components/TestimonialVideo.astro';
 import { CREDIT_AI_EN } from '../../consts';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
@@ -30,7 +31,8 @@ const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipend
         To protect the girls, we give only their first name and what they want to become.
         No surnames, no details about family or where they live, nothing that could identify
         them — these are the safeguarding standards of the Jesuit Refugee Service, and we hold
-        to them.
+        to them. Josephine&rsquo;s video below is shown with her consent and with the express
+        approval of the Jesuit Refugee Service.
       </p>
       <p style="margin-top:var(--sp-4);color:var(--stone)" data-reveal>
         Education gives South Sudanese refugee children in Uganda perspectives for the future —
@@ -103,13 +105,29 @@ const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipend
     </div>
   </section>
 
-  <!-- 3b. gift cross-link -->
+  <!-- 3c. VIDEO — JOSEPHINE -->
+  <section class="section">
+    <div class="container container-text">
+      <div class="section-head" data-reveal>
+        <Eyebrow text="A voice from Adjumani" />
+        <h2>In her own words.</h2>
+      </div>
+      <p style="margin:0 0 var(--sp-6);color:var(--stone)" data-reveal>
+        Josephine is a student at Mungula Senior Secondary School in Adjumani. In this video
+        she tells, in her own words, what her school place means to her.
+      </p>
+      <TestimonialVideo lang="en" />
+    </div>
+  </section>
+
+  <!-- 3d. gift cross-link -->
   <section class="section section--tight">
     <div class="container container-text" style="text-align:center" data-reveal>
-      <p class="prose" style="color:var(--stone);margin:0">
-        Give a story like this one —
-        <a class="link-tertiary" href="/en/gift">give education in someone&rsquo;s name →</a>
+      <p class="lead" style="margin:0 0 var(--sp-2)">Give a story like this one.</p>
+      <p style="color:var(--stone);margin:0 0 var(--sp-5)">
+        A donation in someone&rsquo;s name — a personal gift you can print.
       </p>
+      <a class="btn btn--secondary" href="/en/gift">Create a gift</a>
     </div>
   </section>
 

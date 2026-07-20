@@ -1,0 +1,49 @@
+---
+/**
+ * TestimonialVideo.astro — self-hosted student testimonial (native <video>).
+ * preload="none": nothing loads until the visitor presses play, and no
+ * third-party requests are ever made (privacy-friendlier than an embed).
+ * Shown with Josephine's consent and the express approval of the JRS.
+ *
+ * Props:
+ *   lang  'de' | 'en'  — language (default 'de')
+ */
+interface Props { lang?: 'de' | 'en'; }
+const { lang = 'de' } = Astro.props;
+const isEn = lang === 'en';
+---
+<figure class="tvideo" data-reveal>
+  <video
+    controls
+    preload="none"
+    playsinline
+    poster="/videos/josephine-testimonial-poster.jpg"
+    width="568"
+    height="320"
+    aria-label={isEn
+      ? 'Video: Josephine tells what her school place means to her (English)'
+      : 'Video: Josephine erzählt, was ihr Schulplatz für sie bedeutet (Englisch)'}
+  >
+    <source src="/videos/josephine-testimonial-2026.mp4" type="video/mp4" />
+    {isEn ? 'Your browser cannot play this video.' : 'Ihr Browser kann dieses Video nicht abspielen.'}
+  </video>
+  <figcaption>
+    {isEn
+      ? 'Josephine — 2026 Adjumani student at Mungula Senior Secondary School. Video: Jesuit Refugee Service.'
+      : 'Josephine — Stipendiatin 2026 aus Adjumani, Schülerin der Mungula Senior Secondary School. Video: Jesuit Refugee Service.'}
+  </figcaption>
+</figure>
+
+<style>
+  .tvideo {
+    margin: 0 auto;
+    max-width: 640px;
+  }
+  .tvideo video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    background: #000;
+  }
+</style>
