@@ -75,17 +75,18 @@ const nav = isEn ? navEn : navDe;
       <!-- Spendenkonto -->
       <div>
         <h3>{isEn ? 'Donation account' : 'Spendenkonto'}</h3>
-        <div class="footer-bank">
-          <dl class="bank">
-            <dt>{isEn ? 'Recipient' : 'Empfänger'}</dt>
-            <dd>Frido&rsquo;s Friends e.V.</dd>
-            <dt>IBAN</dt>
-            <dd>DE44&nbsp;6805&nbsp;2230&nbsp;0000&nbsp;2055&nbsp;26</dd>
-            <dt>BIC</dt>
-            <dd>SOLADES1STB</dd>
-            <dt>{isEn ? 'Bank' : 'Bank'}</dt>
-            <dd>Sparkasse St.&nbsp;Blasien</dd>
-          </dl>
+        <dl class="bank">
+          <dt>{isEn ? 'Recipient' : 'Empfänger'}</dt>
+          <dd>Frido&rsquo;s Friends e.V.</dd>
+          <dt>IBAN</dt>
+          <dd>DE44&nbsp;6805&nbsp;2230&nbsp;0000&nbsp;2055&nbsp;26</dd>
+          <dt>BIC</dt>
+          <dd>SOLADES1STB</dd>
+          <dt>{isEn ? 'Bank' : 'Bank'}</dt>
+          <dd>Sparkasse St.&nbsp;Blasien</dd>
+        </dl>
+        <div class="footer-pay">
+          <h3>{isEn ? 'Ways to give' : 'So können Sie spenden'}</h3>
           <a
             class="footer-qr"
             href="/images/sepa-qr.png"
@@ -104,9 +105,6 @@ const nav = isEn ? navEn : navDe;
                 : 'QR-Code — mit der Banking-App scannen und per Überweisung spenden'}
             />
           </a>
-        </div>
-        <div class="footer-pay">
-          <h3>{isEn ? 'Ways to give' : 'So können Sie spenden'}</h3>
           <div class="pay-badges">
             <a class="pay-badge" href="https://www.betterplace.org/de/projects/165916" rel="noopener" target="_blank" aria-label="betterplace.org">
               <img src="/images/betterplace-logo.png" alt="betterplace.org" width="128" height="19" loading="lazy" />
@@ -133,10 +131,8 @@ const nav = isEn ? navEn : navDe;
 </footer>
 
 <style>
-  .footer-bank { display: flex; align-items: flex-start; gap: var(--sp-5); flex-wrap: wrap; }
-  .footer-bank .bank { flex: 1 1 150px; }
   .footer-qr,
-  .footer-qr:hover { flex: 0 0 auto; border-bottom: none; }
+  .footer-qr:hover { display: inline-block; margin: 0 0 var(--sp-4); border-bottom: none; }
   .footer-qr img {
     width: 168px;
     height: 168px;
