@@ -75,16 +75,36 @@ const nav = isEn ? navEn : navDe;
       <!-- Spendenkonto -->
       <div>
         <h3>{isEn ? 'Donation account' : 'Spendenkonto'}</h3>
-        <dl class="bank">
-          <dt>{isEn ? 'Recipient' : 'Empfänger'}</dt>
-          <dd>Frido&rsquo;s Friends e.V.</dd>
-          <dt>IBAN</dt>
-          <dd>DE44&nbsp;6805&nbsp;2230&nbsp;0000&nbsp;2055&nbsp;26</dd>
-          <dt>BIC</dt>
-          <dd>SOLADES1STB</dd>
-          <dt>{isEn ? 'Bank' : 'Bank'}</dt>
-          <dd>Sparkasse St.&nbsp;Blasien</dd>
-        </dl>
+        <div class="footer-bank">
+          <dl class="bank">
+            <dt>{isEn ? 'Recipient' : 'Empfänger'}</dt>
+            <dd>Frido&rsquo;s Friends e.V.</dd>
+            <dt>IBAN</dt>
+            <dd>DE44&nbsp;6805&nbsp;2230&nbsp;0000&nbsp;2055&nbsp;26</dd>
+            <dt>BIC</dt>
+            <dd>SOLADES1STB</dd>
+            <dt>{isEn ? 'Bank' : 'Bank'}</dt>
+            <dd>Sparkasse St.&nbsp;Blasien</dd>
+          </dl>
+          <a
+            class="footer-qr"
+            href="/images/sepa-qr.png"
+            target="_blank"
+            rel="noopener"
+            aria-label={isEn ? 'Open the banking-app QR code full size' : 'QR-Code für die Banking-App in voller Größe öffnen'}
+          >
+            <img
+              src="/images/sepa-qr.png"
+              width="512"
+              height="512"
+              loading="lazy"
+              decoding="async"
+              alt={isEn
+                ? 'QR code — scan with your banking app to donate by SEPA transfer'
+                : 'QR-Code — mit der Banking-App scannen und per Überweisung spenden'}
+            />
+          </a>
+        </div>
         <div class="footer-pay">
           <h3>{isEn ? 'Ways to give' : 'So können Sie spenden'}</h3>
           <div class="pay-badges">
@@ -111,3 +131,18 @@ const nav = isEn ? navEn : navDe;
     </div>
   </div>
 </footer>
+
+<style>
+  .footer-bank { display: flex; align-items: flex-start; gap: var(--sp-5); flex-wrap: wrap; }
+  .footer-bank .bank { flex: 1 1 150px; }
+  .footer-qr,
+  .footer-qr:hover { flex: 0 0 auto; border-bottom: none; }
+  .footer-qr img {
+    width: 168px;
+    height: 168px;
+    display: block;
+    border-radius: 10px;
+    transition: transform 150ms var(--ease-out);
+  }
+  .footer-qr:hover img { transform: translateY(-2px); }
+</style>
