@@ -12,18 +12,20 @@
  *   credit?   string    — figcaption text (default 'Foto: JRS Uganda')
  *   width?    number    — intrinsic width attr (default 1600)
  *   height?   number    — intrinsic height attr (default 1067)
+ *   focus?    string    — CSS object-position focal point, e.g. '50% 30%' (default '50% 50%').
+ *                         Wide viewports crop the 3:2 photo top/bottom; aim this at the faces.
  */
 import Eyebrow from './Eyebrow.astro';
 interface Props {
   src: string; alt: string;
   eyebrow?: string; heading?: string;
-  credit?: string; width?: number; height?: number;
+  credit?: string; width?: number; height?: number; focus?: string;
 }
-const { src, alt, eyebrow, heading, credit = 'Foto: JRS Uganda', width = 1600, height = 1067 } = Astro.props;
+const { src, alt, eyebrow, heading, credit = 'Foto: JRS Uganda', width = 1600, height = 1067, focus = '50% 50%' } = Astro.props;
 const hasOverlay = Boolean(eyebrow || heading);
 ---
 <figure class="photo-break" data-reveal>
-  <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
+  <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" style={`object-position:${focus}`} />
   {hasOverlay && (
     <div class="photo-break__caption">
       <div class="container">

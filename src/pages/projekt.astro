@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import PhotoBreak from '../components/PhotoBreak.astro';
+import MapStrip from '../components/MapStrip.astro';
 import CTABand from '../components/CTABand.astro';
 import { CREDIT_AI_DE } from '../consts';
 
@@ -78,12 +79,14 @@ const jrsFacts = [
           ist der einzige nachhaltige Weg aus diesem Kreislauf — und genau dort setzen wir an.
         </p>
       </div>
+      <MapStrip lang="de" />
     </div>
   </section>
 
   <!-- (b) CONTEXT PHOTO -->
   <PhotoBreak
     src="/images/student-corridor-flowers.jpg"
+    focus="50% 30%"
     alt="Eine Schülerin steht in einem sonnendurchfluteten Schulkorridor in Adjumani"
     eyebrow="Adjumani, Norduganda"
     heading="Für ein Mädchen beginnt Zukunft mit einem sicheren Schulweg."
@@ -145,6 +148,7 @@ const jrsFacts = [
   <!-- (e) PHOTO BREAK -->
   <PhotoBreak
     src="/images/girls-group-smiling.jpg"
+    focus="50% 18%"
     alt="Eine Gruppe von sieben Schülerinnen in rot-weißen Uniformen steht selbstbewusst zusammen"
     eyebrow="Gemeinsam stärker"
     heading="Jedes geförderte Mädchen verändert mehr als ein einzelnes Leben."

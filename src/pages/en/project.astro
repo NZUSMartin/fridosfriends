@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
 import PhotoBreak from '../../components/PhotoBreak.astro';
+import MapStrip from '../../components/MapStrip.astro';
 import CTABand from '../../components/CTABand.astro';
 import { CREDIT_AI_EN } from '../../consts';
 
@@ -78,12 +79,14 @@ const jrsFacts = [
           sustainable way out of this cycle — and that is exactly where we begin.
         </p>
       </div>
+      <MapStrip lang="en" />
     </div>
   </section>
 
   <!-- (b) CONTEXT PHOTO -->
   <PhotoBreak
     src="/images/student-corridor-flowers.jpg"
+    focus="50% 30%"
     alt="A schoolgirl stands in a sunlit school corridor in Adjumani"
     eyebrow="Adjumani, northern Uganda"
     heading="For a girl, the future begins with a safe way to school."
@@ -145,6 +148,7 @@ const jrsFacts = [
   <!-- (e) PHOTO BREAK -->
   <PhotoBreak
     src="/images/girls-group-smiling.jpg"
+    focus="50% 18%"
     alt="A group of seven schoolgirls in red-and-white uniforms stand together confidently"
     eyebrow="Stronger together"
     heading="Every girl we support changes more than a single life."

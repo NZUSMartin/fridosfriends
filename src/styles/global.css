@@ -564,9 +564,40 @@ figcaption, .caption {
 .figure--portrait img { aspect-ratio: 4 / 5; }
 .figure--landscape img { aspect-ratio: 3 / 2; }
 
+/* schematic maps (MapStrip.astro) */
+.map-strip { display: grid; grid-template-columns: 1fr; gap: var(--sp-6); margin-top: var(--sp-8); }
+@media (min-width: 768px) { .map-strip { grid-template-columns: 1fr 1fr; gap: var(--sp-7); align-items: start; } }
+.map-card {
+  position: relative; margin: 0; padding: var(--sp-5);
+  background: var(--paper-pure); border: 1px solid var(--line); border-radius: var(--r-card);
+}
+.map-card__num {
+  position: absolute; top: calc(var(--sp-4) * -1); left: var(--sp-5);
+  width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center;
+  background: var(--gold); color: var(--ink); font-family: var(--font-serif); font-weight: 600; font-size: 1rem;
+  box-shadow: 0 0 0 4px var(--paper);
+}
+.map-svg { display: block; width: 100%; height: auto; max-width: 420px; margin: 0 auto; font-family: var(--font-sans); }
+.map-land { fill: color-mix(in srgb, var(--ink) 7%, var(--paper-pure)); stroke: var(--paper-pure); stroke-width: 0.8; stroke-linejoin: round; }
+.map-focus { fill: var(--gold); stroke: var(--gold-text); stroke-width: 0.8; stroke-linejoin: round; }
+.map-country { fill: var(--paper); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.map-leader { stroke: var(--gold-text); stroke-width: 1; }
+.map-label { font-size: 13px; fill: var(--ink); }
+.map-label--focus { font-family: var(--font-serif); font-weight: 600; font-size: 15px; fill: var(--gold-text); }
+.map-label--nb { font-size: 11px; fill: var(--stone); letter-spacing: 0.08em; text-transform: uppercase; }
+.map-pin--capital { fill: var(--ink); }
+.map-pin--focus { fill: var(--gold); stroke: var(--paper-pure); stroke-width: 2; }
+.map-pin-halo { fill: color-mix(in srgb, var(--gold) 22%, transparent); }
+.map-card figcaption { margin-top: var(--sp-4); font-size: var(--step--1); color: var(--stone); text-align: center; }
+.map-note { margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--line); }
+.map-note strong { font-family: var(--font-serif); font-size: var(--step-1); color: var(--ink); display: block; margin-bottom: var(--sp-2); }
+.map-note p { color: var(--stone); font-size: var(--step--1); margin: 0 0 var(--sp-3); }
+
 /* full-bleed photo break */
 .photo-break { position: relative; margin: 0; }
 .photo-break img { width: 100%; height: 60vh; min-height: 360px; object-fit: cover; border-radius: 0; display: block; }
+/* wide viewports: a 60vh band is short relative to its width and crops a 3:2 photo top+bottom — let it grow */
+@media (min-width: 1024px) { .photo-break img { height: clamp(360px, max(60vh, 46vw), 84vh); } }
 .photo-break__caption {
   position: absolute; inset: auto 0 0 0;
   padding: var(--sp-8) var(--sp-4) var(--sp-7);
@@ -699,7 +730,29 @@ figcaption, .caption {
 }
 .sticky-cta.is-shown { display: flex; }
 .sticky-cta .btn { flex: 1; }
-@media (min-width: 1024px) { .sticky-cta { display: none !important; } }
+.sticky-cta__line, .sticky-cta__social { display: none; }
+/* keep the last lines of the page (footer legal) clear of the bar */
+body.has-sticky-cta { padding-bottom: 72px; }
+/* desktop: slim band — one line of context, the two CTAs, LinkedIn */
+@media (min-width: 1024px) {
+  .sticky-cta {
+    align-items: center; justify-content: flex-end;
+    padding: var(--sp-2) max(var(--sp-5), calc((100vw - var(--container, 1120px)) / 2 + var(--sp-5)));
+    gap: var(--sp-3);
+  }
+  .sticky-cta .btn { flex: 0 0 auto; }
+  .sticky-cta__line {
+    display: block; margin-right: auto;
+    font-family: var(--font-serif); font-size: var(--step-0); color: var(--ink);
+  }
+  .sticky-cta__social {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; margin-left: var(--sp-2); border-radius: 999px;
+    color: var(--gold-text); border: 1px solid var(--line); transition: background 150ms, color 150ms;
+  }
+  .sticky-cta__social:hover { background: var(--gold-soft); color: var(--ink); }
+  body.has-sticky-cta { padding-bottom: 64px; }
+}
 
 /* =====================================================================
    16. Accessibility — focus / skip link
@@ -763,6 +816,9 @@ figcaption, .caption {
 .pay-badge img { height: 22px; width: auto; display: block; }
 .footer-pay { margin-top: var(--sp-5); }
 .footer-pay h3 { margin-bottom: var(--sp-3); }
+.footer-social { margin-top: var(--sp-4); }
+.footer-social a { display: inline-flex; align-items: center; gap: var(--sp-2); color: var(--gold-on-ink); white-space: nowrap; font-size: var(--step--1); }
+.footer-social a:hover { border-bottom-color: var(--gold); }
 
 /* =====================================================================
    21. Video embed (privacy-friendly click-to-load)

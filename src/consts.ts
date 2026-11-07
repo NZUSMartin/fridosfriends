@@ -21,7 +21,10 @@ export const BETTERPLACE =
 export const BETTERPLACE_SHORT = 'https://www.betterplace.org/de/projects/165916';
 export const PAYPAL_DONATE =
   'https://www.paypal.com/donate/?hosted_button_id=R94VT44NWJ7QY'; // one-time
-export const PAYPAL_SUBSCRIBE = ''; // paste the PayPal *subscription* button link here once created
+export const PAYPAL_SUBSCRIBE = '';
+
+// Social: the Frido's Friends e.V. LinkedIn company page (organisation id 128463972).
+export const LINKEDIN = 'https://www.linkedin.com/company/128463972/'; // paste the PayPal *subscription* button link here once created
 
 // Photo credit + AI-modification disclosure. Used as the figcaption under every
 // sensitive photo that was AI-modified for privacy (faces are synthetic stand-ins).
