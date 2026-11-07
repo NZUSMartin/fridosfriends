@@ -16,7 +16,7 @@ const steps = [
   {
     n: '1',
     title: 'JRS wählt aus',
-    body: 'Unser Partner vor Ort, der Jesuit Refugee Service, kennt die Familien im Bezirk Adjumani und wählt die Mädchen aus, für die ein Schulplatz alles verändert.',
+    body: 'Unser Partner vor Ort, der <a class="link-inline" href="https://ear.jrs.net/en/country/uganda/" target="_blank" rel="noopener">Jesuit Refugee Service</a>, kennt die Familien im Bezirk Adjumani und wählt die Mädchen aus, für die ein Schulplatz alles verändert.',
   },
   {
     n: '2',
@@ -60,7 +60,7 @@ const multiplier = [
           <h1 data-reveal>Bildung ist die einzige Investition, die niemand mehr wegnehmen kann.</h1>
           <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
             Wir finanzieren Schulstipendien für Mädchen im Flüchtlingsbezirk Adjumani in
-            Norduganda — gemeinsam mit dem <a class="link-inline" href="https://ear.jrs.net/en/country/uganda/" target="_blank" rel="noopener">Jesuit Refugee Service</a> und im Sinne von Pater Frido
+            Norduganda — gemeinsam mit dem Jesuit Refugee Service und im Sinne von Pater Frido
             Pflüger. Wenn Sie ein Mädchen fördern, fördern Sie eine ganze Gemeinschaft.
           </p>
           <p class="hero__cost" data-reveal>Jede Spende zählt — ein ganzes Schuljahr kostet rund <b>800 €</b>.</p>
@@ -209,7 +209,7 @@ const multiplier = [
           <article class="card" data-reveal>
             <span class="card__num">{s.n}</span>
             <h3>{s.title}</h3>
-            <p style="color:var(--stone);margin-top:var(--sp-3)">{s.body}</p>
+            <p style="color:var(--stone);margin-top:var(--sp-3)" set:html={s.body} />
           </article>
         ))}
       </div>

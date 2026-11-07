@@ -16,7 +16,7 @@ const steps = [
   {
     n: '1',
     title: 'JRS selects',
-    body: 'Our partner on the ground, the Jesuit Refugee Service, knows the families in the Adjumani district and chooses the girls for whom a school place changes everything.',
+    body: 'Our partner on the ground, the <a class="link-inline" href="https://ear.jrs.net/en/country/uganda/" target="_blank" rel="noopener">Jesuit Refugee Service</a>, knows the families in the Adjumani district and chooses the girls for whom a school place changes everything.',
   },
   {
     n: '2',
@@ -60,7 +60,7 @@ const multiplier = [
           <h1 data-reveal>Education is the one investment no one can ever take away.</h1>
           <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
             We fund school scholarships for girls in the Adjumani refugee district in
-            northern Uganda — together with the <a class="link-inline" href="https://ear.jrs.net/en/country/uganda/" target="_blank" rel="noopener">Jesuit Refugee Service</a> and in the spirit of
+            northern Uganda — together with the Jesuit Refugee Service and in the spirit of
             Father Frido Pflüger. When you support one girl, you support a whole community.
           </p>
           <p class="hero__cost" data-reveal>Every gift counts — a full school year costs about <b>€800</b>.</p>
@@ -209,7 +209,7 @@ const multiplier = [
           <article class="card" data-reveal>
             <span class="card__num">{s.n}</span>
             <h3>{s.title}</h3>
-            <p style="color:var(--stone);margin-top:var(--sp-3)">{s.body}</p>
+            <p style="color:var(--stone);margin-top:var(--sp-3)" set:html={s.body} />
           </article>
         ))}
       </div>
