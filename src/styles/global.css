@@ -736,14 +736,18 @@ body.has-sticky-cta { padding-bottom: 72px; }
 /* desktop: slim band — one line of context, the two CTAs, LinkedIn */
 @media (min-width: 1024px) {
   .sticky-cta {
-    align-items: center; justify-content: flex-end;
+    align-items: center; justify-content: flex-end; flex-wrap: wrap;
     padding: var(--sp-2) max(var(--sp-5), calc((100vw - var(--container, 1120px)) / 2 + var(--sp-5)));
     gap: var(--sp-3);
+    row-gap: 6px;
   }
   .sticky-cta .btn { flex: 0 0 auto; }
+  /* small gold line under the buttons, right-aligned (eyebrow voice) */
   .sticky-cta__line {
-    display: block; margin-right: auto;
-    font-family: var(--font-serif); font-size: var(--step-0); color: var(--ink);
+    display: block; order: 10; flex-basis: 100%; text-align: right;
+    font-family: var(--font-sans); font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-text);
+    padding-right: 4px;
   }
   .sticky-cta__social {
     display: inline-flex; align-items: center; justify-content: center;
@@ -751,7 +755,7 @@ body.has-sticky-cta { padding-bottom: 72px; }
     color: var(--gold-text); border: 1px solid var(--line); transition: background 150ms, color 150ms;
   }
   .sticky-cta__social:hover { background: var(--gold-soft); color: var(--ink); }
-  body.has-sticky-cta { padding-bottom: 64px; }
+  body.has-sticky-cta { padding-bottom: 84px; }
 }
 
 /* =====================================================================
