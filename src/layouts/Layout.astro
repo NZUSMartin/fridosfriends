@@ -49,9 +49,10 @@ const dePath = isEn ? path.replace(/^\/en/, '') || '/' : path;
 const enPath = isEn ? path : ('/en' + (path === '/' ? '/' : path));
 
 // Mobile sticky CTA: primary "Mitglied werden" + ghost "Spenden".
-// Suppressed on the donation hubs where the page itself is the completion action.
+// Suppressed on the donation hubs where the page itself is the completion action,
+// and on the Geschenk studio: its own stepper guides the visitor — no competing overlays.
 const normPath = path.length > 1 ? path.replace(/\/$/, '') : path;
-const isHub = normPath === '/mitmachen' || normPath === '/en/donate';
+const isHub = ['/mitmachen', '/en/donate', '/geschenk', '/en/gift'].includes(normPath);
 const stickyJoinHref = isEn ? '/en/donate' : '/mitmachen';
 const stickyJoinLabel = isEn ? 'Get involved' : 'Mitmachen';
 const stickyDonateHref = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';

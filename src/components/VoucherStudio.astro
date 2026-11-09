@@ -273,6 +273,8 @@ const t = isEn
   .gstatus { font-size:var(--step--1); color:var(--stone); margin-top:var(--sp-3); min-height:1.2em; }
   .gdone { margin-top:var(--sp-4); }
   .gstudio__preview { position:sticky; top:16px; }
+  /* phones/tablets: preview first but STATIC — a sticky preview under the sticky header left no room for the form */
+  @media (max-width:860px){ .gstudio__preview { position:static; max-width:420px; width:100%; margin:0 auto; } }
   .gpv-label { font-family:var(--font-sans); font-size:var(--step--1); font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--gold-text); text-align:center; margin-bottom:var(--sp-3); }
   .gpv-canvas { display:block; width:100%; max-width:460px; height:auto; margin:0 auto; border-radius:var(--r-card); box-shadow:var(--shadow-lift); }
 </style>
