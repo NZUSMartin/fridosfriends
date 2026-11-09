@@ -21,3 +21,8 @@
   for = "/images/*"
   [headers.values]
     Cache-Control = "public, max-age=3600"
+
+# Serverless: e-mails the generated Geschenk PDF (netlify/functions/send-geschenk.mjs).
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

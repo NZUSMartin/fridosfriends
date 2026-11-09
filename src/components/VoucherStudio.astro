@@ -47,6 +47,7 @@ const t = isEn
       s6h: 'Download your gift', s6lead: 'Almost done — confirm briefly and your gift is ready as a PDF.',
       honorCheck: 'I have made my donation and would like to download the gift now.',
       dl: 'Download gift (PDF)', dlPng: 'Download as image (PNG)',
+      mailH: 'Or send it by e-mail', mailLead: 'We e-mail the PDF to one address — your own or the recipient’s.', mailPh: 'name@example.com', mailBtn: 'Send by e-mail',
       done: 'Your gift is ready.', doneMore: 'Create another gift',
       shareLead: 'Know someone else who’d love to give this?', shareCopy: 'Copy link',
       back: '← Back', next: 'Next →',
@@ -82,6 +83,7 @@ const t = isEn
       s6h: 'Geschenk herunterladen', s6lead: 'Fast geschafft — bestätigen Sie kurz, dann liegt Ihr Geschenk als PDF bereit.',
       honorCheck: 'Ich habe meine Spende ausgelöst und möchte das Geschenk jetzt herunterladen.',
       dl: 'Geschenk herunterladen (PDF)', dlPng: 'Als Bild (PNG) herunterladen',
+      mailH: 'Oder per E-Mail senden', mailLead: 'Wir schicken das PDF an eine Adresse – Ihre eigene oder die der beschenkten Person.', mailPh: 'name@beispiel.de', mailBtn: 'Per E-Mail senden',
       done: 'Ihr Geschenk ist fertig.', doneMore: 'Noch ein Geschenk gestalten',
       shareLead: 'Kennen Sie jemanden, der das auch verschenken möchte?', shareCopy: 'Link kopieren',
       back: '← Zurück', next: 'Weiter →',
@@ -203,6 +205,16 @@ const t = isEn
           <button type="button" class="btn btn--primary" style="width:100%;margin-top:var(--sp-3)" data-dl-pdf disabled>{t.dl}</button>
           <button type="button" class="btn btn--secondary" style="width:100%;margin-top:var(--sp-2)" data-dl-png disabled>{t.dlPng}</button>
           <p class="gstatus" data-status aria-live="polite"></p>
+          <div class="gmail" data-mail>
+            <p class="gmail__h">{t.mailH}</p>
+            <p class="caption" style="margin:0 0 var(--sp-3)">{t.mailLead}</p>
+            <div class="gmail__row">
+              <input type="email" class="ginput" data-mail-to placeholder={t.mailPh} autocomplete="email" inputmode="email" maxlength="120" disabled />
+              <input type="text" name="website" data-mail-hp tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
+              <button type="button" class="btn btn--secondary" data-mail-send disabled>{t.mailBtn}</button>
+            </div>
+            <p class="gstatus" data-mail-status aria-live="polite"></p>
+          </div>
           <div class="gdone card" data-done hidden>
             <p class="eyebrow">{t.done}</p>
             <p style="margin-top:var(--sp-2);color:var(--stone)">{t.shareLead}</p>
@@ -271,6 +283,14 @@ const t = isEn
   .gprivacy { font-size:var(--step--1); color:var(--stone); margin-top:var(--sp-3); }
   .gprivacy::before { content:"🔒 "; }
   .gstatus { font-size:var(--step--1); color:var(--stone); margin-top:var(--sp-3); min-height:1.2em; }
+  .gmail { margin-top:var(--sp-5); padding-top:var(--sp-4); border-top:1px solid var(--line); position:relative; }
+  .gmail__h { font-family:var(--font-serif); font-weight:600; margin:0 0 var(--sp-1); }
+  .gmail__row { display:flex; gap:var(--sp-2); align-items:stretch; }
+  .gmail__row .ginput { flex:1; min-width:0; }
+  .ginput { font:inherit; padding:.7em .9em; border:1px solid var(--line-strong,#D6CDB6); border-radius:var(--r-card); background:#fff; color:var(--ink); }
+  .ginput:disabled { opacity:.55; }
+  .ginput:focus-visible { outline:2px solid var(--teal); outline-offset:2px; }
+  @media (max-width:520px){ .gmail__row { flex-direction:column; } }
   .gdone { margin-top:var(--sp-4); }
   .gstudio__preview { position:sticky; top:16px; }
   /* phones/tablets: preview first but STATIC — a sticky preview under the sticky header left no room for the form */
@@ -417,7 +437,9 @@ const t = isEn
     const honor = root.querySelector('[data-honor]') as HTMLInputElement;
     const dlPdf = root.querySelector('[data-dl-pdf]') as HTMLButtonElement;
     const dlPng = root.querySelector('[data-dl-png]') as HTMLButtonElement;
-    honor?.addEventListener('change', () => { dlPdf.disabled = !honor.checked; dlPng.disabled = !honor.checked; if (honor.checked) prepare().catch(() => {}); });
+    const mailTo = root.querySelector('[data-mail-to]') as HTMLInputElement; const mailSend = root.querySelector('[data-mail-send]') as HTMLButtonElement;
+    const mailHp = root.querySelector('[data-mail-hp]') as HTMLInputElement; const mailStatus = $('[data-mail-status]');
+    honor?.addEventListener('change', () => { const off = !honor.checked; dlPdf.disabled = off; dlPng.disabled = off; if (mailTo) mailTo.disabled = off; if (mailSend) mailSend.disabled = off; if (honor.checked) prepare().catch(() => {}); });
     const status = $('[data-status]');
     const trigger = (blob: Blob, name: string) => { const u = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); };
     const showDone = () => { const d = $('[data-done]'); if (d) d.hidden = false; };
@@ -467,6 +489,37 @@ const t = isEn
     }
     dlPng?.addEventListener('click', () => { deliver('png'); });
     dlPdf?.addEventListener('click', () => { deliver('pdf'); });
+    // --- e-mail: a lighter JPEG-based PDF (≈0.5–1 MB) goes to the Netlify Function, which mails it from the Verein's mailbox ---
+    async function makeMailPdf(): Promise<Blob> {
+      draw();
+      const jpg = await new Promise<Blob>((res, rej) => canvas.toBlob((b) => b ? res(b) : rej(new Error('JPG')), 'image/jpeg', 0.9));
+      const { PDFDocument } = await import('pdf-lib');
+      const pdf = await PDFDocument.create();
+      const page = pdf.addPage([PAGE_W, PAGE_H]);
+      const img = await pdf.embedJpg(new Uint8Array(await jpg.arrayBuffer()));
+      page.drawImage(img, { x:0, y:0, width:PAGE_W, height:PAGE_H });
+      return new Blob([await pdf.save()], { type: TYPES.pdf });
+    }
+    const toB64 = (blob: Blob) => new Promise<string>((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
+    const MAILMSG = () => isEnLang()
+      ? { sending: 'Sending …', sent: 'Sent to', bad: 'Please enter a valid e-mail address.', notready: 'E-mail sending is not set up yet — please download the PDF.', fail: 'Sending failed — please download the PDF instead.', rate: 'Too many e-mails in a short time — please try again later or download the PDF.' }
+      : { sending: 'Wird gesendet …', sent: 'Gesendet an', bad: 'Bitte eine gültige E-Mail-Adresse eingeben.', notready: 'Der E-Mail-Versand ist noch nicht eingerichtet – bitte laden Sie das PDF herunter.', fail: 'Senden fehlgeschlagen – bitte laden Sie das PDF herunter.', rate: 'Zu viele E-Mails in kurzer Zeit – bitte später erneut versuchen oder das PDF herunterladen.' };
+    mailSend?.addEventListener('click', async () => {
+      const m = MAILMSG(); const to = (mailTo?.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)) { if (mailStatus) mailStatus.textContent = m.bad; mailTo?.focus(); return; }
+      mailSend.disabled = true; if (mailStatus) mailStatus.textContent = m.sending;
+      try {
+        const pdf = await makeMailPdf();
+        const res = await fetch('/.netlify/functions/send-geschenk', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ to, lang: isEnLang() ? 'en' : 'de', occasion: state.occasion, recipient: state.recipient, giver: state.giver, pdf: await toB64(pdf), website: mailHp?.value || '' }) });
+        const j: any = await res.json().catch(() => ({}));
+        if (res.ok && j.ok) { if (mailStatus) mailStatus.textContent = m.sent + ' ' + to + '.'; showDone(); }
+        else if (res.status === 503) { if (mailStatus) mailStatus.textContent = m.notready; }
+        else if (res.status === 429) { if (mailStatus) mailStatus.textContent = m.rate; }
+        else { if (mailStatus) mailStatus.textContent = m.fail; }
+      } catch { if (mailStatus) mailStatus.textContent = m.fail; }
+      finally { mailSend.disabled = !honor?.checked; }
+    });
     function isEnLang(){ return document.documentElement.lang === 'en'; }
 
     // share
@@ -476,7 +529,7 @@ const t = isEn
       const b = root.querySelector('[data-share]') as HTMLButtonElement; const o = b.textContent; b.textContent = '✓'; setTimeout(() => b.textContent = o, 1500);
     });
     root.querySelector('[data-reset]')?.addEventListener('click', () => { state.recipient=''; state.year=''; state.giver=''; state.amount=100;
-      root.querySelectorAll('input[type=text],input[type=email]').forEach((i) => (i as HTMLInputElement).value = '');
+      root.querySelectorAll('input[type=text],input[type=email]').forEach((i) => (i as HTMLInputElement).value = ''); if (mailStatus) mailStatus.textContent = '';
       tiersEl.querySelectorAll('button').forEach((x,i)=>x.classList.toggle('is-sel', i===2)); sync(); goto(0);
     });
 
