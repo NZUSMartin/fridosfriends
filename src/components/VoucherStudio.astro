@@ -417,28 +417,56 @@ const t = isEn
     const honor = root.querySelector('[data-honor]') as HTMLInputElement;
     const dlPdf = root.querySelector('[data-dl-pdf]') as HTMLButtonElement;
     const dlPng = root.querySelector('[data-dl-png]') as HTMLButtonElement;
-    honor?.addEventListener('change', () => { dlPdf.disabled = !honor.checked; dlPng.disabled = !honor.checked; });
+    honor?.addEventListener('change', () => { dlPdf.disabled = !honor.checked; dlPng.disabled = !honor.checked; if (honor.checked) prepare().catch(() => {}); });
     const status = $('[data-status]');
     const trigger = (blob: Blob, name: string) => { const u = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); };
     const showDone = () => { const d = $('[data-done]'); if (d) d.hidden = false; };
-    dlPng?.addEventListener('click', () => { draw(); canvas.toBlob((b) => { if (b) trigger(b, 'Fridos-Friends-Geschenk.png'); if (status) status.textContent = ''; showDone(); }, 'image/png'); });
-    dlPdf?.addEventListener('click', async () => {
-      if (status) status.textContent = isEnLang() ? 'Creating PDF …' : 'PDF wird erstellt …';
-      try {
-        draw();
-        const png = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/png'));
-        const bytes = new Uint8Array(await png!.arrayBuffer());
-        const { PDFDocument } = await import('pdf-lib');
-        const pdf = await PDFDocument.create();
-        const page = pdf.addPage([PAGE_W, PAGE_H]);
-        const img = await pdf.embedPng(bytes);
-        page.drawImage(img, { x:0, y:0, width:PAGE_W, height:PAGE_H });
-        const out = await pdf.save();
-        trigger(new Blob([out], { type:'application/pdf' }), 'Fridos-Friends-Geschenk.pdf');
-        if (status) status.textContent = '';
-        showDone();
-      } catch (err: any) { if (status) status.textContent = 'Fehler: ' + (err?.message || err); }
-    });
+    // --- file creation, cached: Safari (esp. iPhone) drops a download that arrives after async work,
+    //     i.e. outside the user's tap. So the files are built when step 6 opens / the box is ticked,
+    //     and a tap hands the finished file over synchronously. Phones get the share sheet
+    //     ("In Dateien sichern"); everything else gets a plain download. ---
+    const NAMES = { png: 'Fridos-Friends-Geschenk.png', pdf: 'Fridos-Friends-Geschenk.pdf' } as const;
+    const TYPES = { png: 'image/png', pdf: 'application/pdf' } as const;
+    let cache: { key: string; png?: Blob; pdf?: Blob } = { key: '' };
+    let preparing: Promise<typeof cache> | null = null;
+    const cacheKey = () => JSON.stringify([state.occasion, state.amount, state.recipient, state.year, state.giver, cardDate()]);
+    const makePng = () => { draw(); return new Promise<Blob>((res, rej) => canvas.toBlob((b) => b ? res(b) : rej(new Error('PNG')), 'image/png')); };
+    async function makePdf(png: Blob): Promise<Blob> {
+      const { PDFDocument } = await import('pdf-lib');
+      const pdf = await PDFDocument.create();
+      const page = pdf.addPage([PAGE_W, PAGE_H]);
+      const img = await pdf.embedPng(new Uint8Array(await png.arrayBuffer()));
+      page.drawImage(img, { x:0, y:0, width:PAGE_W, height:PAGE_H });
+      return new Blob([await pdf.save()], { type: TYPES.pdf });
+    }
+    function prepare(): Promise<typeof cache> {
+      const key = cacheKey();
+      if (cache.key === key && cache.png && cache.pdf) return Promise.resolve(cache);
+      if (preparing) return preparing;
+      preparing = (async () => { const png = await makePng(); const pdf = await makePdf(png); cache = { key, png, pdf }; preparing = null; return cache; })()
+        .catch((e) => { preparing = null; throw e; });
+      return preparing;
+    }
+    const isTouch = () => window.matchMedia('(pointer: coarse)').matches;
+    function finish() { if (status) status.textContent = ''; showDone(); }
+    async function deliver(kind: 'png' | 'pdf') {
+      const fresh = cache.key === cacheKey() ? cache[kind] : undefined;
+      let blob = fresh;
+      if (!blob) {
+        if (status) status.textContent = isEnLang() ? 'Creating file …' : 'Datei wird erstellt …';
+        try { blob = (await prepare())[kind]!; } catch (err: any) { if (status) status.textContent = 'Fehler: ' + (err?.message || err); return; }
+      }
+      const nav: any = navigator;
+      if (isTouch() && nav.share && nav.canShare) {
+        try {
+          const file = new File([blob], NAMES[kind], { type: TYPES[kind] });
+          if (nav.canShare({ files: [file] })) { await nav.share({ files: [file], title: 'Frido’s Friends – Geschenk' }); finish(); return; }
+        } catch (err: any) { if (err && err.name === 'AbortError') { finish(); return; } /* else: fall back to a download */ }
+      }
+      trigger(blob, NAMES[kind]); finish();
+    }
+    dlPng?.addEventListener('click', () => { deliver('png'); });
+    dlPdf?.addEventListener('click', () => { deliver('pdf'); });
     function isEnLang(){ return document.documentElement.lang === 'en'; }
 
     // share
@@ -459,6 +487,7 @@ const t = isEn
     const backB = root.querySelector('[data-back]') as HTMLButtonElement;
     const nextB = root.querySelector('[data-next]') as HTMLButtonElement;
     function goto(s: number) {
+      if (s === 5) prepare().catch(() => {}); // build the files while the visitor reads step 6
       step = Math.max(0, Math.min(MAX - 1, s));
       panels.forEach((p) => p.classList.toggle('is-active', Number((p as HTMLElement).dataset.step) === step));
       dots.forEach((d, i) => { d.classList.toggle('is-active', i === step); d.classList.toggle('is-done', i < step); });
