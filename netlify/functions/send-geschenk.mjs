@@ -23,8 +23,8 @@ function copy(lang, occasion, recipient, giver) {
   const occ = occasion === 'weihnachten' ? (en ? 'Christmas' : 'Weihnachten') : (en ? 'birthday' : 'Geburtstag');
   const subject = en ? 'Your gift from Frido’s Friends' : 'Ihr Geschenk von Frido’s Friends';
   const text = en
-    ? `Hello,\n\nattached is the gift that was created on fridosfriends.de${giver ? ` by ${giver}` : ''}${recipient ? ` for ${recipient}` : ''} (${occ}): a donation in someone’s name for a girl’s school year in Adjumani, northern Uganda.\n\nThe PDF is A4 — print it or pass it on as it is.\n\nThis message is not a donation receipt. Receipts: vorstand@fridosfriends.de\n\nFrido’s Friends e.V. · www.fridosfriends.de`
-    : `Guten Tag,\n\nim Anhang finden Sie das Geschenk, das auf fridosfriends.de${giver ? ` von ${giver}` : ''}${recipient ? ` für ${recipient}` : ''} gestaltet wurde (${occ}): eine Spende in Ihrem Namen für ein Schuljahr eines Mädchens in Adjumani, Norduganda.\n\nDas PDF ist im A4-Format – zum Ausdrucken oder Weiterleiten.\n\nDiese Nachricht ist keine Spendenbescheinigung. Bescheinigungen: vorstand@fridosfriends.de\n\nFrido’s Friends e.V. · www.fridosfriends.de`;
+    ? `Hello,\n\nattached is the gift that was created on fridosfriends.de${giver ? ` by ${giver}` : ''}${recipient ? ` for ${recipient}` : ''} (${occ}): a donation in someone’s name for a girl’s school year in Adjumani, northern Uganda.\n\nThe PDF is A4 — print it or pass it on as it is.\n\nThis message is not a donation receipt. Receipts: donation@fridosfriends.de\n\nFrido’s Friends e.V. · www.fridosfriends.de`
+    : `Guten Tag,\n\nim Anhang finden Sie das Geschenk, das auf fridosfriends.de${giver ? ` von ${giver}` : ''}${recipient ? ` für ${recipient}` : ''} gestaltet wurde (${occ}): eine Spende in Ihrem Namen für ein Schuljahr eines Mädchens in Adjumani, Norduganda.\n\nDas PDF ist im A4-Format – zum Ausdrucken oder Weiterleiten.\n\nDiese Nachricht ist keine Spendenbescheinigung. Bescheinigungen: donation@fridosfriends.de\n\nFrido’s Friends e.V. · www.fridosfriends.de`;
   return { subject, text };
 }
 
