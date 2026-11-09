@@ -206,10 +206,12 @@ const stickyLinkedIn = isEn ? "Frido's Friends on LinkedIn" : 'Frido’s Friends
       const hero = document.querySelector('.hero, [data-hero]') as HTMLElement | null;
       const threshold = () => (hero ? hero.offsetTop + hero.offsetHeight - 80 : 480);
       let cTicking = false;
+      // reserve the space once (not toggled mid-scroll: a growing document height while
+      // scrolling makes iOS Safari jump and the bar appear to slide)
+      document.body.classList.add('has-sticky-cta');
       const updateSticky = () => {
         const shown = window.scrollY > threshold();
         stickyCta.classList.toggle('is-shown', shown);
-        document.body.classList.toggle('has-sticky-cta', shown);
         stickyCta.setAttribute('aria-hidden', shown ? 'false' : 'true');
       };
       const onCtaScroll = () => {
