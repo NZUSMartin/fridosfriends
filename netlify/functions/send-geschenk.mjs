@@ -2,10 +2,10 @@
 // Static site → this is the only server piece. Sends through the Verein's own mailbox (SMTP at netcup)
 // so SPF stays intact. Configure in Netlify → Site configuration → Environment variables:
 //   SMTP_HOST, SMTP_PORT (465 = SSL, 587 = STARTTLS), SMTP_USER, SMTP_PASS, MAIL_FROM (optional,
-//   default vorstand@fridosfriends.de). MAIL_DRYRUN=1 → no mail is sent, the message is echoed (tests).
+//   default "Frido’s Friends e.V. <SMTP_USER>"), MAIL_REPLY_TO (optional, default donation@fridosfriends.de). MAIL_DRYRUN=1 → no mail is sent, the message is echoed (tests).
 import nodemailer from 'nodemailer';
 
-const FROM_DEFAULT = 'Frido’s Friends e.V. <vorstand@fridosfriends.de>';
+const REPLY_DEFAULT = 'donation@fridosfriends.de';
 const MAX_PDF_BYTES = 4 * 1024 * 1024;           // the client sends a JPEG-based PDF, ~0.5–1 MB
 const RATE = { windowMs: 10 * 60 * 1000, max: 6 }; // per IP per function instance (best effort)
 const hits = new Map();
@@ -42,7 +42,7 @@ export const handler = async (event) => {
   const ip = (event.headers['x-nf-client-connection-ip'] || event.headers['client-ip'] || 'unknown');
   if (limited(ip)) return json(429, { ok: false, error: 'rate' });
 
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, MAIL_FROM, MAIL_DRYRUN } = process.env;
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, MAIL_FROM, MAIL_REPLY_TO, MAIL_DRYRUN } = process.env;
   const dry = MAIL_DRYRUN === '1';
   if (!dry && !(SMTP_HOST && SMTP_USER && SMTP_PASS)) return json(503, { ok: false, error: 'notconfigured' });
 
@@ -52,7 +52,7 @@ export const handler = async (event) => {
   const { subject, text } = copy(lang, occasion, String(recipient).slice(0, 60), String(giver).slice(0, 60));
   try {
     const info = await transport.sendMail({
-      from: MAIL_FROM || FROM_DEFAULT, to: toAddr, replyTo: 'vorstand@fridosfriends.de', subject, text,
+      from: MAIL_FROM || `Frido’s Friends e.V. <${SMTP_USER || REPLY_DEFAULT}>`, to: toAddr, replyTo: MAIL_REPLY_TO || REPLY_DEFAULT, subject, text,
       attachments: [{ filename: 'Fridos-Friends-Geschenk.pdf', content: bytes, contentType: 'application/pdf' }],
     });
     return json(200, { ok: true, dry, id: info.messageId || null, ...(dry ? { size: bytes.length, to: toAddr, subject } : {}) });
