@@ -27,7 +27,7 @@ const t = isEn
       freeLabel: 'Or a free amount (€)', freePh: 'e.g. 150',
       s2h: 'Recipient & occasion', s2lead: 'Who is the gift for?',
       recLabel: 'Name of the recipient', recPh: 'e.g. Pater Muster',
-      occLabel: 'Occasion', occBirthday: 'Birthday', occSoon: 'soon',
+      occLabel: 'Occasion', occBirthday: 'Birthday', occChristmas: 'Christmas', occSoon: 'soon',
       yearLabel: 'Which birthday? (optional)', yearPh: 'e.g. 80.',
       yearHint: 'Appears as „zu Deinem 80. Geburtstag“. Leave empty for a plain birthday greeting.',
       s3h: 'Make your donation', s3lead: 'You’re giving education worth',
@@ -43,7 +43,7 @@ const t = isEn
       rcptNameLabel: 'Name', rcptEmailLabel: 'Email', rcptEmailPh: 'name@example.com',
       rcptAddrLabel: 'Postal address (optional)', rcptAddrPh: 'Street, ZIP city',
       rcptHint: 'For a formal donation receipt, please include your postal address.', rcptSent: 'Request sent — thank you.',
-      occNote: 'Currently for birthdays — more occasions coming soon.',
+      occNote: 'For birthdays and Christmas — more occasions to follow.',
       s6h: 'Download your gift', s6lead: 'Almost done — confirm briefly and your gift is ready as a PDF.',
       honorCheck: 'I have made my donation and would like to download the gift now.',
       dl: 'Download gift (PDF)', dlPng: 'Download as image (PNG)',
@@ -62,7 +62,7 @@ const t = isEn
       freeLabel: 'Oder freier Betrag (€)', freePh: 'z. B. 150',
       s2h: 'Empfänger & Anlass', s2lead: 'Für wen ist das Geschenk?',
       recLabel: 'Name des/der Beschenkten', recPh: 'z. B. Pater Muster',
-      occLabel: 'Anlass', occBirthday: 'Geburtstag', occSoon: 'bald',
+      occLabel: 'Anlass', occBirthday: 'Geburtstag', occChristmas: 'Weihnachten', occSoon: 'bald',
       yearLabel: 'Welcher Geburtstag? (optional)', yearPh: 'z. B. 80.',
       yearHint: 'Erscheint als „zu Deinem 80. Geburtstag“. Leer lassen für einen schlichten Geburtstagsgruß.',
       s3h: 'Jetzt Ihre Spende leisten', s3lead: 'Sie verschenken Bildung im Wert von',
@@ -78,7 +78,7 @@ const t = isEn
       rcptNameLabel: 'Name', rcptEmailLabel: 'E-Mail', rcptEmailPh: 'name@beispiel.de',
       rcptAddrLabel: 'Postanschrift (optional)', rcptAddrPh: 'Straße, PLZ Ort',
       rcptHint: 'Für eine förmliche Zuwendungsbestätigung geben Sie bitte Ihre Postanschrift an.', rcptSent: 'Anfrage gesendet — vielen Dank.',
-      occNote: 'Aktuell für Geburtstage — weitere Anlässe folgen bald.',
+      occNote: 'Für Geburtstage und Weihnachten — weitere Anlässe folgen.',
       s6h: 'Geschenk herunterladen', s6lead: 'Fast geschafft — bestätigen Sie kurz, dann liegt Ihr Geschenk als PDF bereit.',
       honorCheck: 'Ich habe meine Spende ausgelöst und möchte das Geschenk jetzt herunterladen.',
       dl: 'Geschenk herunterladen (PDF)', dlPng: 'Als Bild (PNG) herunterladen',
@@ -126,8 +126,14 @@ const t = isEn
           <h2 class="h4">2 · {t.s2h}</h2>
           <p class="gpanel__lead">{t.s2lead}</p>
           <label class="field"><span>{t.recLabel}</span><input type="text" data-recipient maxlength="40" placeholder={t.recPh} /></label>
+          <div class="field"><span>{t.occLabel}</span>
+            <div class="gtiers gtiers--occ" data-occ>
+              <button type="button" class="gtier is-sel" data-occ-val="geburtstag">{t.occBirthday}</button>
+              <button type="button" class="gtier" data-occ-val="weihnachten">{t.occChristmas}</button>
+            </div>
+          </div>
           <p class="caption" style="margin:0 0 var(--sp-4)">{t.occNote}</p>
-          <label class="field"><span>{t.yearLabel}</span><input type="text" data-year maxlength="16" placeholder={t.yearPh} /><small class="field-note">{t.yearHint}</small></label>
+          <label class="field" data-year-wrap><span>{t.yearLabel}</span><input type="text" data-year maxlength="16" placeholder={t.yearPh} /><small class="field-note">{t.yearHint}</small></label>
         </section>
 
         <!-- 3 · Spenden -->
@@ -248,6 +254,8 @@ const t = isEn
   .gtier small, .gtiers[data-tiers] > button small { font-family:var(--font-sans); font-weight:400; font-size:.62rem; color:var(--stone); letter-spacing:.02em; }
   .gtier.is-sel, .gtiers[data-tiers] > button.is-sel { border-color:var(--teal); background:var(--gold-wash,#F6EFDD); box-shadow:inset 0 0 0 1px var(--teal); }
   .gtier.is-soon { opacity:.5; cursor:default; }
+  .gtiers--occ { grid-template-columns:repeat(2,1fr); }
+  .field[hidden] { display:none; }
   .gbank { border-top:1px solid var(--line); margin-top:var(--sp-5); padding-top:var(--sp-4); }
   .gbank__row { display:flex; gap:var(--sp-5); flex-wrap:wrap; align-items:flex-start; }
   .gbank__qr { margin:0; text-align:center; }
@@ -285,20 +293,25 @@ const t = isEn
       date:      { x:0.75,  y:0.779, align:'left',   kind:'sans',     sizeFrac:0.0150, color:'ink', maxW:0.220 },
       footline:  { x:0.50,  y:0.745, align:'center', kind:'sans',     sizeFrac:0.0105, color:'grey' },
     };
+    // Per-occasion overrides: the Christmas art has a pine twig from x .507 beside the recipient line,
+    // so that field must stop before it (birthday blank runs clear to the photo at .62).
+    const FIELD_OVERRIDES: Record<string, Record<string, any>> = { weihnachten: { recipient: { maxW: 0.345 } } };
     const COLORS: Record<string,string> = { gold:'rgb(200,150,43)', ink:'rgb(55,53,49)', grey:'rgb(120,116,107)' };
     const FONTDEF: Record<string,string> = { serif:'600 %PX% "Source Serif 4",Georgia,serif', sans:'400 %PX% "Inter",system-ui,sans-serif', sansBold:'600 %PX% "Inter",system-ui,sans-serif' };
     const FOOTLINE = 'Dies ist keine Spendenbescheinigung – bitte anfordern bei vorstand@fridosfriends.de';
 
-    const state = { amount: 100, recipient: '', year: '', giver: '' };
+    // One template per occasion — all on the same 1054×1492 grid; the field map is shared
+    // (pixel-scanned 2026-11-09: every blank line sits on the same row ±1 px in both files).
+    const TEMPLATES: Record<string, string> = { geburtstag: '/voucher/geschenk-preview.png', weihnachten: '/voucher/geschenk-weihnachten.png' };
+    const state = { amount: 100, recipient: '', year: '', giver: '', occasion: 'geburtstag' };
     const deNum = (n: number) => new Intl.NumberFormat('de-DE').format(n);
     const euro = (n: number) => deNum(n) + ' €';
     const cardDate = () => new Date().toLocaleDateString('de-DE', { day:'numeric', month:'long', year:'numeric' });
 
     canvas.width = CW; canvas.height = CH;
     const ctx = canvas.getContext('2d')!;
-    const tmpl = new Image(); let tmplReady = false;
-    tmpl.onload = () => { tmplReady = true; draw(); };
-    tmpl.src = '/voucher/geschenk-preview.png';
+    const tmpls: Record<string, HTMLImageElement> = {}; const tmplReady: Record<string, boolean> = {};
+    Object.keys(TEMPLATES).forEach((k) => { const im = new Image(); im.onload = () => { tmplReady[k] = true; if (k === state.occasion) draw(); }; im.src = TEMPLATES[k]; tmpls[k] = im; });
 
     const textFor = (k: string): string => {
       if (k === 'amount') return deNum(state.amount);
@@ -308,12 +321,13 @@ const t = isEn
       return (state as any)[k] || '';
     };
     function draw() {
-      if (!tmplReady) return;
+      const tmpl = tmpls[state.occasion]; if (!tmpl || !tmplReady[state.occasion]) return;
       ctx.clearRect(0, 0, CW, CH);
       ctx.drawImage(tmpl, 0, 0, CW, CH);
       ctx.textBaseline = 'alphabetic';
       Object.keys(FIELDS).forEach((k) => {
-        const f = FIELDS[k]; const txt = textFor(k); if (!txt) return;
+        if (k === 'year' && state.occasion !== 'geburtstag') return; // the Christmas art prints "zu Weihnachten" — no blank
+        const f = { ...FIELDS[k], ...((FIELD_OVERRIDES[state.occasion] || {})[k] || {}) }; const txt = textFor(k); if (!txt) return;
         let px = Math.round(f.sizeFrac * CW);
         ctx.font = FONTDEF[f.kind].replace('%PX%', px + 'px');
         if (f.maxW) {
@@ -352,6 +366,18 @@ const t = isEn
     const bind = (sel: string, key: 'recipient'|'year'|'giver') => (root.querySelector(sel) as HTMLInputElement)?.addEventListener('input', (e) => { state[key] = (e.target as HTMLInputElement).value; sync(); });
     bind('[data-recipient]', 'recipient'); bind('[data-year]', 'year'); bind('[data-giver]', 'giver');
 
+    // occasion toggle (template switch); ?anlass=weihnachten preselects (campaign QR / links)
+    const occEl = root.querySelector('[data-occ]');
+    function setOcc(v: string) {
+      if (!TEMPLATES[v]) v = 'geburtstag';
+      state.occasion = v;
+      occEl?.querySelectorAll('button').forEach((b) => b.classList.toggle('is-sel', (b as HTMLElement).dataset.occVal === v));
+      const yw = root.querySelector('[data-year-wrap]') as HTMLElement | null; if (yw) yw.hidden = v !== 'geburtstag';
+      sync();
+    }
+    occEl?.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => setOcc((b as HTMLElement).dataset.occVal || 'geburtstag')));
+    setOcc((new URLSearchParams(location.search).get('anlass') || 'geburtstag').toLowerCase());
+
     function sync() {
       draw();
       const ds = $('[data-donsum]'); if (ds) ds.innerHTML = euro(state.amount);
@@ -378,7 +404,7 @@ const t = isEn
       if (rcptSentDone || !want?.checked) return;
       (root.querySelector('[data-rcpt-betrag]') as HTMLInputElement).value = deNum(state.amount) + ' EUR';
       (root.querySelector('[data-rcpt-empf]') as HTMLInputElement).value = state.recipient;
-      (root.querySelector('[data-rcpt-anlass]') as HTMLInputElement).value = state.year ? state.year + ' Geburtstag' : 'Geburtstag';
+      (root.querySelector('[data-rcpt-anlass]') as HTMLInputElement).value = state.occasion === 'weihnachten' ? 'Weihnachten' : (state.year ? state.year + ' Geburtstag' : 'Geburtstag');
       const data = new URLSearchParams(new FormData(rcptForm) as any);
       fetch('/', { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body:data.toString() })
         .then((r) => { if (!r.ok) throw 0; rcptSentDone = true; const s = $('[data-rcpt-sent]'); if (s) s.hidden = false; })
@@ -415,7 +441,7 @@ const t = isEn
 
     // share
     root.querySelector('[data-share]')?.addEventListener('click', () => {
-      const url = location.origin + location.pathname;
+      const url = location.origin + location.pathname + (state.occasion !== 'geburtstag' ? '?anlass=' + state.occasion : '');
       navigator.clipboard?.writeText(url);
       const b = root.querySelector('[data-share]') as HTMLButtonElement; const o = b.textContent; b.textContent = '✓'; setTimeout(() => b.textContent = o, 1500);
     });
