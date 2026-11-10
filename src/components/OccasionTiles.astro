@@ -1,9 +1,11 @@
 ---
 /**
- * OccasionTiles.astro — the Geschenk occasions as picture tiles (the real card artwork).
- * Used twice: as BUTTONS in the Geschenk chooser (mode="pick", the studio script listens for
- * [data-occ-pick]) and as LINKS on the home page (mode="link", straight into the flow).
- * The tile order follows the season (see GIFT_SEASONS in consts.ts; CSS order set in Layout).
+ * OccasionTiles.astro — the Geschenk occasions as the things to click.
+ *  mode="pick"  → Geschenk chooser: plain BUTTONS, the occasion itself is central (no image);
+ *                 the studio script listens for [data-occ-pick].
+ *  mode="link"  → home page: picture tiles (the real card artwork) that LINK straight into the flow.
+ * In both modes the occasion title is the link. The order follows the season
+ * (GIFT_SEASONS in consts.ts; the CSS order is generated in Layout).
  *
  * Props: lang 'de' | 'en' · mode 'pick' | 'link'
  */
@@ -13,28 +15,62 @@ interface Props { lang?: 'de' | 'en'; mode?: 'pick' | 'link'; }
 const { lang = 'de', mode = 'link' } = Astro.props;
 const isEn = lang === 'en';
 const base = isEn ? '/en/gift/' : '/geschenk/';
-const go = isEn ? 'Create this gift' : 'Dieses Geschenk gestalten';
 ---
-<div class="occ-tiles">
-  {GIFT_OCCASIONS.map((o) => {
-    const c = isEn ? o.en : o.de;
-    const inner = (
-      <>
-        <span class="occ-tile__art"><img src={o.thumb} alt={c.alt} width="508" height="720" loading="lazy" decoding="async" /></span>
-        <span class="occ-tile__body">
-          <span class="occ-tile__title">{c.title}</span>
-          <span class="occ-tile__text">{c.text}</span>
-          <span class="occ-tile__go">{go}&nbsp;<span aria-hidden="true">→</span></span>
-        </span>
-      </>
-    );
-    return mode === 'pick'
-      ? <button type="button" class="occ-tile" data-occ-tile={o.id} data-occ-pick={o.id}>{inner}</button>
-      : <a class="occ-tile" data-occ-tile={o.id} href={`${base}?anlass=${o.id}`}>{inner}</a>;
-  })}
-</div>
+{mode === 'pick' ? (
+  <div class="occ-choices">
+    {GIFT_OCCASIONS.map((o) => {
+      const c = isEn ? o.en : o.de;
+      return (
+        <button type="button" class="occ-choice" data-occ-tile={o.id} data-occ-pick={o.id}>
+          <span class="occ-choice__words">
+            <span class="occ-choice__title">{c.title}</span>
+            <span class="occ-choice__text">{c.text}</span>
+          </span>
+          <span class="occ-choice__arrow" aria-hidden="true">→</span>
+        </button>
+      );
+    })}
+  </div>
+) : (
+  <div class="occ-tiles">
+    {GIFT_OCCASIONS.map((o) => {
+      const c = isEn ? o.en : o.de;
+      return (
+        <a class="occ-tile" data-occ-tile={o.id} href={`${base}?anlass=${o.id}`}>
+          <span class="occ-tile__art"><img src={o.thumb} alt={c.alt} width="508" height="720" loading="lazy" decoding="async" /></span>
+          <span class="occ-tile__body">
+            <span class="occ-tile__title">{c.title}&nbsp;<span class="occ-tile__arrow" aria-hidden="true">→</span></span>
+            <span class="occ-tile__text">{c.text}</span>
+          </span>
+        </a>
+      );
+    })}
+  </div>
+)}
 
 <style>
+  /* ---------- pick: the occasion is the button ---------- */
+  .occ-choices { display:grid; gap:var(--sp-3); max-width:540px; }
+  .occ-choice {
+    display:flex; align-items:center; justify-content:space-between; gap:var(--sp-4); width:100%;
+    text-align:left; margin:0; padding:var(--sp-5); font:inherit; color:inherit; cursor:pointer;
+    background:var(--paper-pure, #fff); border:1px solid var(--line-strong, #D6CDB6); border-radius:var(--r-card);
+    transition:transform 180ms var(--ease-out, ease-out), box-shadow 180ms var(--ease-out, ease-out), border-color 180ms var(--ease-out, ease-out);
+  }
+  .occ-choice:hover, .occ-choice:focus-visible { transform:translateY(-2px); box-shadow:var(--shadow-lift); border-color:var(--gold); }
+  .occ-choice:focus-visible { outline:2px solid var(--teal); outline-offset:3px; }
+  .occ-choice__words { display:flex; flex-direction:column; gap:var(--sp-1); min-width:0; }
+  .occ-choice__title { font-family:var(--font-serif); font-weight:600; font-size:var(--step-3); line-height:1.15; color:var(--ink); }
+  .occ-choice:hover .occ-choice__title { color:var(--gold-text); }
+  .occ-choice__text { color:var(--stone); font-size:var(--step--1); line-height:1.5; }
+  .occ-choice__arrow {
+    flex:none; width:2.4em; height:2.4em; border-radius:50%; display:grid; place-items:center;
+    border:1px solid var(--gold); color:var(--gold-text); font-size:1.05rem;
+    transition:background 180ms var(--ease-out, ease-out), color 180ms var(--ease-out, ease-out), transform 180ms var(--ease-out, ease-out);
+  }
+  .occ-choice:hover .occ-choice__arrow { background:var(--gold); color:var(--ink); transform:translateX(3px); }
+
+  /* ---------- link: picture tiles (home page) ---------- */
   .occ-tiles { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:var(--sp-5); max-width:720px; }
   .occ-tile {
     display:flex; flex-direction:column; text-align:left; padding:0; margin:0; font:inherit; color:inherit; cursor:pointer;
@@ -55,10 +91,12 @@ const go = isEn ? 'Create this gift' : 'Dieses Geschenk gestalten';
   }
   .occ-tile:hover .occ-tile__art img { transform:translateY(-4px); }
   .occ-tile__body { display:flex; flex-direction:column; gap:var(--sp-2); padding:var(--sp-4) var(--sp-5) var(--sp-5); border-top:1px solid var(--line); }
-  .occ-tile__title { font-family:var(--font-serif); font-weight:600; font-size:var(--step-1); line-height:1.2; color:var(--ink); }
+  .occ-tile__title { font-family:var(--font-serif); font-weight:600; font-size:var(--step-2); line-height:1.2; color:var(--ink); }
+  .occ-tile__arrow { color:var(--gold-text); font-family:var(--font-sans); font-weight:400; display:inline-block; transition:transform 180ms var(--ease-out, ease-out); }
+  .occ-tile:hover .occ-tile__title { color:var(--gold-text); }
+  .occ-tile:hover .occ-tile__arrow { transform:translateX(3px); }
   .occ-tile__text { color:var(--stone); font-size:var(--step--1); line-height:1.5; }
-  .occ-tile__go { margin-top:var(--sp-2); font-family:var(--font-sans); font-weight:600; font-size:var(--step--1); color:var(--gold-text); }
-  /* phones: one tile per row, card left, words right — compact, both visible without scrolling far */
+  /* phones: one tile per row, card left, words right */
   @media (max-width:560px) {
     .occ-tiles { grid-template-columns:1fr; gap:var(--sp-4); }
     .occ-tile { flex-direction:row; align-items:stretch; }
@@ -67,6 +105,11 @@ const go = isEn ? 'Create this gift' : 'Dieses Geschenk gestalten';
     .occ-tile__art img { aspect-ratio: 508 / 720; border-radius:3px; }
     .occ-tile:hover .occ-tile__art img { transform:none; }
     .occ-tile__body { flex:1; border-top:0; border-left:1px solid var(--line); padding:var(--sp-4); justify-content:center; }
+    .occ-choice { padding:var(--sp-4); }
+    .occ-choice__title { font-size:var(--step-2); }
   }
-  @media (prefers-reduced-motion: reduce) { .occ-tile, .occ-tile__art img { transition:none; } .occ-tile:hover, .occ-tile:hover .occ-tile__art img { transform:none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .occ-tile, .occ-tile__art img, .occ-choice, .occ-choice__arrow, .occ-tile__arrow { transition:none; }
+    .occ-tile:hover, .occ-tile:hover .occ-tile__art img, .occ-choice:hover, .occ-choice:hover .occ-choice__arrow, .occ-tile:hover .occ-tile__arrow { transform:none; }
+  }
 </style>

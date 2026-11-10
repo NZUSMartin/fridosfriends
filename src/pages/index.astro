@@ -69,7 +69,7 @@ const multiplier = [
             <a class="btn btn--primary" href="/mitmachen">Mitmachen</a>
             {/* seasonal gift button: one variant per occasion, the season switch shows the right one */}
             {GIFT_OCCASIONS.map((o) => (
-              <a class="btn btn--secondary" href={`/geschenk/?anlass=${o.id}`} data-season-show={o.id}>{o.de.cta}</a>
+              <a class={`btn ${o.featured ? 'btn--gold' : 'btn--secondary'}`} href={`/geschenk/?anlass=${o.id}`} data-season-show={o.id}>{o.de.cta}</a>
             ))}
             <a class="link-tertiary" href="#so-funktioniert-es">Mehr erfahren</a>
           </div>

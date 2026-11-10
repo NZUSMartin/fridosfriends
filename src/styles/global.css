@@ -422,6 +422,9 @@ figcaption, .caption {
   border-color: var(--ink);
 }
 .btn--secondary:hover, .btn-secondary:hover { background: var(--gold-soft); }
+/* filled gold: the seasonal gift button (ink text keeps WCAG AA on gold) */
+.btn--gold { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+.btn--gold:hover { background: #B98722; border-color: #B98722; transform: translateY(-1px); box-shadow: var(--shadow-lift); }
 .btn--ghost {
   background: transparent;
   color: #fff;

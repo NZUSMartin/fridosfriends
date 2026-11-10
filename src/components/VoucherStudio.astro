@@ -29,8 +29,8 @@ const t = isEn
       chLead: 'A gift that lasts: you donate in the name of someone dear to you — and a girl in northern Uganda can go to school.',
       chMoreText: 'The person you are giving to receives a personally designed card that carries their name. It tells them what this gift makes possible: school fees, materials and care for a girl from a refugee family. Every euro donated goes into the scholarships.',
       chSteps: ['Choose the occasion and personalise the card', 'Donate — 100% goes into the scholarships', 'Print the card or send it by e‑mail'],
-      chH: 'Which occasion is your gift for?', chMore: 'Other occasions', chMorePh: 'Other occasions …', chSoon: 'coming soon',
-      chNote: 'Every gift counts — a full school year costs about €800.', occChange: 'Change occasion',
+      chH: 'Which occasion is your gift for?', chMore: 'Other occasions', chMorePh: 'Please choose …', chSoon: 'coming soon',
+      chNote: 'Every gift counts — a full school year for one child costs about €800.', chSample: 'Sample of the gift card', occChange: 'Change occasion',
       steps: ['Amount', 'Recipient', 'Donate', 'Your name', 'Receipt', 'Done'],
       s1h: 'Choose an amount', s1lead: 'How much would you like to donate in the recipient’s name?',
       freeLabel: 'Or a free amount (€)', freePh: 'e.g. 150',
@@ -69,8 +69,8 @@ const t = isEn
       chLead: 'Ein Geschenk, das bleibt: Sie spenden im Namen eines Menschen, der Ihnen am Herzen liegt — und ein Mädchen in Norduganda kann zur Schule gehen.',
       chMoreText: 'Die beschenkte Person erhält eine persönlich gestaltete Karte, die ihren Namen trägt. Sie erzählt, was dieses Geschenk möglich macht: Schulgebühren, Material und Begleitung für ein Mädchen aus einer Flüchtlingsfamilie. Jeder gespendete Euro fließt in die Stipendien.',
       chSteps: ['Anlass wählen und die Karte persönlich gestalten', 'Spenden — 100 % fließen in die Stipendien', 'Karte ausdrucken oder per E‑Mail versenden'],
-      chH: 'Zu welchem Anlass möchten Sie schenken?', chMore: 'Weitere Anlässe', chMorePh: 'Weitere Anlässe …', chSoon: 'in Kürze',
-      chNote: 'Jede Spende zählt — ein ganzes Schuljahr kostet rund 800 €.', occChange: 'Anlass ändern',
+      chH: 'Zu welchem Anlass möchten Sie schenken?', chMore: 'Weitere Anlässe', chMorePh: 'Bitte auswählen …', chSoon: 'in Kürze',
+      chNote: 'Jede Spende zählt — ein ganzes Schuljahr für ein Kind kostet rund 800 €.', chSample: 'Beispiel der Geschenk-Karte', occChange: 'Anlass ändern',
       steps: ['Betrag', 'Empfänger', 'Spenden', 'Ihr Name', 'Quittung', 'Fertig'],
       s1h: 'Betrag wählen', s1lead: 'Wie viel möchten Sie im Namen der beschenkten Person spenden?',
       freeLabel: 'Oder freier Betrag (€)', freePh: 'z. B. 150',
@@ -121,15 +121,26 @@ const t = isEn
       <ol class="gchooser__steps">
         {t.chSteps.map((st, i) => (<li><span class="gchooser__n">{i + 1}</span><span>{st}</span></li>))}
       </ol>
-      <h2 class="h3 gchooser__h">{t.chH}</h2>
-      <OccasionTiles lang={lang} mode="pick" />
-      <label class="gchooser__sel">
-        <span>{t.chMore}</span>
-        <select data-occ-more aria-label={t.chMore}>
-          <option value="" selected>{t.chMorePh}</option>
-          {GIFT_OCCASIONS_SOON.map((o) => (<option disabled>{(isEn ? o.en : o.de)} — {t.chSoon}</option>))}
-        </select>
-      </label>
+      <div class="gchooser__main">
+        <div class="gchooser__pick">
+          <h2 class="h3 gchooser__h">{t.chH}</h2>
+          <OccasionTiles lang={lang} mode="pick" />
+          <label class="gchooser__sel">
+            <span>{t.chMore}</span>
+            <select data-occ-more aria-label={t.chMore}>
+              <option value="" selected>{t.chMorePh}</option>
+              {GIFT_OCCASIONS_SOON.map((o) => (<option disabled>{(isEn ? o.en : o.de)} — {t.chSoon}</option>))}
+            </select>
+          </label>
+        </div>
+        <!-- one sample card, small and in the background; follows the season -->
+        <figure class="gchooser__sample">
+          {GIFT_OCCASIONS.map((o) => (
+            <img src={o.thumb} alt={(isEn ? o.en : o.de).alt} width="508" height="720" loading="lazy" decoding="async" data-season-show={o.id} />
+          ))}
+          <figcaption>{t.chSample}</figcaption>
+        </figure>
+      </div>
       <p class="caption gchooser__note">{t.chNote}</p>
     </div>
 
@@ -323,25 +334,40 @@ const t = isEn
   /* chooser vs. wizard */
   [data-gmode="choose"] .gstudio, [data-gmode="choose"] .gonly-wizard { display:none; }
   [data-gmode="wizard"] .gchooser, [data-gmode="wizard"] .gonly-choose { display:none; }
-  .ghead { max-width:64ch; margin-bottom:var(--sp-6); }
+  /* headline on ONE line (wide screens); phones get two balanced lines */
+  .ghead { max-width:none; margin-bottom:var(--sp-6); }
+  .ghead p { max-width:64ch; }
+  .ghead h1 { text-wrap:balance; }
+  @media (min-width:760px){ .ghead h1 { white-space:nowrap; font-size:clamp(2.1rem, 4.6vw, 3.4rem); } }
+  @media (max-width:759px){ .ghead h1 { font-size:clamp(1.75rem, 8.2vw, 2.4rem); } }
+  .gchooser__h { text-wrap:balance; }
+  .gchooser__main { display:grid; grid-template-columns:minmax(0, 540px) auto; gap:var(--sp-8); align-items:center; margin-top:var(--sp-7); }
+  .gchooser__sample { margin:0; justify-self:start; text-align:center; }
+  .gchooser__sample img { display:block; width:210px; height:auto; border-radius:4px; transform:rotate(2.5deg); opacity:.92;
+    box-shadow:0 14px 34px rgba(60,45,10,.16), 0 2px 6px rgba(60,45,10,.10); }
+  .gchooser__sample figcaption { margin-top:var(--sp-4); font-size:var(--step--1); color:var(--stone); }
   .gstudio:focus { outline:none; }
   .gchooser__steps { list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:var(--sp-5); max-width:820px; }
   .gchooser__steps li { display:flex; gap:.75em; align-items:flex-start; font-size:var(--step--1); line-height:1.45; color:var(--ink); }
   .gchooser__n { flex:none; width:2em; height:2em; border-radius:50%; display:grid; place-items:center; border:1px solid var(--gold); color:var(--gold-text); font-family:var(--font-serif); font-weight:600; background:var(--paper-pure,#fff); }
-  .gchooser__h { margin:var(--sp-7) 0 var(--sp-5); }
+  .gchooser__h { margin:0 0 var(--sp-5); }
   .gchooser__sel { display:flex; align-items:center; flex-wrap:wrap; gap:var(--sp-3); margin-top:var(--sp-5); }
   .gchooser__sel > span { font-family:var(--font-sans); font-size:var(--step--1); font-weight:600; }
   .gchooser__sel select { font:inherit; font-size:.95rem; padding:.6em .8em; border:1px solid var(--line-strong,#D6CDB6); border-radius:var(--r-input); background:#fff; color:var(--ink); min-width:230px; }
   .gchooser__sel select:focus-visible { outline:2px solid var(--teal); outline-offset:2px; }
   .gchooser__note { margin-top:var(--sp-5); }
-  /* phones: the occasion tiles come first, the three steps follow below them */
+  @media (max-width:860px){
+    .gchooser__main { grid-template-columns:1fr; gap:var(--sp-6); }
+    .gchooser__sample { justify-self:center; }
+    .gchooser__sample img { width:150px; margin:0 auto; }
+  }
+  /* phones: the occasion buttons come first, the three steps follow below them */
   @media (max-width:640px){
     .gchooser { display:flex; flex-direction:column; }
-    .gchooser__h { order:1; margin:0 0 var(--sp-4); }
-    .gchooser :global(.occ-tiles) { order:2; }
-    .gchooser__sel { order:3; }
-    .gchooser__steps { order:4; grid-template-columns:1fr; gap:var(--sp-3); margin-top:var(--sp-6); padding-top:var(--sp-5); border-top:1px solid var(--line); }
-    .gchooser__note { order:5; }
+    .gchooser__main { order:1; margin-top:0; }
+    .gchooser__h { margin:0 0 var(--sp-4); }
+    .gchooser__steps { order:2; grid-template-columns:1fr; gap:var(--sp-3); margin-top:var(--sp-6); padding-top:var(--sp-5); border-top:1px solid var(--line); }
+    .gchooser__note { order:3; }
   }
   .gpv-occ { text-align:center; font-size:var(--step--1); color:var(--stone); margin:calc(-1 * var(--sp-2)) 0 var(--sp-3); }
   .gpv-occ__change { font:inherit; background:none; border:0; padding:0; cursor:pointer; color:var(--gold-text); font-weight:600; border-bottom:1px solid currentColor; }

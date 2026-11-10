@@ -40,12 +40,12 @@ export const CREDIT_AI_EN =
 // The occasions a visitor can pick today (each has its own card artwork in /public/voucher).
 export const GIFT_OCCASIONS = [
   {
-    id: 'geburtstag', thumb: '/voucher/thumb-geburtstag.jpg',
+    id: 'geburtstag', thumb: '/voucher/thumb-geburtstag.jpg', featured: false,
     de: { title: 'Zum Geburtstag', text: 'Ein Glückwunsch, der weit über den Tag hinaus wirkt.', cta: 'Zum Geburtstag verschenken', alt: 'Geschenk-Karte zum Geburtstag' },
     en: { title: 'For a birthday', text: 'A greeting that reaches far beyond the day itself.', cta: 'Give for a birthday', alt: 'Gift card for a birthday' },
   },
   {
-    id: 'weihnachten', thumb: '/voucher/thumb-weihnachten.jpg',
+    id: 'weihnachten', thumb: '/voucher/thumb-weihnachten.jpg', featured: true, // home hero button filled gold in season
     de: { title: 'Zu Weihnachten', text: 'Ein Geschenk, das Hoffnung schenkt und Zukunft schafft.', cta: 'Zu Weihnachten verschenken', alt: 'Geschenk-Karte zu Weihnachten' },
     en: { title: 'For Christmas', text: 'A gift that gives hope and builds a future.', cta: 'Give for Christmas', alt: 'Gift card for Christmas' },
   },
