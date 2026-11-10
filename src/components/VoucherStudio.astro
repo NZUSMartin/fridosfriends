@@ -1,7 +1,9 @@
 ---
 /**
  * VoucherStudio.astro — the full Geschenk (gift-voucher) flow.
- * 6 steps: Betrag → Empfänger+Anlass → Spenden → Ihr Name → (optional) Spendenbescheinigung → Herunterladen.
+ * Opens with the occasion CHOOSER (picture tiles + "Weitere Anlässe" pull-down), then
+ * 6 steps: Betrag → Empfänger → Spenden → Ihr Name → (optional) Spendenbescheinigung → Herunterladen.
+ * ?anlass=<id> skips the chooser (campaign links, home-page buttons).
  * The voucher is rendered on a <canvas> (image + text at PIXEL-MEASURED baselines) — the canvas IS the
  * preview and the download (PDF = the canvas image on one fresh A4 page). The card is always German;
  * only the surrounding UI is bilingual. Honor system (no payment verification). GDPR: nothing stored.
@@ -9,7 +11,8 @@
  * Props: lang 'de' | 'en'
  */
 import Eyebrow from './Eyebrow.astro';
-import { BETTERPLACE, BETTERPLACE_SHORT, PAYPAL_DONATE } from '../consts';
+import OccasionTiles from './OccasionTiles.astro';
+import { BETTERPLACE, BETTERPLACE_SHORT, PAYPAL_DONATE, GIFT_OCCASIONS, GIFT_OCCASIONS_SOON } from '../consts';
 
 interface Props { lang?: 'de' | 'en'; }
 const { lang = 'de' } = Astro.props;
@@ -17,17 +20,23 @@ const isEn = lang === 'en';
 const IBAN = 'DE44 6805 2230 0000 2055 26';
 const formName = isEn ? 'geschenk-en' : 'geschenk-de';
 const thanks = isEn ? '/en/thanks/' : '/danke/';
+const occIds = GIFT_OCCASIONS.map((o) => o.id).join(' ');
 
 const t = isEn
   ? {
       eyebrow: 'Gift', h1: 'Education that carries your name.',
       sub: 'Give a donation in your name — and give a girl in northern Uganda a piece of her future. Personalise it, donate, then download a printable PDF to give.',
+      chLead: 'A gift that lasts: you donate in the name of someone dear to you — and a girl in northern Uganda can go to school.',
+      chMoreText: 'The person you are giving to receives a personally designed card that carries their name. It tells them what this gift makes possible: school fees, materials and care for a girl from a refugee family. Every euro donated goes into the scholarships.',
+      chSteps: ['Choose the occasion and personalise the card', 'Donate — 100% goes into the scholarships', 'Print the card or send it by e‑mail'],
+      chH: 'Which occasion is your gift for?', chMore: 'Other occasions', chMorePh: 'Other occasions …', chSoon: 'coming soon',
+      chNote: 'Every gift counts — a full school year costs about €800.', occChange: 'Change occasion',
       steps: ['Amount', 'Recipient', 'Donate', 'Your name', 'Receipt', 'Done'],
       s1h: 'Choose an amount', s1lead: 'How much would you like to donate in the recipient’s name?',
       freeLabel: 'Or a free amount (€)', freePh: 'e.g. 150',
-      s2h: 'Recipient & occasion', s2lead: 'Who is the gift for?',
+      s2h: 'Recipient', s2lead: 'Who is the gift for?',
       recLabel: 'Name of the recipient', recPh: 'e.g. Pater Muster',
-      occLabel: 'Occasion', occBirthday: 'Birthday', occChristmas: 'Christmas', occSoon: 'soon',
+      occBirthday: 'Birthday', occChristmas: 'Christmas',
       yearLabel: 'Which birthday? (optional)', yearPh: 'e.g. 80.',
       yearHint: 'Appears as „zu Deinem 80. Geburtstag“. Leave empty for a plain birthday greeting.',
       s3h: 'Make your donation', s3lead: 'You’re giving education worth',
@@ -43,7 +52,6 @@ const t = isEn
       rcptNameLabel: 'Name', rcptEmailLabel: 'Email', rcptEmailPh: 'name@example.com',
       rcptAddrLabel: 'Postal address (optional)', rcptAddrPh: 'Street, ZIP city',
       rcptHint: 'For a formal donation receipt, please include your postal address.', rcptSent: 'Request sent — thank you.',
-      occNote: 'For birthdays and Christmas — more occasions to follow.',
       s6h: 'Download your gift', s6lead: 'Almost done — confirm briefly and your gift is ready as a PDF.',
       honorCheck: 'I have made my donation and would like to download the gift now.',
       dl: 'Download gift (PDF)', dlPng: 'Download as image (PNG)',
@@ -58,12 +66,17 @@ const t = isEn
   : {
       eyebrow: 'Geschenk', h1: 'Bildung, die Deinen Namen trägt.',
       sub: 'Verschenken Sie eine Spende in Ihrem Namen — und schenken Sie einem Mädchen in Norduganda ein Stück Zukunft. Gestalten, spenden, dann als PDF zum Ausdrucken herunterladen.',
+      chLead: 'Ein Geschenk, das bleibt: Sie spenden im Namen eines Menschen, der Ihnen am Herzen liegt — und ein Mädchen in Norduganda kann zur Schule gehen.',
+      chMoreText: 'Die beschenkte Person erhält eine persönlich gestaltete Karte, die ihren Namen trägt. Sie erzählt, was dieses Geschenk möglich macht: Schulgebühren, Material und Begleitung für ein Mädchen aus einer Flüchtlingsfamilie. Jeder gespendete Euro fließt in die Stipendien.',
+      chSteps: ['Anlass wählen und die Karte persönlich gestalten', 'Spenden — 100 % fließen in die Stipendien', 'Karte ausdrucken oder per E‑Mail versenden'],
+      chH: 'Zu welchem Anlass möchten Sie schenken?', chMore: 'Weitere Anlässe', chMorePh: 'Weitere Anlässe …', chSoon: 'in Kürze',
+      chNote: 'Jede Spende zählt — ein ganzes Schuljahr kostet rund 800 €.', occChange: 'Anlass ändern',
       steps: ['Betrag', 'Empfänger', 'Spenden', 'Ihr Name', 'Quittung', 'Fertig'],
       s1h: 'Betrag wählen', s1lead: 'Wie viel möchten Sie im Namen der beschenkten Person spenden?',
       freeLabel: 'Oder freier Betrag (€)', freePh: 'z. B. 150',
-      s2h: 'Empfänger & Anlass', s2lead: 'Für wen ist das Geschenk?',
+      s2h: 'Empfänger', s2lead: 'Für wen ist das Geschenk?',
       recLabel: 'Name des/der Beschenkten', recPh: 'z. B. Pater Muster',
-      occLabel: 'Anlass', occBirthday: 'Geburtstag', occChristmas: 'Weihnachten', occSoon: 'bald',
+      occBirthday: 'Geburtstag', occChristmas: 'Weihnachten',
       yearLabel: 'Welcher Geburtstag? (optional)', yearPh: 'z. B. 80.',
       yearHint: 'Erscheint als „zu Deinem 80. Geburtstag“. Leer lassen für einen schlichten Geburtstagsgruß.',
       s3h: 'Jetzt Ihre Spende leisten', s3lead: 'Sie verschenken Bildung im Wert von',
@@ -79,7 +92,6 @@ const t = isEn
       rcptNameLabel: 'Name', rcptEmailLabel: 'E-Mail', rcptEmailPh: 'name@beispiel.de',
       rcptAddrLabel: 'Postanschrift (optional)', rcptAddrPh: 'Straße, PLZ Ort',
       rcptHint: 'Für eine förmliche Zuwendungsbestätigung geben Sie bitte Ihre Postanschrift an.', rcptSent: 'Anfrage gesendet — vielen Dank.',
-      occNote: 'Für Geburtstage und Weihnachten — weitere Anlässe folgen.',
       s6h: 'Geschenk herunterladen', s6lead: 'Fast geschafft — bestätigen Sie kurz, dann liegt Ihr Geschenk als PDF bereit.',
       honorCheck: 'Ich habe meine Spende ausgelöst und möchte das Geschenk jetzt herunterladen.',
       dl: 'Geschenk herunterladen (PDF)', dlPng: 'Als Bild (PNG) herunterladen',
@@ -93,14 +105,35 @@ const t = isEn
     };
 ---
 <section class="section">
-  <div class="container">
-    <div class="section-head" data-reveal>
+  <div class="container" data-gshell data-gmode="choose" data-gocc={occIds}>
+    <!-- decide chooser vs. wizard before first paint (no flash on campaign links) -->
+    <script is:inline>(function(s){try{var m=/[?&]anlass=([a-z]+)/.exec(location.search);if(m&&(' '+s.getAttribute('data-gocc')+' ').indexOf(' '+m[1]+' ')>-1)s.setAttribute('data-gmode','wizard');}catch(e){}})(document.currentScript.parentElement);</script>
+    <div class="section-head ghead">
       <Eyebrow text={t.eyebrow} />
       <h1>{t.h1}</h1>
-      <p class="prose" style="color:var(--stone);margin-top:var(--sp-3);max-width:60ch">{t.sub}</p>
+      <p class="prose gonly-wizard" style="color:var(--stone);margin-top:var(--sp-3);max-width:60ch">{t.sub}</p>
+      <p class="lead gonly-choose" style="margin-top:var(--sp-5)">{t.chLead}</p>
+      <p class="gonly-choose" style="color:var(--stone);margin-top:var(--sp-4)">{t.chMoreText}</p>
     </div>
 
-    <div class="gstudio" data-gstudio>
+    <!-- OCCASION CHOOSER — the first screen -->
+    <div class="gchooser" data-gchooser>
+      <ol class="gchooser__steps">
+        {t.chSteps.map((st, i) => (<li><span class="gchooser__n">{i + 1}</span><span>{st}</span></li>))}
+      </ol>
+      <h2 class="h3 gchooser__h">{t.chH}</h2>
+      <OccasionTiles lang={lang} mode="pick" />
+      <label class="gchooser__sel">
+        <span>{t.chMore}</span>
+        <select data-occ-more aria-label={t.chMore}>
+          <option value="" selected>{t.chMorePh}</option>
+          {GIFT_OCCASIONS_SOON.map((o) => (<option disabled>{(isEn ? o.en : o.de)} — {t.chSoon}</option>))}
+        </select>
+      </label>
+      <p class="caption gchooser__note">{t.chNote}</p>
+    </div>
+
+    <div class="gstudio" data-gstudio data-occ-names={JSON.stringify({ geburtstag: t.occBirthday, weihnachten: t.occChristmas })} tabindex="-1">
       <!-- LEFT: wizard -->
       <div class="gstudio__flow">
         <ol class="gstepper" data-stepper>
@@ -123,18 +156,11 @@ const t = isEn
           <label class="field"><span>{t.freeLabel}</span><input type="text" inputmode="numeric" data-free placeholder={t.freePh} /></label>
         </section>
 
-        <!-- 2 · Empfänger + Anlass -->
+        <!-- 2 · Empfänger (the occasion is chosen up front, in the chooser) -->
         <section class="gpanel" data-step="1">
           <h2 class="h4">2 · {t.s2h}</h2>
           <p class="gpanel__lead">{t.s2lead}</p>
           <label class="field"><span>{t.recLabel}</span><input type="text" data-recipient maxlength="40" placeholder={t.recPh} /></label>
-          <div class="field"><span>{t.occLabel}</span>
-            <div class="gtiers gtiers--occ" data-occ>
-              <button type="button" class="gtier is-sel" data-occ-val="geburtstag">{t.occBirthday}</button>
-              <button type="button" class="gtier" data-occ-val="weihnachten">{t.occChristmas}</button>
-            </div>
-          </div>
-          <p class="caption" style="margin:0 0 var(--sp-4)">{t.occNote}</p>
           <label class="field" data-year-wrap><span>{t.yearLabel}</span><input type="text" data-year maxlength="16" placeholder={t.yearPh} /><small class="field-note">{t.yearHint}</small></label>
         </section>
 
@@ -236,6 +262,7 @@ const t = isEn
       <!-- RIGHT: live preview (canvas) -->
       <div class="gstudio__preview">
         <p class="gpv-label">{t.pvLabel}</p>
+        <p class="gpv-occ"><span data-occ-name></span><span aria-hidden="true"> · </span><button type="button" class="gpv-occ__change" data-occ-change>{t.occChange}</button></p>
         <canvas class="gpv-canvas" data-canvas></canvas>
         <p class="caption" style="text-align:center;margin-top:var(--sp-3)">{t.pvNote}</p>
       </div>
@@ -265,8 +292,6 @@ const t = isEn
   .gtier, .gtiers[data-tiers] > button { border:1px solid var(--line-strong,#D6CDB6); background:#fff; border-radius:var(--r-card); padding:.7em .4em; text-align:center; cursor:pointer; font:inherit; font-family:var(--font-serif); font-weight:600; color:var(--ink); display:flex; flex-direction:column; align-items:center; gap:.15em; }
   .gtier small, .gtiers[data-tiers] > button small { font-family:var(--font-sans); font-weight:400; font-size:.62rem; color:var(--stone); letter-spacing:.02em; }
   .gtier.is-sel, .gtiers[data-tiers] > button.is-sel { border-color:var(--teal); background:var(--gold-wash,#F6EFDD); box-shadow:inset 0 0 0 1px var(--teal); }
-  .gtier.is-soon { opacity:.5; cursor:default; }
-  .gtiers--occ { grid-template-columns:repeat(2,1fr); }
   .field[hidden] { display:none; }
   .gbank { border-top:1px solid var(--line); margin-top:var(--sp-5); padding-top:var(--sp-4); }
   .gbank__row { display:flex; gap:var(--sp-5); flex-wrap:wrap; align-items:flex-start; }
@@ -295,6 +320,33 @@ const t = isEn
   .gstudio__preview { position:sticky; top:16px; }
   /* phones/tablets: preview first but STATIC — a sticky preview under the sticky header left no room for the form */
   @media (max-width:860px){ .gstudio__preview { position:static; max-width:420px; width:100%; margin:0 auto; } }
+  /* chooser vs. wizard */
+  [data-gmode="choose"] .gstudio, [data-gmode="choose"] .gonly-wizard { display:none; }
+  [data-gmode="wizard"] .gchooser, [data-gmode="wizard"] .gonly-choose { display:none; }
+  .ghead { max-width:64ch; margin-bottom:var(--sp-6); }
+  .gstudio:focus { outline:none; }
+  .gchooser__steps { list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:var(--sp-5); max-width:820px; }
+  .gchooser__steps li { display:flex; gap:.75em; align-items:flex-start; font-size:var(--step--1); line-height:1.45; color:var(--ink); }
+  .gchooser__n { flex:none; width:2em; height:2em; border-radius:50%; display:grid; place-items:center; border:1px solid var(--gold); color:var(--gold-text); font-family:var(--font-serif); font-weight:600; background:var(--paper-pure,#fff); }
+  .gchooser__h { margin:var(--sp-7) 0 var(--sp-5); }
+  .gchooser__sel { display:flex; align-items:center; flex-wrap:wrap; gap:var(--sp-3); margin-top:var(--sp-5); }
+  .gchooser__sel > span { font-family:var(--font-sans); font-size:var(--step--1); font-weight:600; }
+  .gchooser__sel select { font:inherit; font-size:.95rem; padding:.6em .8em; border:1px solid var(--line-strong,#D6CDB6); border-radius:var(--r-input); background:#fff; color:var(--ink); min-width:230px; }
+  .gchooser__sel select:focus-visible { outline:2px solid var(--teal); outline-offset:2px; }
+  .gchooser__note { margin-top:var(--sp-5); }
+  /* phones: the occasion tiles come first, the three steps follow below them */
+  @media (max-width:640px){
+    .gchooser { display:flex; flex-direction:column; }
+    .gchooser__h { order:1; margin:0 0 var(--sp-4); }
+    .gchooser :global(.occ-tiles) { order:2; }
+    .gchooser__sel { order:3; }
+    .gchooser__steps { order:4; grid-template-columns:1fr; gap:var(--sp-3); margin-top:var(--sp-6); padding-top:var(--sp-5); border-top:1px solid var(--line); }
+    .gchooser__note { order:5; }
+  }
+  .gpv-occ { text-align:center; font-size:var(--step--1); color:var(--stone); margin:calc(-1 * var(--sp-2)) 0 var(--sp-3); }
+  .gpv-occ__change { font:inherit; background:none; border:0; padding:0; cursor:pointer; color:var(--gold-text); font-weight:600; border-bottom:1px solid currentColor; }
+  .gpv-occ__change:hover { color:var(--ink); }
+  .gpv-occ__change:focus-visible { outline:2px solid var(--teal); outline-offset:2px; }
   .gpv-label { font-family:var(--font-sans); font-size:var(--step--1); font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--gold-text); text-align:center; margin-bottom:var(--sp-3); }
   .gpv-canvas { display:block; width:100%; max-width:460px; height:auto; margin:0 auto; border-radius:var(--r-card); box-shadow:var(--shadow-lift); }
 </style>
@@ -388,17 +440,32 @@ const t = isEn
     const bind = (sel: string, key: 'recipient'|'year'|'giver') => (root.querySelector(sel) as HTMLInputElement)?.addEventListener('input', (e) => { state[key] = (e.target as HTMLInputElement).value; sync(); });
     bind('[data-recipient]', 'recipient'); bind('[data-year]', 'year'); bind('[data-giver]', 'giver');
 
-    // occasion toggle (template switch); ?anlass=weihnachten preselects (campaign QR / links)
-    const occEl = root.querySelector('[data-occ]');
+    // occasion: chosen in the chooser (tiles) or via ?anlass=<id> (campaign QR, home-page buttons).
+    // The URL carries the choice, so Back/Forward move between chooser and wizard.
+    const shell = (root.closest('[data-gshell]') || document.body) as HTMLElement;
+    const OCC_NAMES: Record<string, string> = JSON.parse((root as HTMLElement).dataset.occNames || '{}');
     function setOcc(v: string) {
       if (!TEMPLATES[v]) v = 'geburtstag';
       state.occasion = v;
-      occEl?.querySelectorAll('button').forEach((b) => b.classList.toggle('is-sel', (b as HTMLElement).dataset.occVal === v));
       const yw = root.querySelector('[data-year-wrap]') as HTMLElement | null; if (yw) yw.hidden = v !== 'geburtstag';
+      const on = root.querySelector('[data-occ-name]'); if (on) on.textContent = OCC_NAMES[v] || '';
       sync();
     }
-    occEl?.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => setOcc((b as HTMLElement).dataset.occVal || 'geburtstag')));
-    setOcc((new URLSearchParams(location.search).get('anlass') || 'geburtstag').toLowerCase());
+    const occFromUrl = () => { const v = (new URLSearchParams(location.search).get('anlass') || '').toLowerCase(); return TEMPLATES[v] ? v : ''; };
+    function setMode(m: 'choose' | 'wizard', scroll = true) {
+      shell.dataset.gmode = m;
+      if (scroll) { const y = shell.getBoundingClientRect().top + window.scrollY - 96; window.scrollTo({ top: Math.max(0, y) }); }
+    }
+    function applyUrl(scroll: boolean) { const v = occFromUrl(); if (v) { setOcc(v); setMode('wizard', scroll); } else { setMode('choose', scroll); } }
+    shell.querySelectorAll('[data-occ-pick]').forEach((b) => b.addEventListener('click', () => {
+      const v = (b as HTMLElement).dataset.occPick || 'geburtstag';
+      history.pushState({}, '', location.pathname + '?anlass=' + v);
+      setOcc(v); setMode('wizard');
+    }));
+    const toChooser = () => { history.pushState({}, '', location.pathname); setMode('choose'); };
+    root.querySelector('[data-occ-change]')?.addEventListener('click', toChooser);
+    window.addEventListener('popstate', () => applyUrl(true));
+    setOcc(occFromUrl() || 'geburtstag'); setMode(occFromUrl() ? 'wizard' : 'choose', false);
 
     function sync() {
       draw();
@@ -530,7 +597,7 @@ const t = isEn
     });
     root.querySelector('[data-reset]')?.addEventListener('click', () => { state.recipient=''; state.year=''; state.giver=''; state.amount=100;
       root.querySelectorAll('input[type=text],input[type=email]').forEach((i) => (i as HTMLInputElement).value = ''); if (mailStatus) mailStatus.textContent = '';
-      tiersEl.querySelectorAll('button').forEach((x,i)=>x.classList.toggle('is-sel', i===2)); sync(); goto(0);
+      tiersEl.querySelectorAll('button').forEach((x,i)=>x.classList.toggle('is-sel', i===2)); sync(); goto(0); toChooser();
     });
 
     // stepper nav

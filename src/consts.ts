@@ -33,3 +33,34 @@ export const CREDIT_AI_DE =
   'Foto: JRS Uganda · Sensible Bilder mit KI modifiziert – abgebildete Personen sind nicht real.';
 export const CREDIT_AI_EN =
   'Foto: JRS Uganda · Sensitive images modified with AI – the people shown are not real.';
+
+// ---------------------------------------------------------------------------
+// Geschenk occasions + season switch
+// ---------------------------------------------------------------------------
+// The occasions a visitor can pick today (each has its own card artwork in /public/voucher).
+export const GIFT_OCCASIONS = [
+  {
+    id: 'geburtstag', thumb: '/voucher/thumb-geburtstag.jpg',
+    de: { title: 'Zum Geburtstag', text: 'Ein Glückwunsch, der weit über den Tag hinaus wirkt.', cta: 'Zum Geburtstag verschenken', alt: 'Geschenk-Karte zum Geburtstag' },
+    en: { title: 'For a birthday', text: 'A greeting that reaches far beyond the day itself.', cta: 'Give for a birthday', alt: 'Gift card for a birthday' },
+  },
+  {
+    id: 'weihnachten', thumb: '/voucher/thumb-weihnachten.jpg',
+    de: { title: 'Zu Weihnachten', text: 'Ein Geschenk, das Hoffnung schenkt und Zukunft schafft.', cta: 'Zu Weihnachten verschenken', alt: 'Geschenk-Karte zu Weihnachten' },
+    en: { title: 'For Christmas', text: 'A gift that gives hope and builds a future.', cta: 'Give for Christmas', alt: 'Gift card for Christmas' },
+  },
+] as const;
+// Listed in the "Weitere Anlässe" pull-down as "in Kürze" until their card artwork arrives.
+export const GIFT_OCCASIONS_SOON = [
+  { de: 'Hochzeit', en: 'Wedding' },
+  { de: 'Geburt', en: 'Birth' },
+  { de: 'Jubiläum', en: 'Anniversary' },
+  { de: 'Trauer', en: 'In memoriam' },
+] as const;
+// Season switch: which occasion the home-page gift button (and the tile order) leads with.
+// Dates are MM-DD, inclusive, in the visitor's local time — the site flips on its own, no re-deploy.
+// A window may wrap the new year (from '12-27', to '01-06'). Outside every window the default applies.
+export const GIFT_DEFAULT_OCCASION = 'geburtstag';
+export const GIFT_SEASONS = [
+  { occasion: 'weihnachten', from: '11-01', to: '12-26' },
+];

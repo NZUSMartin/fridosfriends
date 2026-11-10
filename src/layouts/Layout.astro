@@ -15,7 +15,7 @@
  */
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { LINKEDIN } from '../consts';
+import { LINKEDIN, GIFT_OCCASIONS, GIFT_SEASONS, GIFT_DEFAULT_OCCASION } from '../consts';
 import '../styles/global.css';
 
 interface Props {
@@ -59,6 +59,17 @@ const stickyDonateHref = 'https://www.betterplace.org/de/projects/165916-schulst
 const stickyDonateLabel = isEn ? 'Donate' : 'Spenden';
 const stickyLine = isEn ? '800 € = one full school year' : '800 € = ein ganzes Schuljahr';
 const stickyLinkedIn = isEn ? "Frido's Friends on LinkedIn" : 'Frido’s Friends auf LinkedIn';
+const stickyGiftHref = isEn ? '/en/gift/' : '/geschenk/';
+const stickyGiftLabel = isEn ? 'Gift' : 'Geschenk';
+
+// Season switch (see GIFT_SEASONS in consts.ts). A tiny head script sets <html data-season="…"> from the
+// visitor's date; these generated rules then show the matching [data-season-show] variant and put the
+// seasonal occasion tile first. Without JS the default occasion shows.
+const seasonIds = GIFT_OCCASIONS.map((o) => o.id);
+const seasonCss = seasonIds.map((id) => (id === GIFT_DEFAULT_OCCASION
+  ? `html[data-season]:not([data-season="${id}"]) [data-season-show="${id}"]{display:none!important}`
+  : `html:not([data-season="${id}"]) [data-season-show="${id}"]{display:none!important}`)
+  + `html[data-season="${id}"] [data-occ-tile="${id}"]{order:-1}`).join('');
 ---
 
 <!DOCTYPE html>
@@ -97,6 +108,15 @@ const stickyLinkedIn = isEn ? "Frido's Friends on LinkedIn" : 'Frido’s Friends
   <link rel="alternate" hreflang="de" href={siteUrl + dePath} />
   <link rel="alternate" hreflang="en" href={siteUrl + enPath} />
   <link rel="alternate" hreflang="x-default" href={siteUrl + dePath} />
+
+  <!-- Geschenk season: set before first paint. ?season=<id> previews another season. -->
+  <style is:inline set:html={seasonCss}></style>
+  <script is:inline define:vars={{ S: GIFT_SEASONS, D: GIFT_DEFAULT_OCCASION, IDS: seasonIds }}>
+    (function(){var d=new Date(),k=('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2),s=D;
+    for(var i=0;i<S.length;i++){var a=S[i];if(a.from<=a.to?(k>=a.from&&k<=a.to):(k>=a.from||k<=a.to)){s=a.occasion;break;}}
+    try{var q=/[?&]season=([a-z]+)/.exec(location.search);if(q&&IDS.indexOf(q[1])>-1)s=q[1];}catch(e){}
+    document.documentElement.setAttribute('data-season',s);})();
+  </script>
 </head>
 <body class={bodyClass} data-spine={spine}>
   <a class="skip-link" href="#main-content">{isEn ? 'Skip to content' : 'Zum Inhalt springen'}</a>
@@ -120,6 +140,7 @@ const stickyLinkedIn = isEn ? "Frido's Friends on LinkedIn" : 'Frido’s Friends
       <span class="sticky-cta__line" aria-hidden="true">{stickyLine}</span>
       <a class="btn btn--primary btn--sm" href={stickyJoinHref}>{stickyJoinLabel}</a>
       <a class="btn btn--secondary btn--sm" href={stickyDonateHref} rel="noopener" target="_blank">{stickyDonateLabel}</a>
+      <a class="btn btn--secondary btn--sm sticky-cta__gift" href={stickyGiftHref} data-season-link>{stickyGiftLabel}</a>
       <a class="sticky-cta__social" href={LINKEDIN} rel="noopener" target="_blank" aria-label={stickyLinkedIn} title={stickyLinkedIn}>
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
       </a>
@@ -199,6 +220,12 @@ const stickyLinkedIn = isEn ? "Frido's Friends on LinkedIn" : 'Frido’s Friends
         window.setTimeout(handoff, 1600); // safety net if transitionend never fires
       }
     }
+
+    /* ---------- Geschenk season: [data-season-link] leads straight into the seasonal occasion ---------- */
+    const season = document.documentElement.getAttribute('data-season');
+    if (season) document.querySelectorAll('a[data-season-link]').forEach((a) => {
+      const el = a as HTMLAnchorElement; el.href = el.pathname + '?anlass=' + season;
+    });
 
     /* ---------- Mobile sticky CTA: reveal after the hero leaves the viewport ---------- */
     const stickyCta = document.querySelector('[data-sticky-cta]') as HTMLElement | null;

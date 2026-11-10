@@ -730,7 +730,7 @@ figcaption, .caption {
 }
 .sticky-cta.is-shown { display: flex; }
 .sticky-cta .btn { flex: 1; }
-.sticky-cta__line, .sticky-cta__social { display: none; }
+.sticky-cta__line, .sticky-cta__social, .sticky-cta .sticky-cta__gift { display: none; }
 /* keep the last lines of the page (footer legal) clear of the bar */
 body.has-sticky-cta { padding-bottom: 72px; }
 /* desktop: slim band — one line of context, the two CTAs, LinkedIn */
@@ -743,6 +743,7 @@ body.has-sticky-cta { padding-bottom: 72px; }
     row-gap: 6px;
   }
   .sticky-cta .btn { flex: 0 0 auto; }
+  .sticky-cta .sticky-cta__gift { display: inline-flex; }
   /* small gold line under the buttons, right-aligned (eyebrow voice) */
   .sticky-cta__line {
     display: block; order: 10; flex-basis: 100%; text-align: right;

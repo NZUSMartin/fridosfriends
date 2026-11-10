@@ -8,7 +8,8 @@ import PromiseBand from '../components/PromiseBand.astro';
 import CTABand from '../components/CTABand.astro';
 import MembershipCalculator from '../components/MembershipCalculator.astro';
 import ProgressThermometer from '../components/ProgressThermometer.astro';
-import { FUNDING, CREDIT_AI_DE } from '../consts';
+import OccasionTiles from '../components/OccasionTiles.astro';
+import { FUNDING, CREDIT_AI_DE, GIFT_OCCASIONS } from '../consts';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 
@@ -64,9 +65,13 @@ const multiplier = [
             Pflüger. Wenn Sie ein Mädchen fördern, fördern Sie eine ganze Gemeinschaft.
           </p>
           <p class="hero__cost" data-reveal>Jede Spende zählt — ein ganzes Schuljahr kostet rund <b>800 €</b>.</p>
-          <div class="btn-row" data-reveal>
+          <div class="btn-row" style="align-items:center" data-reveal>
             <a class="btn btn--primary" href="/mitmachen">Mitmachen</a>
-            <a class="btn btn--secondary" href="#so-funktioniert-es">Mehr erfahren</a>
+            {/* seasonal gift button: one variant per occasion, the season switch shows the right one */}
+            {GIFT_OCCASIONS.map((o) => (
+              <a class="btn btn--secondary" href={`/geschenk/?anlass=${o.id}`} data-season-show={o.id}>{o.de.cta}</a>
+            ))}
+            <a class="link-tertiary" href="#so-funktioniert-es">Mehr erfahren</a>
           </div>
         </div>
 
@@ -81,6 +86,25 @@ const multiplier = [
           <figcaption>{CREDIT_AI_DE}</figcaption>
         </figure>
       </div>
+    </div>
+  </section>
+
+  <!-- 1b. GESCHENK — verschenken (directly under the hero; tiles lead straight into the flow) -->
+  <section class="band band-pure section" id="geschenk">
+    <div class="container" data-reveal-group>
+      <div class="section-head" style="margin-bottom:var(--sp-6)">
+        <Eyebrow text="Verschenken" />
+        <h2 data-reveal>Ein Geschenk mit Wirkung.</h2>
+        <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
+          Zum Geburtstag, zur Hochzeit, zu Weihnachten — verschenken Sie eine Spende in Ihrem
+          Namen und schenken Sie einem Mädchen in Norduganda ein Stück Zukunft. In wenigen Minuten
+          gestaltet, sofort als PDF zum Ausdrucken.
+        </p>
+      </div>
+      <div data-reveal><OccasionTiles lang="de" mode="link" /></div>
+      <p style="margin-top:var(--sp-5)" data-reveal>
+        <a class="link-tertiary" href="/geschenk/">Weitere Anlässe</a>
+      </p>
     </div>
   </section>
 
@@ -241,22 +265,6 @@ const multiplier = [
           <MembershipCalculator lang="de" />
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- 8b. GESCHENK — verschenken -->
-  <section class="section">
-    <div class="container container-text" data-reveal-group>
-      <Eyebrow text="Verschenken" />
-      <h2 data-reveal>Ein Geschenk mit Wirkung.</h2>
-      <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
-        Zum Geburtstag, zur Hochzeit, zu Weihnachten — verschenken Sie eine Spende in Ihrem
-        Namen und schenken Sie einem Mädchen in Norduganda ein Stück Zukunft. In wenigen Minuten
-        gestaltet, sofort als PDF zum Ausdrucken.
-      </p>
-      <p style="margin-top:var(--sp-5)" data-reveal>
-        <a class="btn btn--secondary" href="/geschenk">Geschenk gestalten</a>
-      </p>
     </div>
   </section>
 

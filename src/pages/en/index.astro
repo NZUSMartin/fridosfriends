@@ -8,7 +8,8 @@ import PromiseBand from '../../components/PromiseBand.astro';
 import CTABand from '../../components/CTABand.astro';
 import MembershipCalculator from '../../components/MembershipCalculator.astro';
 import ProgressThermometer from '../../components/ProgressThermometer.astro';
-import { FUNDING, CREDIT_AI_EN } from '../../consts';
+import OccasionTiles from '../../components/OccasionTiles.astro';
+import { FUNDING, CREDIT_AI_EN, GIFT_OCCASIONS } from '../../consts';
 
 const betterplace = 'https://www.betterplace.org/de/projects/165916-schulstipendien-fuer-maedchen-in-uganda-bildung-ist-ihre-zukunft';
 
@@ -64,9 +65,13 @@ const multiplier = [
             Father Frido Pflüger. When you support one girl, you support a whole community.
           </p>
           <p class="hero__cost" data-reveal>Every gift counts — a full school year costs about <b>€800</b>.</p>
-          <div class="btn-row" data-reveal>
+          <div class="btn-row" style="align-items:center" data-reveal>
             <a class="btn btn--primary" href="/en/donate">Get involved</a>
-            <a class="btn btn--secondary" href="#how-it-works">Learn more</a>
+            {/* seasonal gift button: one variant per occasion, the season switch shows the right one */}
+            {GIFT_OCCASIONS.map((o) => (
+              <a class="btn btn--secondary" href={`/en/gift/?anlass=${o.id}`} data-season-show={o.id}>{o.en.cta}</a>
+            ))}
+            <a class="link-tertiary" href="#how-it-works">Learn more</a>
           </div>
         </div>
 
@@ -81,6 +86,24 @@ const multiplier = [
           <figcaption>{CREDIT_AI_EN}</figcaption>
         </figure>
       </div>
+    </div>
+  </section>
+
+  <!-- 1b. GIFT — give a gift (directly under the hero; tiles lead straight into the flow) -->
+  <section class="band band-pure section" id="gift">
+    <div class="container" data-reveal-group>
+      <div class="section-head" style="margin-bottom:var(--sp-6)">
+        <Eyebrow text="Give a gift" />
+        <h2 data-reveal>A gift that works.</h2>
+        <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
+          For a birthday, a wedding, or Christmas — give a donation in your name and give a girl
+          in northern Uganda a piece of her future. Made in minutes, ready as a printable PDF.
+        </p>
+      </div>
+      <div data-reveal><OccasionTiles lang="en" mode="link" /></div>
+      <p style="margin-top:var(--sp-5)" data-reveal>
+        <a class="link-tertiary" href="/en/gift/">Other occasions</a>
+      </p>
     </div>
   </section>
 
@@ -240,21 +263,6 @@ const multiplier = [
           <MembershipCalculator lang="en" />
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- 8b. GIFT — give a gift -->
-  <section class="section">
-    <div class="container container-text" data-reveal-group>
-      <Eyebrow text="Give a gift" />
-      <h2 data-reveal>A gift that works.</h2>
-      <p class="lead" style="margin-top:var(--sp-5)" data-reveal>
-        For a birthday, a wedding, or Christmas — give a donation in your name and give a girl
-        in northern Uganda a piece of her future. Made in minutes, ready as a printable PDF.
-      </p>
-      <p style="margin-top:var(--sp-5)" data-reveal>
-        <a class="btn btn--secondary" href="/en/gift">Create a gift</a>
-      </p>
     </div>
   </section>
 

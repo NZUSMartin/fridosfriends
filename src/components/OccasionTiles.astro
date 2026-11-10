@@ -1,0 +1,72 @@
+---
+/**
+ * OccasionTiles.astro — the Geschenk occasions as picture tiles (the real card artwork).
+ * Used twice: as BUTTONS in the Geschenk chooser (mode="pick", the studio script listens for
+ * [data-occ-pick]) and as LINKS on the home page (mode="link", straight into the flow).
+ * The tile order follows the season (see GIFT_SEASONS in consts.ts; CSS order set in Layout).
+ *
+ * Props: lang 'de' | 'en' · mode 'pick' | 'link'
+ */
+import { GIFT_OCCASIONS } from '../consts';
+
+interface Props { lang?: 'de' | 'en'; mode?: 'pick' | 'link'; }
+const { lang = 'de', mode = 'link' } = Astro.props;
+const isEn = lang === 'en';
+const base = isEn ? '/en/gift/' : '/geschenk/';
+const go = isEn ? 'Create this gift' : 'Dieses Geschenk gestalten';
+---
+<div class="occ-tiles">
+  {GIFT_OCCASIONS.map((o) => {
+    const c = isEn ? o.en : o.de;
+    const inner = (
+      <>
+        <span class="occ-tile__art"><img src={o.thumb} alt={c.alt} width="508" height="720" loading="lazy" decoding="async" /></span>
+        <span class="occ-tile__body">
+          <span class="occ-tile__title">{c.title}</span>
+          <span class="occ-tile__text">{c.text}</span>
+          <span class="occ-tile__go">{go}&nbsp;<span aria-hidden="true">→</span></span>
+        </span>
+      </>
+    );
+    return mode === 'pick'
+      ? <button type="button" class="occ-tile" data-occ-tile={o.id} data-occ-pick={o.id}>{inner}</button>
+      : <a class="occ-tile" data-occ-tile={o.id} href={`${base}?anlass=${o.id}`}>{inner}</a>;
+  })}
+</div>
+
+<style>
+  .occ-tiles { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:var(--sp-5); max-width:720px; }
+  .occ-tile {
+    display:flex; flex-direction:column; text-align:left; padding:0; margin:0; font:inherit; color:inherit; cursor:pointer;
+    background:var(--paper-pure, #fff); border:1px solid var(--line-strong, #D6CDB6); border-radius:var(--r-card);
+    overflow:hidden; text-decoration:none;
+    transition:transform 180ms var(--ease-out, ease-out), box-shadow 180ms var(--ease-out, ease-out), border-color 180ms var(--ease-out, ease-out);
+  }
+  .occ-tile:hover, .occ-tile:focus-visible { transform:translateY(-3px); box-shadow:var(--shadow-lift); border-color:var(--gold); }
+  .occ-tile:focus-visible { outline:2px solid var(--teal); outline-offset:3px; }
+  /* the card lies on a warm surface, like a printed card on a table */
+  .occ-tile__art { display:block; background:var(--gold-wash, #F6EFDD); padding:var(--sp-5) var(--sp-5) 0; }
+  .occ-tile__art img {
+    display:block; width:100%; height:auto; border-radius:4px 4px 0 0;
+    box-shadow:0 10px 28px rgba(60, 45, 10, .18), 0 2px 6px rgba(60, 45, 10, .10);
+    /* show the upper part of the card: headline, greeting line and the photo */
+    aspect-ratio: 508 / 430; object-fit:cover; object-position:top center;
+    transition:transform 240ms var(--ease-out, ease-out);
+  }
+  .occ-tile:hover .occ-tile__art img { transform:translateY(-4px); }
+  .occ-tile__body { display:flex; flex-direction:column; gap:var(--sp-2); padding:var(--sp-4) var(--sp-5) var(--sp-5); border-top:1px solid var(--line); }
+  .occ-tile__title { font-family:var(--font-serif); font-weight:600; font-size:var(--step-1); line-height:1.2; color:var(--ink); }
+  .occ-tile__text { color:var(--stone); font-size:var(--step--1); line-height:1.5; }
+  .occ-tile__go { margin-top:var(--sp-2); font-family:var(--font-sans); font-weight:600; font-size:var(--step--1); color:var(--gold-text); }
+  /* phones: one tile per row, card left, words right — compact, both visible without scrolling far */
+  @media (max-width:560px) {
+    .occ-tiles { grid-template-columns:1fr; gap:var(--sp-4); }
+    .occ-tile { flex-direction:row; align-items:stretch; }
+    /* the whole card, standing in its warm frame */
+    .occ-tile__art { flex:0 0 38%; padding:var(--sp-3); display:flex; align-items:center; }
+    .occ-tile__art img { aspect-ratio: 508 / 720; border-radius:3px; }
+    .occ-tile:hover .occ-tile__art img { transform:none; }
+    .occ-tile__body { flex:1; border-top:0; border-left:1px solid var(--line); padding:var(--sp-4); justify-content:center; }
+  }
+  @media (prefers-reduced-motion: reduce) { .occ-tile, .occ-tile__art img { transition:none; } .occ-tile:hover, .occ-tile:hover .occ-tile__art img { transform:none; } }
+</style>
