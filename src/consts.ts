@@ -64,3 +64,14 @@ export const GIFT_DEFAULT_OCCASION = 'geburtstag';
 export const GIFT_SEASONS = [
   { occasion: 'weihnachten', from: '11-01', to: '12-26' },
 ];
+
+// ---------------------------------------------------------------------------
+// Newsletter archive — every issue is a public PDF, listed on /newsletter/ (newest first).
+// To publish an issue: put the PDF into /public/newsletter/ausgaben/ and add ONE entry here.
+//   date   'YYYY-MM-DD' (shown as month + year)      title   headline of the issue
+//   teaser one or two sentences (optional)           pdf     file name inside /newsletter/ausgaben/
+// While the list is empty the archive section stays hidden.
+// ---------------------------------------------------------------------------
+export const NEWSLETTER_ISSUES: { date: string; title: string; teaser?: string; pdf: string }[] = [
+  // { date: '2027-01-15', title: 'Titel der Ausgabe', teaser: 'Worum es geht.', pdf: '2027-01-newsletter.pdf' },
+];
