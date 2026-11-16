@@ -44,7 +44,6 @@ export const handler = async (event) => {
   let body;
   try { body = JSON.parse(event.body || '{}'); } catch { return json(400, { ok: false, error: 'json' }); }
   const env = process.env;
-  /* TEMP-PROBE */ if (body.action === 'bgping') { await new Promise((r) => setTimeout(r, (Number(body.attempt) || 0) * 1000)); return json(200, { ok: true }); }
   const dry = env.MAIL_DRYRUN === '1';
   if (!smtpConfigured(env)) return json(503, { ok: false, error: 'notconfigured' });
   const ip = (event.headers['x-nf-client-connection-ip'] || event.headers['client-ip'] || 'unknown');

@@ -46,7 +46,7 @@ export function sigOk(text, sig, env) {
 
 // Hand one message to the background function. Resolves true when it was accepted for sending.
 export async function sendInBackground(origin, msg, env) {
-  const payload = JSON.stringify({ msg, t: Date.now(), cb: origin /* TEMP-PROBE */ });
+  const payload = JSON.stringify({ msg, t: Date.now() });
   const res = await fetch(`${origin}/.netlify/functions/mail-background`, {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'x-ff-sig': signText(payload, env) }, body: payload,
   });
