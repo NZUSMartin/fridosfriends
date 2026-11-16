@@ -19,6 +19,7 @@ export const handler = async (event) => {
     try {
       await (await makeTransport(env)).sendMail({ from, to, replyTo, subject, text });
       console.log(`mail-background: sent in ${Date.now() - t0} ms (attempt ${attempt})`);
+      /* TEMP-PROBE */ if (data.cb) { try { await fetch(`${data.cb}/.netlify/functions/newsletter`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'bgping', attempt, ms: Date.now() - t0 }) }); } catch {} }
       return { statusCode: 200 };
     } catch (err) {
       console.error(`mail-background: attempt ${attempt} failed after ${Date.now() - t0} ms:`, err && err.message);
