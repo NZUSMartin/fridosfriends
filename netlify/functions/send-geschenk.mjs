@@ -3,7 +3,7 @@
 // so SPF stays intact. Configure in Netlify → Site configuration → Environment variables:
 //   SMTP_HOST, SMTP_PORT (465 = SSL, 587 = STARTTLS), SMTP_USER, SMTP_PASS, MAIL_FROM (optional,
 //   default "Frido’s Friends e.V. <SMTP_USER>"), MAIL_REPLY_TO (optional, default donation@fridosfriends.de). MAIL_DRYRUN=1 → no mail is sent, the message is echoed (tests).
-import nodemailer from 'nodemailer';
+import { makeTransport, smtpConfigured } from '../lib/mail.mjs';
 
 const REPLY_DEFAULT = 'donation@fridosfriends.de';
 const MAX_PDF_BYTES = 4 * 1024 * 1024;           // the client sends a JPEG-based PDF, ~0.5–1 MB
@@ -44,17 +44,17 @@ export const handler = async (event) => {
 
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, MAIL_FROM, MAIL_REPLY_TO, MAIL_DRYRUN } = process.env;
   const dry = MAIL_DRYRUN === '1';
-  if (!dry && !(SMTP_HOST && SMTP_USER && SMTP_PASS)) return json(503, { ok: false, error: 'notconfigured' });
+  if (!smtpConfigured(process.env)) return json(503, { ok: false, error: 'notconfigured' });
 
-  const transport = dry
-    ? nodemailer.createTransport({ jsonTransport: true })
-    : nodemailer.createTransport({ host: SMTP_HOST, port: Number(SMTP_PORT || 465), secure: Number(SMTP_PORT || 465) === 465, auth: { user: SMTP_USER, pass: SMTP_PASS } });
+  const transport = await makeTransport(process.env);
   const { subject, text } = copy(lang, occasion, String(recipient).slice(0, 60), String(giver).slice(0, 60));
   try {
+    const t0 = Date.now();
     const info = await transport.sendMail({
       from: MAIL_FROM || `Frido’s Friends e.V. <${SMTP_USER || REPLY_DEFAULT}>`, to: toAddr, replyTo: MAIL_REPLY_TO || REPLY_DEFAULT, subject, text,
       attachments: [{ filename: 'Fridos-Friends-Geschenk.pdf', content: bytes, contentType: 'application/pdf' }],
     });
+    console.log('send-geschenk sent in', Date.now() - t0, 'ms');
     return json(200, { ok: true, dry, id: info.messageId || null, ...(dry ? { size: bytes.length, to: toAddr, subject } : {}) });
   } catch (err) {
     console.error('send-geschenk failed:', err && err.message);

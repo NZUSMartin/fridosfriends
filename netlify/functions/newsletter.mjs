@@ -7,7 +7,7 @@
 // does nothing — mail scanners that pre-open links cannot confirm by accident).
 // Env: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS (as for send-geschenk), optional MAIL_FROM,
 //      NEWSLETTER_NOTIFY (default vorstand@fridosfriends.de), NEWSLETTER_SECRET. MAIL_DRYRUN=1 → nothing is sent (tests).
-import nodemailer from 'nodemailer';
+import { makeTransport, smtpConfigured } from '../lib/mail.mjs';
 import { createHmac, createHash, timingSafeEqual } from 'node:crypto';
 
 const NOTIFY_DEFAULT = 'vorstand@fridosfriends.de';
@@ -59,11 +59,8 @@ export const handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); } catch { return json(400, { ok: false, error: 'json' }); }
   const env = process.env;
   const dry = env.MAIL_DRYRUN === '1';
-  if (!dry && !(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS)) return json(503, { ok: false, error: 'notconfigured' });
+  if (!smtpConfigured(env)) return json(503, { ok: false, error: 'notconfigured' });
   const ip = (event.headers['x-nf-client-connection-ip'] || event.headers['client-ip'] || 'unknown');
-  const transport = () => dry
-    ? nodemailer.createTransport({ jsonTransport: true })
-    : nodemailer.createTransport({ host: env.SMTP_HOST, port: Number(env.SMTP_PORT || 465), secure: Number(env.SMTP_PORT || 465) === 465, auth: { user: env.SMTP_USER, pass: env.SMTP_PASS } });
   const from = env.MAIL_FROM || `Frido’s Friends e.V. <${env.SMTP_USER || NOTIFY_DEFAULT}>`;
   const notify = env.NEWSLETTER_NOTIFY || NOTIFY_DEFAULT;
 
@@ -76,10 +73,12 @@ export const handler = async (event) => {
     const when = new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin', dateStyle: 'long', timeStyle: 'short' });
     const asked = new Date(Number(d.t)).toLocaleString('de-DE', { timeZone: 'Europe/Berlin', dateStyle: 'long', timeStyle: 'short' });
     try {
-      await transport().sendMail({
+      const t0 = Date.now();
+      await (await makeTransport(env)).sendMail({
         from, to: notify, replyTo: d.e, subject: `Newsletter: neue bestätigte Anmeldung (${d.e})`,
         text: `Eine Newsletter-Anmeldung wurde bestätigt (Double-Opt-in).\n\nE-Mail:          ${d.e}\nAngemeldet am:   ${asked}\nBestätigt am:    ${when}\nAngemeldet über: ${d.s || 'unbekannt'}\nSprache:         ${d.l === 'en' ? 'Englisch' : 'Deutsch'}\n\nBitte in den Newsletter-Verteiler aufnehmen. Diese Nachricht ist zugleich der Nachweis der Einwilligung – bitte aufbewahren, solange die Adresse im Verteiler ist.`,
       });
+      console.log('newsletter confirm sent in', Date.now() - t0, 'ms');
       return json(200, { ok: true, dry, email: d.e });
     } catch (err) {
       console.error('newsletter confirm failed:', err && err.message);
@@ -99,7 +98,9 @@ export const handler = async (event) => {
   const link = `${origin(event)}${l === 'en' ? '/en/newsletter/' : '/newsletter/'}?t=${token}`;
   const { subject, text } = confirmCopy(l, link);
   try {
-    await transport().sendMail({ from, to: addr, replyTo: notify, subject, text });
+    const t0 = Date.now();
+    await (await makeTransport(env)).sendMail({ from, to: addr, replyTo: notify, subject, text });
+    console.log('newsletter subscribe sent in', Date.now() - t0, 'ms');
     return json(200, { ok: true, dry, ...(dry ? { link } : {}) });
   } catch (err) {
     console.error('newsletter subscribe failed:', err && err.message);
