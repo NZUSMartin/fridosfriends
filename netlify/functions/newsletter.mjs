@@ -7,8 +7,9 @@
 // does nothing — mail scanners that pre-open links cannot confirm by accident).
 // Env: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS (as for send-geschenk), optional MAIL_FROM,
 //      NEWSLETTER_NOTIFY (default vorstand@fridosfriends.de), NEWSLETTER_SECRET. MAIL_DRYRUN=1 → nothing is sent (tests).
-import { makeTransport, smtpConfigured } from '../lib/mail.mjs';
-import { createHmac, createHash, timingSafeEqual } from 'node:crypto';
+// The confirmation mail leaves via the background function `mail-background` (the mail server needs up to ~20 s to
+// accept it); the notification to the Vorstand stays synchronous, so the person only sees "confirmed" once it is out.
+import { makeTransport, smtpConfigured, sendInBackground, signText, sigOk, b64u } from '../lib/mail.mjs';
 
 const NOTIFY_DEFAULT = 'vorstand@fridosfriends.de';
 const SITE = 'https://www.fridosfriends.de';
@@ -18,24 +19,17 @@ const hits = new Map();
 
 const json = (status, body) => ({ statusCode: status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }, body: JSON.stringify(body) });
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const b64u = (buf) => Buffer.from(buf).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const unb64u = (s) => Buffer.from(String(s).replace(/-/g, '+').replace(/_/g, '/'), 'base64');
 
 function limited(ip) {
   const now = Date.now(); const arr = (hits.get(ip) || []).filter((t) => now - t < RATE.windowMs);
   arr.push(now); hits.set(ip, arr); return arr.length > RATE.max;
 }
-function key(env) {
-  if (env.NEWSLETTER_SECRET) return env.NEWSLETTER_SECRET;
-  return createHash('sha256').update('ff-newsletter|' + (env.SMTP_PASS || 'dryrun')).digest();
-}
-const sign = (payload, env) => b64u(createHmac('sha256', key(env)).update(payload).digest());
-function makeToken(data, env) { const p = b64u(JSON.stringify(data)); return p + '.' + sign(p, env); }
+function makeToken(data, env) { const p = b64u(JSON.stringify(data)); return p + '.' + signText(p, env); }
 function readToken(token, env) {
   const [p, s] = String(token || '').split('.');
   if (!p || !s) return null;
-  const a = Buffer.from(s); const b = Buffer.from(sign(p, env));
-  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
+  if (!sigOk(p, s, env)) return null;
   try { const d = JSON.parse(unb64u(p).toString('utf8')); return (d && EMAIL_RE.test(d.e || '') && Number(d.t)) ? d : null; } catch { return null; }
 }
 // Only our own hosts may appear in the mailed link (the Host header is client-controlled).
@@ -63,19 +57,6 @@ export const handler = async (event) => {
   const ip = (event.headers['x-nf-client-connection-ip'] || event.headers['client-ip'] || 'unknown');
   const from = env.MAIL_FROM || `Frido’s Friends e.V. <${env.SMTP_USER || NOTIFY_DEFAULT}>`;
   const notify = env.NEWSLETTER_NOTIFY || NOTIFY_DEFAULT;
-
-  // TEMP-DEBUG (dev only, remove): phase timings of one real send, no content
-  if (body.debug === 'timing') {
-    const nodemailer = (await import('nodemailer')).default; const { lookup } = await import('node:dns/promises');
-    const T0 = Date.now(); const marks = [];
-    const logger = {}; for (const lvl of ['trace','debug','info','warn','error','fatal']) logger[lvl] = (entry, msg) => { marks.push([Date.now() - T0, (entry && entry.tnx) || lvl, String(msg || '').slice(0, 9)]); };
-    let ip = ''; try { ip = (await lookup(env.SMTP_HOST, { family: 4 })).address; } catch (e) { ip = 'ERR ' + e.code; }
-    const tLookup = Date.now() - T0;
-    const port = Number(env.SMTP_PORT || 465);
-    const tr = nodemailer.createTransport({ host: ip, port, secure: port === 465, auth: { user: env.SMTP_USER, pass: env.SMTP_PASS }, tls: { servername: env.SMTP_HOST }, logger, debug: true, connectionTimeout: 10000, greetingTimeout: 20000, socketTimeout: 25000 });
-    let err = null; try { await tr.sendMail({ from, to: notify, subject: 'Zeitmessung (technischer Test)', text: 'Technischer Test der Versanddauer. Bitte ignorieren.' }); } catch (e) { err = String(e && e.message).slice(0, 80); }
-    return json(200, { tLookup, total: Date.now() - T0, port, hostIsName: !/^[0-9.]+$/.test(env.SMTP_HOST || ''), err, marks });
-  }
 
   // ---- step 2: the person clicked the button on the confirmation page
   if (body.action === 'confirm') {
@@ -111,9 +92,12 @@ export const handler = async (event) => {
   const link = `${origin(event)}${l === 'en' ? '/en/newsletter/' : '/newsletter/'}?t=${token}`;
   const { subject, text } = confirmCopy(l, link);
   try {
-    const t0 = Date.now();
-    await (await makeTransport(env)).sendMail({ from, to: addr, replyTo: notify, subject, text });
-    console.log('newsletter subscribe sent in', Date.now() - t0, 'ms');
+    const msg = { from, to: addr, replyTo: notify, subject, text };
+    // the visitor should not wait for the mail server: hand the message to the background function;
+    // if that hand-over is refused (or in dry-run), send it right here
+    let handed = false;
+    if (!dry) { try { handed = await sendInBackground(origin(event), msg, env); } catch { handed = false; } }
+    if (!handed) await (await makeTransport(env)).sendMail(msg);
     return json(200, { ok: true, dry, ...(dry ? { link } : {}) });
   } catch (err) {
     console.error('newsletter subscribe failed:', err && err.message);
