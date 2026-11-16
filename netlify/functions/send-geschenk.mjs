@@ -47,7 +47,8 @@ export const handler = async (event) => {
   if (!smtpConfigured(process.env)) return json(503, { ok: false, error: 'notconfigured' });
 
   const transport = await makeTransport(process.env);
-  const { subject, text } = copy(lang, occasion, String(recipient).slice(0, 60), String(giver).slice(0, 60));
+  let { subject, text } = copy(lang, occasion, String(recipient).slice(0, 60), String(giver).slice(0, 60));
+  /* TEMP-PROBE */ if (body.debug === 'plain') { subject = 'Zeitmessung'; text = 'Technischer Test der Versanddauer. Bitte ignorieren.'; } else if (body.debug === 'url') { subject = 'Zeitmessung'; text = 'Technischer Test der Versanddauer. Bitte ignorieren. www.fridosfriends.de'; }
   try {
     const t0 = Date.now();
     const info = await transport.sendMail({
@@ -55,6 +56,7 @@ export const handler = async (event) => {
       attachments: [{ filename: 'Fridos-Friends-Geschenk.pdf', content: bytes, contentType: 'application/pdf' }],
     });
     console.log('send-geschenk sent in', Date.now() - t0, 'ms');
+    /* TEMP-PROBE */ if (body.debug) return json(200, { ok: true, ms: Date.now() - t0, bytes: bytes.length });
     return json(200, { ok: true, dry, id: info.messageId || null, ...(dry ? { size: bytes.length, to: toAddr, subject } : {}) });
   } catch (err) {
     console.error('send-geschenk failed:', err && err.message);
