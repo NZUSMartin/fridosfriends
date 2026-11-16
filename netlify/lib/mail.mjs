@@ -64,15 +64,22 @@ export function siteOrigin(event) {
 // ---- PDF parking: the PDF waits in a blob store only until the background function has sent it
 const PDF_STORE = 'geschenk-mail';
 const PDF_MAX_AGE_MS = 60 * 60 * 1000;
-const pdfStore = (event) => { connectLambda(event); return getStore({ name: PDF_STORE, consistency: 'strong' }); };
+// (default, eventually consistent store: strong consistency is not available to this function format —
+//  a write can take a moment to become readable, so takePdf waits and retries)
+const pdfStore = (event) => { connectLambda(event); return getStore(PDF_STORE); };
 export async function parkPdf(event, bytes) {
   const key = `${Date.now()}-${randomUUID()}`;
   await pdfStore(event).set(key, bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
   return key;
 }
 export async function takePdf(event, key) {
-  const buf = await pdfStore(event).get(key, { type: 'arrayBuffer' });
-  return buf ? Buffer.from(buf) : null;
+  const store = pdfStore(event);
+  for (let i = 0; i < 15; i++) { // up to ~70 s
+    const buf = await store.get(key, { type: 'arrayBuffer' }).catch(() => null);
+    if (buf) return Buffer.from(buf);
+    await new Promise((r) => setTimeout(r, 5000));
+  }
+  return null;
 }
 export async function dropPdf(event, key) { try { await pdfStore(event).delete(key); } catch { /* already gone */ } }
 // leftovers (a hand-over that never ran): anything older than an hour is removed
