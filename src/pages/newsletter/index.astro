@@ -27,18 +27,22 @@ const when = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('de-DE'
         {issues.length > 0 && (
           <section class="nlarchive" aria-labelledby="nlarchive-h">
             <h2 class="h3" id="nlarchive-h">Bisherige Ausgaben</h2>
-            
+            <p class="caption" style="margin-top:var(--sp-2)">Jede Ausgabe gibt es auf Deutsch und Englisch.</p>
             <ol class="nlarchive__list">
-              {issues.map((i) => (
-                <li>
-                  <a class="nlarchive__item" href={`/newsletter/ausgaben/${i.pdf}`} target="_blank" rel="noopener">
+              {issues.map((i) => {
+                const own = i.de; const other = i.en;
+                return (
+                  <li class="nlarchive__item">
                     <span class="nlarchive__date">{when(i.date)}</span>
-                    <span class="nlarchive__title">{i.title}</span>
-                    {i.teaser && <span class="nlarchive__teaser">{i.teaser}</span>}
-                    <span class="nlarchive__go">PDF öffnen&nbsp;<span aria-hidden="true">→</span></span>
-                  </a>
-                </li>
-              ))}
+                    <span class="nlarchive__title">{own.title}</span>
+                    {own.teaser && <span class="nlarchive__teaser">{own.teaser}</span>}
+                    <span class="nlarchive__langs">
+                      <a class="nlarchive__pdf" href={`/newsletter/ausgaben/${own.pdf}`} target="_blank" rel="noopener" hreflang="de" aria-label={`${own.title} — Deutsch (PDF)`}>Deutsch <small>PDF</small></a>
+                      <a class="nlarchive__pdf" href={`/newsletter/ausgaben/${other.pdf}`} target="_blank" rel="noopener" hreflang="en" aria-label={`${other.title} — English (PDF)`}>English <small>PDF</small></a>
+                    </span>
+                  </li>
+                );
+              })}
             </ol>
           </section>
         )}
@@ -73,16 +77,18 @@ const when = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('de-DE'
   .nlview:focus { outline:none; }
   .nlarchive { margin-top:var(--sp-8); padding-top:var(--sp-6); border-top:1px solid var(--line); }
   .nlarchive__list { list-style:none; padding:0; margin:var(--sp-5) 0 0; display:grid; gap:var(--sp-3); }
-  .nlarchive__item { display:grid; gap:var(--sp-1); padding:var(--sp-5); text-decoration:none; color:inherit;
-    background:var(--paper-pure, #fff); border:1px solid var(--line-strong, #D6CDB6); border-radius:var(--r-card);
-    transition:transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out), border-color 180ms var(--ease-out); }
-  .nlarchive__item:hover, .nlarchive__item:focus-visible { transform:translateY(-2px); box-shadow:var(--shadow-lift); border-color:var(--gold); }
-  .nlarchive__item:focus-visible { outline:2px solid var(--teal); outline-offset:3px; }
+  .nlarchive__item { display:grid; gap:var(--sp-1); padding:var(--sp-5);
+    background:var(--paper-pure, #fff); border:1px solid var(--line-strong, #D6CDB6); border-radius:var(--r-card); }
   .nlarchive__date { font-family:var(--font-sans); font-size:var(--step--1); font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--gold-text); }
   .nlarchive__title { font-family:var(--font-serif); font-weight:600; font-size:var(--step-2); line-height:1.2; color:var(--ink); }
   .nlarchive__teaser { color:var(--stone); font-size:var(--step-0); line-height:1.5; }
-  .nlarchive__go { margin-top:var(--sp-2); font-family:var(--font-sans); font-weight:600; font-size:var(--step--1); color:var(--gold-text); }
-  @media (prefers-reduced-motion: reduce) { .nlarchive__item { transition:none; } .nlarchive__item:hover { transform:none; } }
+  .nlarchive__langs { display:flex; flex-wrap:wrap; gap:var(--sp-3); margin-top:var(--sp-4); }
+  .nlarchive__pdf { display:inline-flex; align-items:baseline; gap:.5em; padding:.55em 1.1em; border-radius:var(--r-pill);
+    border:1.5px solid var(--ink); color:var(--ink); text-decoration:none; font-family:var(--font-sans); font-weight:600; font-size:.95rem;
+    transition:background 180ms var(--ease-out), border-color 180ms var(--ease-out); }
+  .nlarchive__pdf small { font-weight:500; font-size:.72rem; letter-spacing:.08em; color:var(--gold-text); }
+  .nlarchive__pdf:hover { background:var(--gold-soft); }
+  .nlarchive__pdf:focus-visible { outline:2px solid var(--teal); outline-offset:3px; }
   .nlview__status { margin-top:var(--sp-4); color:var(--stone); min-height:1.4em; }
 </style>
 

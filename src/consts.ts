@@ -66,12 +66,18 @@ export const GIFT_SEASONS = [
 ];
 
 // ---------------------------------------------------------------------------
-// Newsletter archive — every issue is a public PDF, listed on /newsletter/ (newest first).
-// To publish an issue: put the PDF into /public/newsletter/ausgaben/ and add ONE entry here.
-//   date   'YYYY-MM-DD' (shown as month + year)      title   headline of the issue
-//   teaser one or two sentences (optional)           pdf     file name inside /newsletter/ausgaben/
-// While the list is empty the archive section stays hidden.
+// Newsletter archive — every issue is public and is filed in German AND English (two PDFs),
+// listed on /newsletter/ and /en/newsletter/, newest first, with both languages to choose from.
+// To publish an issue: put both PDFs into /public/newsletter/ausgaben/ and add ONE entry here.
+//   date  'YYYY-MM-DD' (shown as month + year)
+//   de    { title, teaser?, pdf }   German headline, one or two sentences (optional), file name
+//   en    { title, teaser?, pdf }   the same for the English edition
+// File names: '2027-01-newsletter-de.pdf' / '2027-01-newsletter-en.pdf'.
+// While the list is empty the archive section (and the "Alle Ausgaben lesen" links) stay hidden.
 // ---------------------------------------------------------------------------
-export const NEWSLETTER_ISSUES: { date: string; title: string; teaser?: string; pdf: string }[] = [
-  // { date: '2027-01-15', title: 'Titel der Ausgabe', teaser: 'Worum es geht.', pdf: '2027-01-newsletter.pdf' },
+type NewsletterEdition = { title: string; teaser?: string; pdf: string };
+export const NEWSLETTER_ISSUES: { date: string; de: NewsletterEdition; en: NewsletterEdition }[] = [
+  // { date: '2027-01-15',
+  //   de: { title: 'Titel der Ausgabe', teaser: 'Worum es geht.', pdf: '2027-01-newsletter-de.pdf' },
+  //   en: { title: 'Title of the issue', teaser: 'What it is about.', pdf: '2027-01-newsletter-en.pdf' } },
 ];
