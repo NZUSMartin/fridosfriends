@@ -64,6 +64,19 @@ export const handler = async (event) => {
   const from = env.MAIL_FROM || `Frido’s Friends e.V. <${env.SMTP_USER || NOTIFY_DEFAULT}>`;
   const notify = env.NEWSLETTER_NOTIFY || NOTIFY_DEFAULT;
 
+  // TEMP-DEBUG (dev only, remove): phase timings of one real send, no content
+  if (body.debug === 'timing') {
+    const nodemailer = (await import('nodemailer')).default; const { lookup } = await import('node:dns/promises');
+    const T0 = Date.now(); const marks = [];
+    const logger = {}; for (const lvl of ['trace','debug','info','warn','error','fatal']) logger[lvl] = (entry, msg) => { marks.push([Date.now() - T0, (entry && entry.tnx) || lvl, String(msg || '').slice(0, 9)]); };
+    let ip = ''; try { ip = (await lookup(env.SMTP_HOST, { family: 4 })).address; } catch (e) { ip = 'ERR ' + e.code; }
+    const tLookup = Date.now() - T0;
+    const port = Number(env.SMTP_PORT || 465);
+    const tr = nodemailer.createTransport({ host: ip, port, secure: port === 465, auth: { user: env.SMTP_USER, pass: env.SMTP_PASS }, tls: { servername: env.SMTP_HOST }, logger, debug: true, connectionTimeout: 10000, greetingTimeout: 20000, socketTimeout: 25000 });
+    let err = null; try { await tr.sendMail({ from, to: notify, subject: 'Zeitmessung (technischer Test)', text: 'Technischer Test der Versanddauer. Bitte ignorieren.' }); } catch (e) { err = String(e && e.message).slice(0, 80); }
+    return json(200, { tLookup, total: Date.now() - T0, port, hostIsName: !/^[0-9.]+$/.test(env.SMTP_HOST || ''), err, marks });
+  }
+
   // ---- step 2: the person clicked the button on the confirmation page
   if (body.action === 'confirm') {
     const d = readToken(body.token, env);
