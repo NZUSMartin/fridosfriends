@@ -641,8 +641,8 @@ const t = isEn
     }
     const toB64 = (blob: Blob) => new Promise<string>((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
     const MAILMSG = () => isEnLang()
-      ? { sending: 'Sending …', sent: 'Sent to', bad: 'Please enter a valid e-mail address.', notready: 'E-mail sending is not set up yet — please download the PDF.', fail: 'Sending failed — please download the PDF instead.', rate: 'Too many e-mails in a short time — please try again later or download the PDF.' }
-      : { sending: 'Wird gesendet …', sent: 'Gesendet an', bad: 'Bitte eine gültige E-Mail-Adresse eingeben.', notready: 'Der E-Mail-Versand ist noch nicht eingerichtet – bitte laden Sie das PDF herunter.', fail: 'Senden fehlgeschlagen – bitte laden Sie das PDF herunter.', rate: 'Zu viele E-Mails in kurzer Zeit – bitte später erneut versuchen oder das PDF herunterladen.' };
+      ? { sending: 'Sending …', sent: 'Sent to', queued: 'On its way to', queuedTail: 'It should arrive within a minute.', bad: 'Please enter a valid e-mail address.', notready: 'E-mail sending is not set up yet — please download the PDF.', fail: 'Sending failed — please download the PDF instead.', rate: 'Too many e-mails in a short time — please try again later or download the PDF.' }
+      : { sending: 'Wird gesendet …', sent: 'Gesendet an', queued: 'Unterwegs an', queuedTail: 'Die E-Mail sollte innerhalb einer Minute eintreffen.', bad: 'Bitte eine gültige E-Mail-Adresse eingeben.', notready: 'Der E-Mail-Versand ist noch nicht eingerichtet – bitte laden Sie das PDF herunter.', fail: 'Senden fehlgeschlagen – bitte laden Sie das PDF herunter.', rate: 'Zu viele E-Mails in kurzer Zeit – bitte später erneut versuchen oder das PDF herunterladen.' };
     mailSend?.addEventListener('click', async () => {
       const m = MAILMSG(); const to = (mailTo?.value || '').trim();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)) { if (mailStatus) mailStatus.textContent = m.bad; mailTo?.focus(); return; }
@@ -652,7 +652,7 @@ const t = isEn
         const res = await fetch('/.netlify/functions/send-geschenk', { method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ to, lang: isEnLang() ? 'en' : 'de', occasion: state.occasion, recipient: state.recipient, giver: state.giver, pdf: await toB64(pdf), website: mailHp?.value || '' }) });
         const j: any = await res.json().catch(() => ({}));
-        if (res.ok && j.ok) { if (mailStatus) mailStatus.textContent = m.sent + ' ' + to + '.'; showDone(); }
+        if (res.ok && j.ok) { if (mailStatus) mailStatus.textContent = j.queued ? `${m.queued} ${to}. ${m.queuedTail}` : `${m.sent} ${to}.`; showDone(); }
         else if (res.status === 503) { if (mailStatus) mailStatus.textContent = m.notready; }
         else if (res.status === 429) { if (mailStatus) mailStatus.textContent = m.rate; }
         else { if (mailStatus) mailStatus.textContent = m.fail; }

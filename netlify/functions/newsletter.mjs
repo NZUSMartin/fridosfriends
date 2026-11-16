@@ -9,10 +9,9 @@
 //      NEWSLETTER_NOTIFY (default vorstand@fridosfriends.de), NEWSLETTER_SECRET. MAIL_DRYRUN=1 → nothing is sent (tests).
 // The confirmation mail leaves via the background function `mail-background` (the mail server needs up to ~20 s to
 // accept it); the notification to the Vorstand stays synchronous, so the person only sees "confirmed" once it is out.
-import { makeTransport, smtpConfigured, sendInBackground, signText, sigOk, b64u } from '../lib/mail.mjs';
+import { makeTransport, smtpConfigured, sendInBackground, signText, sigOk, b64u, siteOrigin as origin } from '../lib/mail.mjs';
 
 const NOTIFY_DEFAULT = 'vorstand@fridosfriends.de';
-const SITE = 'https://www.fridosfriends.de';
 const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;        // a confirmation link is valid for 30 days
 const RATE = { windowMs: 10 * 60 * 1000, max: 6 };  // per IP per function instance (best effort)
 const hits = new Map();
@@ -32,13 +31,6 @@ function readToken(token, env) {
   if (!sigOk(p, s, env)) return null;
   try { const d = JSON.parse(unb64u(p).toString('utf8')); return (d && EMAIL_RE.test(d.e || '') && Number(d.t)) ? d : null; } catch { return null; }
 }
-// Only our own hosts may appear in the mailed link (the Host header is client-controlled).
-function origin(event) {
-  const host = String(event.headers.host || '').toLowerCase();
-  if (/^(www\.)?fridosfriends\.de$/.test(host) || /^[a-z0-9-]+--kolleg\.netlify\.app$/.test(host) || host === 'kolleg.netlify.app') return 'https://' + host;
-  if (/^localhost:\d+$/.test(host)) return 'http://' + host;
-  return SITE;
-}
 function confirmCopy(lang, link) {
   return lang === 'en'
     ? { subject: 'Please confirm your newsletter sign-up',
@@ -52,6 +44,7 @@ export const handler = async (event) => {
   let body;
   try { body = JSON.parse(event.body || '{}'); } catch { return json(400, { ok: false, error: 'json' }); }
   const env = process.env;
+  /* TEMP-PROBE */ if (body.action === 'bgping') { await new Promise((r) => setTimeout(r, (Number(body.attempt) || 0) * 1000)); return json(200, { ok: true }); }
   const dry = env.MAIL_DRYRUN === '1';
   if (!smtpConfigured(env)) return json(503, { ok: false, error: 'notconfigured' });
   const ip = (event.headers['x-nf-client-connection-ip'] || event.headers['client-ip'] || 'unknown');

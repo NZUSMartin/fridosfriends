@@ -3,12 +3,16 @@
 // Measured 2026-11-16 (phase timings of real sends): connecting, TLS and login at the netcup server take
 // about one second; the wait is at the END of the message, where the server scans the content before it
 // accepts the mail (5–6 s for a plain note, 16–21 s for the confirmation mail with its link, one 504).
+// A second probe showed 18–28 s for ANY mail with an attachment, link or not, with large swings.
 // So: mails that a visitor waits for are handed to the background function `mail-background`
 // (returns at once, retries on failure); only mails that need an immediate yes/no stay synchronous.
+// A background function accepts at most 256 KB, so a Geschenk PDF is parked in Netlify Blobs for the
+// seconds until it is sent, and deleted right after (see parkPdf / takePdf).
 import nodemailer from 'nodemailer';
 import { lookup } from 'node:dns/promises';
 import { isIP } from 'node:net';
-import { createHmac, createHash, timingSafeEqual } from 'node:crypto';
+import { createHmac, createHash, timingSafeEqual, randomUUID } from 'node:crypto';
+import { getStore, connectLambda } from '@netlify/blobs';
 
 export const smtpConfigured = (env) => env.MAIL_DRYRUN === '1' || !!(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS);
 
@@ -42,9 +46,39 @@ export function sigOk(text, sig, env) {
 
 // Hand one message to the background function. Resolves true when it was accepted for sending.
 export async function sendInBackground(origin, msg, env) {
-  const payload = JSON.stringify({ msg, t: Date.now() });
+  const payload = JSON.stringify({ msg, t: Date.now(), cb: origin /* TEMP-PROBE */ });
   const res = await fetch(`${origin}/.netlify/functions/mail-background`, {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'x-ff-sig': signText(payload, env) }, body: payload,
   });
   return res.status >= 200 && res.status < 300;
+}
+
+// Only our own hosts may appear in links or receive the hand-over (the Host header is client-controlled).
+export function siteOrigin(event) {
+  const host = String((event.headers && event.headers.host) || '').toLowerCase();
+  if (/^(www\.)?fridosfriends\.de$/.test(host) || /^[a-z0-9-]+--kolleg\.netlify\.app$/.test(host) || host === 'kolleg.netlify.app') return 'https://' + host;
+  if (/^localhost:\d+$/.test(host)) return 'http://' + host;
+  return 'https://www.fridosfriends.de';
+}
+
+// ---- PDF parking: the PDF waits in a blob store only until the background function has sent it
+const PDF_STORE = 'geschenk-mail';
+const PDF_MAX_AGE_MS = 60 * 60 * 1000;
+const pdfStore = (event) => { connectLambda(event); return getStore({ name: PDF_STORE, consistency: 'strong' }); };
+export async function parkPdf(event, bytes) {
+  const key = `${Date.now()}-${randomUUID()}`;
+  await pdfStore(event).set(key, bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
+  return key;
+}
+export async function takePdf(event, key) {
+  const buf = await pdfStore(event).get(key, { type: 'arrayBuffer' });
+  return buf ? Buffer.from(buf) : null;
+}
+export async function dropPdf(event, key) { try { await pdfStore(event).delete(key); } catch { /* already gone */ } }
+// leftovers (a hand-over that never ran): anything older than an hour is removed
+export async function sweepPdfs(event) {
+  try {
+    const store = pdfStore(event); const { blobs } = await store.list();
+    for (const b of blobs) { const t = Number(String(b.key).split('-')[0]); if (t && Date.now() - t > PDF_MAX_AGE_MS) await store.delete(b.key); }
+  } catch { /* best effort */ }
 }

@@ -1,9 +1,11 @@
 // Netlify Function: e-mails a generated Geschenk PDF to ONE address the giver typed in.
 // Static site → this is the only server piece. Sends through the Verein's own mailbox (SMTP at netcup)
-// so SPF stays intact. Configure in Netlify → Site configuration → Environment variables:
+// so SPF stays intact. The mail server needs 18–28 s to accept a mail with a PDF, so the PDF is parked
+// (Netlify Blobs) and the background function `mail-background` sends it; the visitor gets an answer at once.
+// If the hand-over is not possible, the mail is sent right here as before. Configure in Netlify → Site configuration → Environment variables:
 //   SMTP_HOST, SMTP_PORT (465 = SSL, 587 = STARTTLS), SMTP_USER, SMTP_PASS, MAIL_FROM (optional,
 //   default "Frido’s Friends e.V. <SMTP_USER>"), MAIL_REPLY_TO (optional, default donation@fridosfriends.de). MAIL_DRYRUN=1 → no mail is sent, the message is echoed (tests).
-import { makeTransport, smtpConfigured } from '../lib/mail.mjs';
+import { makeTransport, smtpConfigured, sendInBackground, siteOrigin, parkPdf, dropPdf } from '../lib/mail.mjs';
 
 const REPLY_DEFAULT = 'donation@fridosfriends.de';
 const MAX_PDF_BYTES = 4 * 1024 * 1024;           // the client sends a JPEG-based PDF, ~0.5–1 MB
@@ -46,17 +48,24 @@ export const handler = async (event) => {
   const dry = MAIL_DRYRUN === '1';
   if (!smtpConfigured(process.env)) return json(503, { ok: false, error: 'notconfigured' });
 
-  const transport = await makeTransport(process.env);
-  let { subject, text } = copy(lang, occasion, String(recipient).slice(0, 60), String(giver).slice(0, 60));
-  /* TEMP-PROBE */ if (body.debug === 'plain') { subject = 'Zeitmessung'; text = 'Technischer Test der Versanddauer. Bitte ignorieren.'; } else if (body.debug === 'url') { subject = 'Zeitmessung'; text = 'Technischer Test der Versanddauer. Bitte ignorieren. www.fridosfriends.de'; }
+  const { subject, text } = copy(lang, occasion, String(recipient).slice(0, 60), String(giver).slice(0, 60));
   try {
+    const msg = { from: MAIL_FROM || `Frido’s Friends e.V. <${SMTP_USER || REPLY_DEFAULT}>`, to: toAddr, replyTo: MAIL_REPLY_TO || REPLY_DEFAULT, subject, text };
+    // park the PDF and hand the message to the background function …
+    if (!dry) {
+      let key = '';
+      try {
+        key = await parkPdf(event, bytes);
+        if (await sendInBackground(siteOrigin(event), { ...msg, pdfKey: key }, process.env)) return json(200, { ok: true, queued: true });
+      } catch (err) { console.error('send-geschenk hand-over failed:', err && err.message); }
+      if (key) await dropPdf(event, key);
+    }
+    // … otherwise (or in dry-run) send it here
     const t0 = Date.now();
-    const info = await transport.sendMail({
-      from: MAIL_FROM || `Frido’s Friends e.V. <${SMTP_USER || REPLY_DEFAULT}>`, to: toAddr, replyTo: MAIL_REPLY_TO || REPLY_DEFAULT, subject, text,
-      attachments: [{ filename: 'Fridos-Friends-Geschenk.pdf', content: bytes, contentType: 'application/pdf' }],
+    const info = await (await makeTransport(process.env)).sendMail({
+      ...msg, attachments: [{ filename: 'Fridos-Friends-Geschenk.pdf', content: bytes, contentType: 'application/pdf' }],
     });
     console.log('send-geschenk sent in', Date.now() - t0, 'ms');
-    /* TEMP-PROBE */ if (body.debug) return json(200, { ok: true, ms: Date.now() - t0, bytes: bytes.length });
     return json(200, { ok: true, dry, id: info.messageId || null, ...(dry ? { size: bytes.length, to: toAddr, subject } : {}) });
   } catch (err) {
     console.error('send-geschenk failed:', err && err.message);
