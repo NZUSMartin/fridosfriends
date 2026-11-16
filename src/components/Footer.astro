@@ -7,6 +7,7 @@
  *   lang  'de' | 'en'  — language (default 'de')
  */
 import Logo from './Logo.astro';
+import NewsletterSignup from './NewsletterSignup.astro';
 import { LINKEDIN } from '../consts';
 
 interface Props { lang?: 'de' | 'en'; }
@@ -54,6 +55,11 @@ const nav = isEn ? navEn : navDe;
           Gemarkenstraße 12, 51069 Köln<br />
           <a href="mailto:vorstand@fridosfriends.de">vorstand@fridosfriends.de</a>
         </p>
+        <div class="footer-news">
+          <h3>Newsletter</h3>
+          <p class="footer-news__lead">{isEn ? 'Hear how the girls we support are doing.' : 'Erfahren Sie, wie es den geförderten Mädchen geht.'}</p>
+          <NewsletterSignup lang={lang} source="footer" tone="dark" />
+        </div>
       </div>
 
       <!-- Navigation -->
@@ -148,4 +154,7 @@ const nav = isEn ? navEn : navDe;
     transition: transform 150ms var(--ease-out);
   }
   .footer-qr:hover img { transform: translateY(-2px); }
+  .footer-news { margin-top: var(--sp-6); }
+  .footer-news h3 { margin-bottom: var(--sp-2); }
+  .footer-news__lead { font-size: var(--step--1); color: var(--gold-on-ink); margin: 0 0 var(--sp-3); }
 </style>

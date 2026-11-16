@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import MembershipForm from '../components/MembershipForm.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
 import ProgressThermometer from '../components/ProgressThermometer.astro';
 import { FUNDING, BETTERPLACE, BETTERPLACE_SHORT, PAYPAL_DONATE, PAYPAL_SUBSCRIBE } from '../consts';
 
@@ -266,10 +267,9 @@ const trust = [
         <article class="card card--story" data-reveal>
           <h3>Newsletter</h3>
           <p style="color:var(--stone);margin-top:var(--sp-3)">
-            Bleiben Sie nah dran: Wir berichten, wie es den geförderten Mädchen geht. Melden Sie
-            sich per E-Mail an unter
-            <a class="link-tertiary" href="mailto:vorstand@fridosfriends.de?subject=Newsletter">vorstand@fridosfriends.de</a>.
+            Bleiben Sie nah dran: Wir berichten, wie es den geförderten Mädchen geht.
           </p>
+          <div style="margin-top:var(--sp-4)"><NewsletterSignup lang="de" source="mitmachen" /></div>
         </article>
       </div>
     </div>

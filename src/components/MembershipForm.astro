@@ -40,6 +40,7 @@ const t = isEn
       trust: ['Registered charity', '100% promise', 'Tax receipt', 'Partner JRS'],
       successEyebrow: 'Application received',
       success: 'Thank you! Your application has reached us — the board will be in touch personally within 24–48 hours with the membership form and SEPA mandate.',
+      newsSent: 'We have also sent you an e-mail: please confirm with the link in it that you would like to receive our updates.',
     }
   : {
       legend: 'Mitglied werden — monatlich', amountLabel: 'Monatlicher Beitrag',
@@ -55,6 +56,7 @@ const t = isEn
       trust: ['Gemeinnützigkeit', '100 %-Versprechen', 'Spendenquittung', 'Partner JRS'],
       successEyebrow: 'Antrag eingegangen',
       success: 'Vielen Dank! Ihr Mitgliedsantrag ist eingegangen — der Vorstand meldet sich innerhalb von 24–48 Stunden persönlich bei Ihnen, mit Beitrittserklärung und SEPA-Mandat.',
+      newsSent: 'Außerdem haben wir Ihnen eine E-Mail geschickt: Bitte bestätigen Sie über den Link darin, dass Sie unsere Updates erhalten möchten.',
     };
 ---
 <div class="membership-block">
@@ -127,6 +129,7 @@ const t = isEn
   <div class="form-success card" data-form-success hidden tabindex="-1" role="status" aria-live="polite">
     <p class="eyebrow">{t.successEyebrow}</p>
     <p style="margin-top:var(--sp-3)">{t.success}</p>
+    <p style="margin-top:var(--sp-3);color:var(--stone)" data-form-news hidden>{t.newsSent}</p>
   </div>
 </div>
 
@@ -142,17 +145,24 @@ const t = isEn
 </script>
 
 <script>
+  import { nlSubscribe } from '../scripts/newsletter';
   document.querySelectorAll('.membership-form').forEach((form) => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const f = form as HTMLFormElement;
       const data = new URLSearchParams(new FormData(f) as any);
+      // opt-in ticked → double opt-in: a confirmation mail goes to the address given
+      const wantsNews = (f.querySelector('input[name="newsletter"]') as HTMLInputElement | null)?.checked;
+      const mail = (f.querySelector('input[name="email"]') as HTMLInputElement | null)?.value || '';
+      // sent right away (keepalive), so it also goes out if the form falls back to a normal page POST
+      const news = (wantsNews && mail) ? nlSubscribe(mail, document.documentElement.lang === 'en' ? 'en' : 'de', 'mitgliedschaft') : null;
       fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: data.toString() })
         .then((r) => {
           if (!r.ok) throw new Error('submit failed');
           const ok = f.parentElement?.querySelector('[data-form-success]') as HTMLElement | null;
           f.hidden = true;
           if (ok) { ok.hidden = false; ok.focus(); ok.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+          news?.then((res) => { const note = ok?.querySelector('[data-form-news]') as HTMLElement | null; if (note && res === 'sent') note.hidden = false; });
         })
         .catch(() => { f.submit(); }); // no-JS / error fallback → normal POST to the thank-you page
     });

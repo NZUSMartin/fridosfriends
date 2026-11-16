@@ -1,0 +1,70 @@
+---
+/**
+ * Newsletter page: the sign-up field, and — when opened from the confirmation mail (?t=<signed token>) —
+ * the confirmation step of the double opt-in. Confirming needs a button click on purpose
+ * (mail scanners pre-open links; a plain page view must not subscribe anyone).
+ */
+import Layout from '../../../layouts/Layout.astro';
+import Eyebrow from '../../../components/Eyebrow.astro';
+import NewsletterSignup from '../../../components/NewsletterSignup.astro';
+---
+<Layout title="Newsletter" description="Sign up for the Frido's Friends newsletter and hear how the girls we support are doing." lang="en" path="/en/newsletter" spine="none">
+  <section class="section">
+    <div class="container container-text" data-nlpage data-nlview="signup">
+      <script is:inline>(function(el){try{if(/[?&]t=[\w.-]+/.test(location.search))el.setAttribute('data-nlview','confirm');}catch(e){}})(document.currentScript.parentElement);</script>
+      <Eyebrow text="Newsletter" />
+
+      <div class="nlview" data-view="signup">
+        <h1>Stay close.</h1>
+        <p class="lead" style="margin-top:var(--sp-5)">We report on how the girls we support are doing.</p>
+        <div style="margin-top:var(--sp-6)"><NewsletterSignup lang="en" source="newsletter-seite" /></div>
+      </div>
+
+      <div class="nlview" data-view="confirm">
+        <h1>Please confirm your sign-up.</h1>
+        <p class="lead" style="margin-top:var(--sp-5)">With one click we add your address to our newsletter list.</p>
+        <p style="margin-top:var(--sp-6)"><button type="button" class="btn btn--primary" data-nl-confirm>Confirm sign-up</button></p>
+        <p class="nlview__status" data-nl-confirm-status aria-live="polite" data-sending="Confirming …" data-fail="Sorry, that did not work. Please try again or write to us at vorstand@fridosfriends.de."></p>
+      </div>
+
+      <div class="nlview" data-view="done" tabindex="-1">
+        <h1>Thank you.</h1>
+        <p class="lead" style="margin-top:var(--sp-5)">Your sign-up is confirmed. From now on you will receive our newsletter.</p>
+        <p style="margin-top:var(--sp-6)"><a class="btn btn--secondary" href="/en/">Back to home</a></p>
+      </div>
+
+      <div class="nlview" data-view="error" tabindex="-1">
+        <h1>This link is no longer valid.</h1>
+        <p class="lead" style="margin-top:var(--sp-5)">Please sign up again — we will send you a new link.</p>
+        <div style="margin-top:var(--sp-6)"><NewsletterSignup lang="en" source="newsletter-neu" /></div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .nlview { display:none; }
+  [data-nlview="signup"] [data-view="signup"], [data-nlview="confirm"] [data-view="confirm"],
+  [data-nlview="done"] [data-view="done"], [data-nlview="error"] [data-view="error"] { display:block; }
+  .nlview:focus { outline:none; }
+  .nlview__status { margin-top:var(--sp-4); color:var(--stone); min-height:1.4em; }
+</style>
+
+<script>
+  const shell = document.querySelector('[data-nlpage]') as HTMLElement | null;
+  const btn = document.querySelector('[data-nl-confirm]') as HTMLButtonElement | null;
+  const status = document.querySelector('[data-nl-confirm-status]') as HTMLElement | null;
+  const show = (v: string) => { if (!shell) return; shell.dataset.nlview = v; (shell.querySelector(`[data-view="${v}"]`) as HTMLElement | null)?.focus(); };
+  btn?.addEventListener('click', async () => {
+    const token = new URLSearchParams(location.search).get('t') || '';
+    btn.disabled = true; if (status) status.textContent = status.dataset.sending || '';
+    try {
+      const res = await fetch('/.netlify/functions/newsletter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'confirm', token }) });
+      const j: any = await res.json().catch(() => ({}));
+      if (res.ok && j.ok) { history.replaceState({}, '', location.pathname); show('done'); return; }
+      if (res.status === 400 || res.status === 410) { history.replaceState({}, '', location.pathname); show('error'); return; }
+      if (status) status.textContent = status.dataset.fail || '';
+    } catch { if (status) status.textContent = status.dataset.fail || ''; }
+    btn.disabled = false;
+  });
+</script>

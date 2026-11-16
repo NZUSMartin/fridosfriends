@@ -1,0 +1,70 @@
+---
+/**
+ * NewsletterSignup.astro — one e-mail field + button; double opt-in via the `newsletter` function.
+ * Props: lang 'de' | 'en' · source (where the sign-up happened, shown to the Vorstand) · tone 'light' | 'dark'
+ */
+interface Props { lang?: 'de' | 'en'; source: string; tone?: 'light' | 'dark'; }
+const { lang = 'de', source, tone = 'light' } = Astro.props;
+const isEn = lang === 'en';
+const id = `nl-${source}`;
+const privacy = isEn ? '/en/privacy' : '/datenschutz';
+const t = isEn
+  ? { label: 'Your e-mail address', ph: 'name@example.com', btn: 'Sign up',
+      consent: 'By signing up you agree to receive the Frido’s Friends newsletter. You can unsubscribe at any time.', privacy: 'Privacy' }
+  : { label: 'Ihre E-Mail-Adresse', ph: 'name@beispiel.de', btn: 'Anmelden',
+      consent: 'Mit der Anmeldung willigen Sie ein, den Newsletter von Frido’s Friends zu erhalten. Abmeldung jederzeit möglich.', privacy: 'Datenschutz' };
+---
+<form class={`nl nl--${tone}`} data-nl data-nl-source={source} data-nl-lang={lang} novalidate>
+  <label class="nl__label" for={id}>{t.label}</label>
+  <div class="nl__row">
+    <input id={id} class="nl__input" type="email" name="email" placeholder={t.ph} autocomplete="email" inputmode="email" maxlength="120" required />
+    <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="nl__hp" />
+    <button type="submit" class={`btn btn--sm ${tone === 'dark' ? 'btn--gold' : 'btn--secondary'}`}>{t.btn}</button>
+  </div>
+  <p class="nl__status" data-nl-status aria-live="polite"></p>
+  <p class="nl__consent">{t.consent} <a href={privacy}>{t.privacy}</a></p>
+</form>
+
+<style>
+  .nl { max-width:460px; margin:0; container-type:inline-size; }
+  .nl__label { display:block; font-family:var(--font-sans); font-size:var(--step--1); font-weight:600; margin-bottom:var(--sp-2); }
+  .nl__row { display:flex; gap:var(--sp-2); align-items:stretch; position:relative; }
+  .nl__input { flex:1; min-width:0; font:inherit; font-size:1rem; padding:.6em .8em; border:1px solid var(--line-strong, #D6CDB6); border-radius:var(--r-input); background:#fff; color:var(--ink); }
+  .nl__input:focus-visible { outline:2px solid var(--teal); outline-offset:2px; }
+  .nl__hp { position:absolute; left:-9999px; width:1px; height:1px; opacity:0; }
+  .nl__status { font-size:var(--step--1); margin:var(--sp-2) 0 0; min-height:1.2em; color:var(--gold-text); font-weight:600; }
+  .nl__status:empty { display:none; }
+  .nl__consent { font-size:.78rem; line-height:1.5; color:var(--stone); margin:var(--sp-2) 0 0; max-width:none; }
+  .nl__consent a { color:inherit; text-decoration:underline; border-bottom:0; }
+  .nl--dark .nl__label { color:var(--paper); }
+  .nl--dark .nl__input { background:rgba(255,255,255,.06); border-color:rgba(235,217,174,.35); color:var(--paper); }
+  .nl--dark .nl__input::placeholder { color:rgba(251,249,244,.5); }
+  .nl--dark .nl__input:focus-visible { outline-color:var(--gold); }
+  .nl--dark .nl__status { color:var(--gold-on-ink); }
+  .nl--dark .nl__consent { color:rgba(251,249,244,.6); }
+  @media (max-width:420px){ .nl__row { flex-direction:column; } }
+  /* narrow cards: field above, button below */
+  @container (max-width:300px){ .nl__row { flex-direction:column; } }
+</style>
+
+<script>
+  import { nlSubscribe, nlMsg } from '../scripts/newsletter';
+  document.querySelectorAll('form[data-nl]').forEach((el) => {
+    const form = el as HTMLFormElement;
+    const input = form.querySelector('.nl__input') as HTMLInputElement;
+    const hp = form.querySelector('.nl__hp') as HTMLInputElement;
+    const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+    const status = form.querySelector('[data-nl-status]') as HTMLElement;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const lang = form.dataset.nlLang || 'de'; const m = nlMsg(lang);
+      btn.disabled = true; status.textContent = m.sending;
+      const r = await nlSubscribe(input.value, lang, form.dataset.nlSource || '', hp.value);
+      btn.disabled = false;
+      if (r === 'sent') { status.textContent = m.sent; input.value = ''; }
+      else if (r === 'bad') { status.textContent = m.bad; input.focus(); }
+      else if (r === 'rate') { status.textContent = m.rate; }
+      else { status.textContent = m.fail; }
+    });
+  });
+</script>

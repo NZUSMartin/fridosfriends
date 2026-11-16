@@ -47,8 +47,11 @@ const t = isEn
       qrNote: 'Scan the QR with your banking app.',
       s4h: 'Your name', s4lead: 'From whom is the gift? Your name appears in the text and as the signature on the card.',
       giverLabel: 'Your name', giverPh: 'e.g. Sabine Beispiel',
-      s5h: 'Donation receipt?', s5lead: 'Optional — as the donor, you receive the tax receipt (the recipient does not).',
+      s5h: 'Receipt & newsletter', s5lead: 'Optional — as the donor, you receive the tax receipt (the recipient does not).',
       wantReceipt: 'Yes, please send me a donation receipt.',
+      wantNews: 'Yes, I would like to receive the Frido’s Friends newsletter and hear how the girls we support are doing. I can unsubscribe at any time.',
+      newsHint: 'We will send you an e-mail with a link to confirm your sign-up.', newsPrivacy: 'Privacy', newsNeedMail: 'Please enter a valid e-mail address.',
+      newsSent: 'Newsletter: we have sent you an e-mail. Please confirm your sign-up with the link in it.',
       rcptNameLabel: 'Name', rcptEmailLabel: 'Email', rcptEmailPh: 'name@example.com',
       rcptAddrLabel: 'Postal address (optional)', rcptAddrPh: 'Street, ZIP city',
       rcptHint: 'For a formal donation receipt, please include your postal address.', rcptSent: 'Request sent — thank you.',
@@ -87,8 +90,11 @@ const t = isEn
       qrNote: 'QR-Code mit Ihrer Banking-App scannen.',
       s4h: 'Ihr Name', s4lead: 'Von wem ist das Geschenk? Ihr Name erscheint im Text und als Unterschrift auf dem Geschenk.',
       giverLabel: 'Ihr Name', giverPh: 'z. B. Sabine Beispiel',
-      s5h: 'Spendenbescheinigung?', s5lead: 'Optional — als Spender:in erhalten Sie die Zuwendungsbestätigung (die beschenkte Person nicht).',
+      s5h: 'Bescheinigung & Newsletter', s5lead: 'Optional — als Spender:in erhalten Sie die Zuwendungsbestätigung (die beschenkte Person nicht).',
       wantReceipt: 'Ja, bitte schickt mir eine Spendenbescheinigung.',
+      wantNews: 'Ja, ich möchte den Newsletter von Frido’s Friends erhalten und erfahren, wie es den geförderten Mädchen geht. Abmeldung jederzeit möglich.',
+      newsHint: 'Sie erhalten eine E-Mail mit einem Link, über den Sie Ihre Anmeldung bestätigen.', newsPrivacy: 'Datenschutz', newsNeedMail: 'Bitte eine gültige E-Mail-Adresse eingeben.',
+      newsSent: 'Newsletter: Wir haben Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.',
       rcptNameLabel: 'Name', rcptEmailLabel: 'E-Mail', rcptEmailPh: 'name@beispiel.de',
       rcptAddrLabel: 'Postanschrift (optional)', rcptAddrPh: 'Straße, PLZ Ort',
       rcptHint: 'Für eine förmliche Zuwendungsbestätigung geben Sie bitte Ihre Postanschrift an.', rcptSent: 'Anfrage gesendet — vielen Dank.',
@@ -221,11 +227,14 @@ const t = isEn
             <input type="hidden" name="form-name" value={formName} />
             <p class="hp" hidden aria-hidden="true"><label>Leave empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
             <label class="field-check"><input type="checkbox" data-want-receipt /><span>{t.wantReceipt}</span></label>
+            <!-- newsletter: its own, unticked consent; shares the e-mail field with the receipt (double opt-in by mail) -->
+            <label class="field-check" style="margin-top:var(--sp-3)"><input type="checkbox" name="newsletter" value="ja" data-want-news /><span>{t.wantNews}</span></label>
             <div class="grcpt__fields" data-rcpt-fields hidden>
-              <label class="field"><span>{t.rcptNameLabel}</span><input type="text" name="name" data-rcpt-name autocomplete="name" /></label>
-              <label class="field"><span>{t.rcptEmailLabel}</span><input type="email" name="email" placeholder={t.rcptEmailPh} autocomplete="email" /></label>
-              <label class="field"><span>{t.rcptAddrLabel}</span><textarea name="anschrift" rows="2" placeholder={t.rcptAddrPh} autocomplete="street-address"></textarea></label>
-              <small class="field-note">{t.rcptHint}</small>
+              <label class="field" data-rcpt-only><span>{t.rcptNameLabel}</span><input type="text" name="name" data-rcpt-name autocomplete="name" /></label>
+              <label class="field"><span>{t.rcptEmailLabel}</span><input type="email" name="email" data-rcpt-email placeholder={t.rcptEmailPh} autocomplete="email" /><small class="field-note gfield-err" data-rcpt-email-err hidden>{t.newsNeedMail}</small></label>
+              <label class="field" data-rcpt-only><span>{t.rcptAddrLabel}</span><textarea name="anschrift" rows="2" placeholder={t.rcptAddrPh} autocomplete="street-address"></textarea></label>
+              <small class="field-note" data-rcpt-only>{t.rcptHint}</small>
+              <small class="field-note" data-news-only>{t.newsHint} <a href={isEn ? '/en/privacy' : '/datenschutz'} target="_blank" rel="noopener">{t.newsPrivacy}</a></small>
               <input type="hidden" name="betrag" data-rcpt-betrag />
               <input type="hidden" name="empfaenger" data-rcpt-empf />
               <input type="hidden" name="anlass" data-rcpt-anlass />
@@ -238,6 +247,7 @@ const t = isEn
         <section class="gpanel" data-step="5">
           <h2 class="h4">6 · {t.s6h}</h2>
           <p class="gpanel__lead">{t.s6lead}</p>
+          <p class="gcallout gnews-sent" data-news-sent hidden>{t.newsSent}</p>
           <label class="field-check"><input type="checkbox" data-honor /><span>{t.honorCheck}</span></label>
           <button type="button" class="btn btn--primary" style="width:100%;margin-top:var(--sp-3)" data-dl-pdf disabled>{t.dl}</button>
           <button type="button" class="btn btn--secondary" style="width:100%;margin-top:var(--sp-2)" data-dl-png disabled>{t.dlPng}</button>
@@ -312,7 +322,11 @@ const t = isEn
   .gcallout { background:var(--gold-wash,#F6EFDD); border:1px solid var(--line-strong,#D6CDB6); border-radius:var(--r-card); padding:.8em 1em; font-size:var(--step--1); margin-top:var(--sp-4); }
   .field-check { display:flex; gap:.6em; align-items:flex-start; font-size:var(--step-0); cursor:pointer; }
   .field-check input { margin-top:.2em; width:18px; height:18px; accent-color:var(--teal); flex:none; }
-  .grcpt__fields { margin-top:var(--sp-3); }
+  .grcpt__fields { margin-top:var(--sp-4); }
+  .grcpt__fields [hidden] { display:none; }
+  .gfield-err { color:#A23B2A; font-weight:600; }
+  .gnews-sent { margin:0 0 var(--sp-4); }
+  .field-note a { color:inherit; text-decoration:underline; }
   .grcpt__sent { color:var(--gold-text); font-weight:600; margin-top:var(--sp-3); }
   .gnav { display:flex; justify-content:space-between; gap:var(--sp-3); margin-top:var(--sp-5); padding-top:var(--sp-4); border-top:1px solid var(--line); }
   .btn--ghost { background:transparent; border-color:transparent; color:var(--stone); }
@@ -378,6 +392,7 @@ const t = isEn
 </style>
 
 <script>
+  import { nlSubscribe, NL_EMAIL_RE } from '../scripts/newsletter';
   document.querySelectorAll('[data-gstudio]').forEach((root) => {
     const $ = (sel: string) => root.querySelector(sel) as HTMLElement | null;
     const canvas = $('[data-canvas]') as HTMLCanvasElement;
@@ -508,11 +523,42 @@ const t = isEn
     // receipt form
     const want = root.querySelector('[data-want-receipt]') as HTMLInputElement;
     const rcptFields = $('[data-rcpt-fields]');
+    const wantNews = root.querySelector('[data-want-news]') as HTMLInputElement;
+    const rcptEmail = root.querySelector('[data-rcpt-email]') as HTMLInputElement;
+    const rcptEmailErr = $('[data-rcpt-email-err]');
+    // the fields open as soon as either box is ticked; name + address belong to the receipt only
+    function syncStep5() {
+      const r = !!want?.checked, n = !!wantNews?.checked;
+      if (rcptFields) rcptFields.hidden = !(r || n);
+      root.querySelectorAll('[data-rcpt-only]').forEach((el) => ((el as HTMLElement).hidden = !r));
+      root.querySelectorAll('[data-news-only]').forEach((el) => ((el as HTMLElement).hidden = !n));
+      if (rcptEmailErr) rcptEmailErr.hidden = true;
+    }
     want?.addEventListener('change', () => {
-      if (rcptFields) rcptFields.hidden = !want.checked;
+      syncStep5();
       const nm = root.querySelector('[data-rcpt-name]') as HTMLInputElement;
       if (want.checked && nm && !nm.value) nm.value = state.giver;
     });
+    wantNews?.addEventListener('change', syncStep5);
+    rcptEmail?.addEventListener('input', () => { if (rcptEmailErr) rcptEmailErr.hidden = true; });
+    syncStep5();
+    // an e-mail address is needed as soon as one of the two boxes is ticked
+    function step5Valid(): boolean {
+      if (!(want?.checked || wantNews?.checked)) return true;
+      const ok = NL_EMAIL_RE.test((rcptEmail?.value || '').trim());
+      if (!ok) { if (rcptEmailErr) rcptEmailErr.hidden = false; rcptEmail?.focus(); }
+      return ok;
+    }
+    let newsDoneFor = '';
+    function submitNewsletter() {
+      const addr = (rcptEmail?.value || '').trim();
+      if (!wantNews?.checked || !addr || newsDoneFor === addr) return;
+      newsDoneFor = addr;
+      nlSubscribe(addr, isEnLang() ? 'en' : 'de', 'geschenk').then((r) => {
+        const s = $('[data-news-sent]'); if (s) s.hidden = r !== 'sent';
+        if (r !== 'sent') newsDoneFor = '';
+      });
+    }
     const rcptForm = root.querySelector('[data-rcpt-form]') as HTMLFormElement;
     let rcptSentDone = false;
     function submitReceipt() {
@@ -640,7 +686,7 @@ const t = isEn
       backB.disabled = step === 0;
       nextB.style.visibility = step === MAX - 1 ? 'hidden' : 'visible';
     }
-    nextB.addEventListener('click', () => { if (step === 4) submitReceipt(); goto(step + 1); });
+    nextB.addEventListener('click', () => { if (step === 4) { if (!step5Valid()) return; submitReceipt(); submitNewsletter(); } goto(step + 1); });
     backB.addEventListener('click', () => goto(step - 1));
 
     sync();

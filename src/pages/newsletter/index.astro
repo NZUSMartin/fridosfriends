@@ -1,0 +1,70 @@
+---
+/**
+ * Newsletter page: the sign-up field, and — when opened from the confirmation mail (?t=<signed token>) —
+ * the confirmation step of the double opt-in. Confirming needs a button click on purpose
+ * (mail scanners pre-open links; a plain page view must not subscribe anyone).
+ */
+import Layout from '../../layouts/Layout.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
+---
+<Layout title="Newsletter" description="Melden Sie sich für den Newsletter von Frido's Friends an und erfahren Sie, wie es den geförderten Mädchen geht." lang="de" path="/newsletter" spine="none">
+  <section class="section">
+    <div class="container container-text" data-nlpage data-nlview="signup">
+      <script is:inline>(function(el){try{if(/[?&]t=[\w.-]+/.test(location.search))el.setAttribute('data-nlview','confirm');}catch(e){}})(document.currentScript.parentElement);</script>
+      <Eyebrow text="Newsletter" />
+
+      <div class="nlview" data-view="signup">
+        <h1>Bleiben Sie nah dran.</h1>
+        <p class="lead" style="margin-top:var(--sp-5)">Wir berichten, wie es den geförderten Mädchen geht.</p>
+        <div style="margin-top:var(--sp-6)"><NewsletterSignup lang="de" source="newsletter-seite" /></div>
+      </div>
+
+      <div class="nlview" data-view="confirm">
+        <h1>Bitte bestätigen Sie Ihre Anmeldung.</h1>
+        <p class="lead" style="margin-top:var(--sp-5)">Mit einem Klick nehmen wir Ihre Adresse in unseren Newsletter-Verteiler auf.</p>
+        <p style="margin-top:var(--sp-6)"><button type="button" class="btn btn--primary" data-nl-confirm>Anmeldung bestätigen</button></p>
+        <p class="nlview__status" data-nl-confirm-status aria-live="polite" data-sending="Wird bestätigt …" data-fail="Das hat leider nicht funktioniert. Bitte versuchen Sie es noch einmal oder schreiben Sie uns an vorstand@fridosfriends.de."></p>
+      </div>
+
+      <div class="nlview" data-view="done" tabindex="-1">
+        <h1>Vielen Dank.</h1>
+        <p class="lead" style="margin-top:var(--sp-5)">Ihre Anmeldung ist bestätigt. Sie erhalten künftig unseren Newsletter.</p>
+        <p style="margin-top:var(--sp-6)"><a class="btn btn--secondary" href="/">Zurück zur Startseite</a></p>
+      </div>
+
+      <div class="nlview" data-view="error" tabindex="-1">
+        <h1>Dieser Link ist nicht mehr gültig.</h1>
+        <p class="lead" style="margin-top:var(--sp-5)">Bitte melden Sie sich erneut an — wir schicken Ihnen einen neuen Link.</p>
+        <div style="margin-top:var(--sp-6)"><NewsletterSignup lang="de" source="newsletter-neu" /></div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .nlview { display:none; }
+  [data-nlview="signup"] [data-view="signup"], [data-nlview="confirm"] [data-view="confirm"],
+  [data-nlview="done"] [data-view="done"], [data-nlview="error"] [data-view="error"] { display:block; }
+  .nlview:focus { outline:none; }
+  .nlview__status { margin-top:var(--sp-4); color:var(--stone); min-height:1.4em; }
+</style>
+
+<script>
+  const shell = document.querySelector('[data-nlpage]') as HTMLElement | null;
+  const btn = document.querySelector('[data-nl-confirm]') as HTMLButtonElement | null;
+  const status = document.querySelector('[data-nl-confirm-status]') as HTMLElement | null;
+  const show = (v: string) => { if (!shell) return; shell.dataset.nlview = v; (shell.querySelector(`[data-view="${v}"]`) as HTMLElement | null)?.focus(); };
+  btn?.addEventListener('click', async () => {
+    const token = new URLSearchParams(location.search).get('t') || '';
+    btn.disabled = true; if (status) status.textContent = status.dataset.sending || '';
+    try {
+      const res = await fetch('/.netlify/functions/newsletter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'confirm', token }) });
+      const j: any = await res.json().catch(() => ({}));
+      if (res.ok && j.ok) { history.replaceState({}, '', location.pathname); show('done'); return; }
+      if (res.status === 400 || res.status === 410) { history.replaceState({}, '', location.pathname); show('error'); return; }
+      if (status) status.textContent = status.dataset.fail || '';
+    } catch { if (status) status.textContent = status.dataset.fail || ''; }
+    btn.disabled = false;
+  });
+</script>
