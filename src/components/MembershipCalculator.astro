@@ -6,7 +6,7 @@
  *
  * Props:
  *   lang     'de' | 'en'  — language (default 'de')
- *   ctaHref? string       — primary "Mitglied werden" target. Defaults to the
+ *   ctaHref? string       — primary "Mitmachen" target. Defaults to the
  *                           donation hub (/mitmachen ÷ /en/donate) on the homepages;
  *                           hub pages pass the membership-completion URL so the teal
  *                           primary doesn't self-loop back to the current page.
@@ -33,9 +33,9 @@ const trust = isEn
   ? ['Registered charity', '100% promise', 'Tax receipt', 'Partner JRS']
   : ['Gemeinnützigkeit', '100 %-Versprechen', 'Spendenquittung', 'Partner JRS'];
 ---
-<form class="calc card" data-donate aria-label={isEn ? 'Become a member' : 'Mitglied werden'}>
+<form class="calc card" data-donate aria-label={isEn ? 'Give monthly' : 'Monatlich fördern'}>
   <fieldset>
-    <legend class="eyebrow">{isEn ? 'Become a member — monthly' : 'Mitglied werden — monatlich'}</legend>
+    <legend class="eyebrow">{isEn ? 'Give monthly' : 'Monatlich fördern'}</legend>
     <div class="calc__tiers" role="radiogroup" aria-label={isEn ? 'Monthly contribution' : 'Monatlicher Beitrag'}>
       <label class="tier">
         <input type="radio" name="amount" value="25" />
@@ -53,7 +53,7 @@ const trust = isEn
     <p class="calc__impact" aria-live="polite" data-impact>{impacts['75']}</p>
   </fieldset>
 
-  <a class="btn btn--primary" href={joinHref} data-join>{isEn ? 'Become a member' : 'Mitglied werden'}</a>
+  <a class="btn btn--primary" href={joinHref} data-join>{isEn ? 'Get involved' : 'Mitmachen'}</a>
 
   <ul class="trust-row">
     {trust.map((t) => (<li>{t}</li>))}
