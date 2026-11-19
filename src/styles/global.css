@@ -607,9 +607,14 @@ figcaption, .caption {
 .photo-break__caption .eyebrow { color: var(--gold); }
 .photo-break__caption h2 { color: #fff; max-width: 24ch; }
 .photo-break figcaption {
-  position: absolute; right: var(--sp-4); bottom: var(--sp-3);
+  position: absolute; left: var(--sp-4); right: var(--sp-4); bottom: var(--sp-3);
+  text-align: right; max-width: none;
   color: #fff; opacity: .8; margin: 0; z-index: 1;
 }
+/* phones: the long credit wraps to two lines — keep the overlaid headline clear of it */
+@media (max-width: 640px) { .photo-break__caption { padding-bottom: calc(var(--sp-7) + var(--sp-5)); } }
+/* the donation sections opened by a link (/mitmachen#spenden, /en/donate#give): start just below the sticky header */
+#spenden, #give { scroll-margin-top: var(--sp-5); }
 
 /* =====================================================================
    10. Timeline (/frido)
